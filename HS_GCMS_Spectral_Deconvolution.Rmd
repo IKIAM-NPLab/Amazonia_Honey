@@ -1,0 +1,144 @@
+---
+title: "HS_GCMS_Spectral_Deconvolution"
+author: "Angiely Camacho, Jefferson Pastuna"
+date: "2024-04-12"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+usethis::git_vaccinate()
+```
+
+### Introduction
+
+Write an Introduction.
+
+### Before to start
+
+Write a package description.
+
+### eRah package workflow
+
+How to star.
+
+```{r echo=TRUE, message=FALSE}
+
+# eRah package installation
+#install.packages('erah')
+# eRah library call
+library(erah)
+
+```
+
+Folder files
+
+```{r pressure, echo=FALSE}
+
+createdt('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/')
+
+```
+
+New experiment.
+
+
+```{r pressure, echo=FALSE}
+
+instrumental <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/HS_GCMS_Data_inst.csv')
+phenotype <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/HS_GCMS_Data_pheno.csv')
+
+ex <- newExp(instrumental = instrumental,
+             phenotype = phenotype,
+             info = 'Amazonia honey')
+
+```
+
+Compound deconvolution
+
+Parameter
+
+```{r pressure, echo=FALSE}
+
+ex.dec.par <- setDecPar(min.peak.width = 1,
+                        avoid.processing.mz = c(30:69,73:75,147:149))
+
+```
+
+parallel processing
+
+```{r pressure, echo=FALSE}
+
+plan(future::multisession,workers = 16)
+
+```
+
+Deconvolution
+
+```{r pressure, echo=FALSE}
+
+ex <- deconvolveComp(ex, ex.dec.par)
+
+```
+
+Alignment
+
+```{r pressure, echo=FALSE}
+# Alignment parameter
+ex.al.par <- setAlPar(min.spectra.cor = 0.90, max.time.dist = 3, mz.range = 70:550)
+# Alignment
+ex <- alignComp(ex, alParameters = ex.al.par)
+
+```
+
+Missing compound recovery
+
+
+```{r pressure, echo=FALSE}
+
+ex <- recMissComp(ex, min.samples = 3)
+
+```
+
+Identification
+
+```{r pressure, echo=FALSE}
+
+# Identification
+ex <- identifyComp(ex)
+# Identified compound
+id.list <- idList(ex)
+head(id.list[,1:4], n = 8)
+
+```
+
+Peak compound view
+
+```{r pressure, echo=FALSE}
+
+plotProfile(ex, 7)
+
+```
+
+Mirror plot of identified compounds
+
+```{r pressure, echo=FALSE}
+
+#plotSpectra(ex, 19, 2, draw.color = "orange")
+
+```
+
+Exporting spectra
+
+```{r pressure, echo=FALSE}
+
+export2MSP(ex,
+           store.path = "E:/Tesis_Mieles/Amazonia_Honey/Result/eRah_Result",
+           alg.version = 2)
+
+```
+
+
+
