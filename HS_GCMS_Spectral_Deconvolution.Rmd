@@ -9,8 +9,10 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 usethis::git_vaccinate()
+
 ```
 
 ### Introduction
@@ -36,19 +38,19 @@ library(erah)
 
 Folder files
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
-createdt('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/')
+createdt('E:/Tesis_Mieles/Amazonia_Honey/Data/HS_GCMS_Data_to_eRah/')
 
 ```
 
 New experiment.
 
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
-instrumental <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/HS_GCMS_Data_inst.csv')
-phenotype <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/HS_GCMS_Data/HS_GCMS_Data_pheno.csv')
+instrumental <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/Data/HS_GCMS_Metadata_to_eRah/HS_GCMS_Data_inst.csv')
+phenotype <- read.csv('E:/Tesis_Mieles/Amazonia_Honey/Data/HS_GCMS_Metadata_to_eRah/HS_GCMS_Data_pheno.csv')
 
 ex <- newExp(instrumental = instrumental,
              phenotype = phenotype,
@@ -60,16 +62,18 @@ Compound deconvolution
 
 Parameter
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
-ex.dec.par <- setDecPar(min.peak.width = 1,
+ex.dec.par <- setDecPar(min.peak.width = 2,
+                        min.peak.height = 450,
+                        noise.threshold = 45,
                         avoid.processing.mz = c(30:69,73:75,147:149))
 
 ```
 
 parallel processing
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 plan(future::multisession,workers = 16)
 
@@ -77,7 +81,7 @@ plan(future::multisession,workers = 16)
 
 Deconvolution
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 ex <- deconvolveComp(ex, ex.dec.par)
 
@@ -85,7 +89,7 @@ ex <- deconvolveComp(ex, ex.dec.par)
 
 Alignment
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 # Alignment parameter
 ex.al.par <- setAlPar(min.spectra.cor = 0.90, max.time.dist = 3, mz.range = 70:550)
 # Alignment
@@ -96,7 +100,7 @@ ex <- alignComp(ex, alParameters = ex.al.par)
 Missing compound recovery
 
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 ex <- recMissComp(ex, min.samples = 3)
 
@@ -104,7 +108,7 @@ ex <- recMissComp(ex, min.samples = 3)
 
 Identification
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 # Identification
 ex <- identifyComp(ex)
@@ -116,23 +120,23 @@ head(id.list[,1:4], n = 8)
 
 Peak compound view
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
-plotProfile(ex, 7)
+plotProfile(ex, 94)
 
 ```
 
 Mirror plot of identified compounds
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 #plotSpectra(ex, 19, 2, draw.color = "orange")
 
 ```
 
-Exporting spectra
+Exporting spectra to NIST
 
-```{r pressure, echo=FALSE}
+```{r echo=TRUE}
 
 export2MSP(ex,
            store.path = "E:/Tesis_Mieles/Amazonia_Honey/Result/eRah_Result",
