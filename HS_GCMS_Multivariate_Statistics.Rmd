@@ -159,7 +159,7 @@ corrected_no_blank <- corrected_no_blank[, corrected_no_blank$Group != "Blank"]
 
 ```
 
-Dta visualization...
+Data visualization...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
 
