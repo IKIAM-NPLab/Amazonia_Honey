@@ -59,7 +59,7 @@ Next...
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 data <- read_from_excel(file = "Data/Data_to_notame/HS_GCMS_Data_to_notame.xlsx", sheet = 1, 
-                        corner_row = 5, corner_column = "E", 
+                        corner_row = 7, corner_column = "E", 
                         split_by = c("Column", "Ion Mode"))
 
 ```
@@ -334,7 +334,7 @@ scores <- ei_pca$x %>%                   # Get PC coordinates
   left_join(pheno_data )                 # Adding metadata
 # PCA plot
 ggplot(scores,
-       aes(PC1, PC2, shape = Species, color = Species)) +
+       aes(PC1, PC2, shape = Species, color = Site_specific)) +
   geom_point(size = 3) +
   guides(x=guide_axis(title = "PC1 (23.65 %)"),
          y=guide_axis(title = "PC2 (20.46 %)")) +
