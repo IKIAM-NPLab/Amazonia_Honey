@@ -9,7 +9,7 @@ Angiely Camacho, Jefferson Pastuna
   package workflow</a>
 
 ### Introduction
-
+The present document aims to record the procedure given for the statistical analysis of metabolites present in the honeys of 3 native bee species (tetragonisca angustula, melipona fasciculata, melipona fuscopilosa) from 3 different localities in the Chontapunta parish.
 Write an Introduction.
 
 ### Before to start
