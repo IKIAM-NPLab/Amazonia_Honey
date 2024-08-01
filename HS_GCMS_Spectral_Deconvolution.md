@@ -276,3 +276,219 @@ export2MSP(ex,
 ```
 
     ## Spectra saved at: Result/eRah_Result/ExportMSP
+
+
+ ### 2-Heptanol
+Mirror plot of alignID number 
+
+``` r
+plotSpectra(peak_iden, ,
+            draw.color = "red",
+            comp.db = 27705,
+            xlim = c(50,160))
+```
+
+imagen
+
+
+
+``` r
+# Experimental Retention Index (RI)
+indexRtime(, rti)
+```
+
+``` r 
+
+# Experimental RI = 903 (Calculated by GCMSsolution software)
+# Literature RI = 900 (NIST#: 20310)
+# ΔRI = 3
+```
+
+#### Benzaldehyde
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 965 (Calculated by GCMSsolution software)
+# Literature RI = 962 (NIST#: 411571)
+# ΔRI = 3
+```
+### Benzyl alcohol
+
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1042 (Calculated by GCMSsolution software)
+# Literature RI = 1036 (NIST#: 379408)
+# ΔRI = 6
+```
+### Benzeneacetaldehyde
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1046 (Calculated by GCMSsolution software)
+# Literature RI = 1045 (NIST#: 114847)
+# ΔRI = 1
+```
+### Benzenemethanol, α-methyl-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1062 (Calculated by GCMSsolution software)
+# Literature RI = 1061 (NIST#: 423818)
+# ΔRI = 1
+```
+### 2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1073 (Calculated by GCMSsolution software)
+# Literature RI = 1074 (NIST#: 384130)
+# ΔRI = 1
+```
+### trans-Linalool oxide (furanoid)
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1086 (Calculated by GCMSsolution software)
+# Literature RI = 1086 (NIST#: 384131)
+# ΔRI = 0
+```
+### Linalool
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1102 (Calculated by GCMSsolution software)
+# Literature RI = 1099 (NIST#: 374223)
+# ΔRI = 3
+```
+### 1,5,7-Octatrien-3-ol, 3,7-dimethyl-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1103 (Calculated by GCMSsolution software)
+# Literature RI = 1107 (NIST#: 107014)
+# ΔRI = 4
+```
+### Butanoic acid, 3-methyl-, 3-methylbutyl ester
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1104 (Calculated by GCMSsolution software)
+# Literature RI = 1104 (NIST#: 428865)
+# ΔRI = 0
+```
+### Phenylethyl Alcohol
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1118 (Calculated by GCMSsolution software)
+# Literature RI = 1116 (NIST#: 229405)
+# ΔRI = 2
+```
+### 2,6-Dimethyl-1,3,5,7-octatetraene, E,E-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1131 (Calculated by GCMSsolution software)
+# Literature RI = 1131 (NIST#: 141120)
+# ΔRI = 0
+```
+### 2H-Pyran, 3,6-dihydro-4-methyl-2-(2-methyl-1-propenyl)-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1153 (Calculated by GCMSsolution software)
+# Literature RI = 1154 (NIST#: 430702)
+# ΔRI = 1
+```
+### 1-Nonanol
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1171 (Calculated by GCMSsolution software)
+# Literature RI = 1173 (NIST#: 249226)
+# ΔRI = 2
+```
+### 3-Cyclohexene-1-acetaldehyde, α,4-dimethyl-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1223 (Calculated by GCMSsolution software)
+# Literature RI = 1225 (NIST#: 21533)
+# ΔRI = 2
+```
+### Benzenemethanol, 4-methoxy-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1287 (Calculated by GCMSsolution software)
+# Literature RI = 1285 (NIST#: 461113)
+# ΔRI = 2
+```
+### 1-Dodecanol
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1476 (Calculated by GCMSsolution software)
+# Literature RI = 1474 (NIST#: 53416)
+# ΔRI = 2
+```
+### 2H-Pyran-2-one, tetrahydro-6-pentyl-
+``` r
+# Experimental Retention Index (RI)
+indexRtime(10.4657, rti)
+```
+
+``` r 
+# Experimental RI = 1497 (Calculated by GCMSsolution software)
+# Literature RI = 1497 (NIST#: 22022)
+# ΔRI = 0
+```
