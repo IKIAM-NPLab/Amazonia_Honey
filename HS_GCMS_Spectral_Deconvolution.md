@@ -277,24 +277,21 @@ export2MSP(ex,
 
     ## Spectra saved at: Result/eRah_Result/ExportMSP
 
-
+ ### 2 level compound
  ### 2-Heptanol
-Mirror plot of alignID number 
+Mirror plot of alignID number 38
 
 ``` r
-plotSpectra(peak_iden, ,
-            draw.color = "red",
-            comp.db = 27705,
-            xlim = c(50,160))
+plotSpectra(ex, 38, 2,
+            draw.color = "red", xlim = c(50,110))
 ```
 
 imagen
 
 
-
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(, rti)
+indexRtime(5.3613, rti)
 ```
 
 ``` r 
@@ -305,9 +302,18 @@ indexRtime(, rti)
 ```
 
 #### Benzaldehyde
+Mirror plot of alignID number 46
+
+``` r
+plotSpectra(ex, 46, 2,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(6.5074, rti)
 ```
 
 ``` r 
@@ -316,10 +322,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 3
 ```
 ### Benzyl alcohol
+Mirror plot of alignID number  62
+
+``` r
+plotSpectra(ex, 62, 2,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
 
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(7.9683, rti)
 ```
 
 ``` r 
@@ -328,9 +342,17 @@ indexRtime(10.4657, rti)
 # ΔRI = 6
 ```
 ### Benzeneacetaldehyde
+Mirror plot of alignID number 71 
+
+``` r
+plotSpectra(ex, 71, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(8.0364, rti)
 ```
 
 ``` r 
@@ -339,9 +361,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 1
 ```
 ### Benzenemethanol, α-methyl-
+Mirror plot of alignID number 74
+
+``` r
+plotSpectra(ex, 74, 2,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(8.3525, rti)
 ```
 
 ``` r 
@@ -350,9 +381,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 1
 ```
 ### 2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-
+Mirror plot of alignID number 79 
+
+``` r
+plotSpectra(ex, 79, 2,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(8.556, rti)
 ```
 
 ``` r 
@@ -361,9 +401,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 1
 ```
 ### trans-Linalool oxide (furanoid)
+Mirror plot of alignID number 86 
+
+``` r
+plotSpectra(ex, 86, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(8.8565, rti)
 ```
 
 ``` r 
@@ -372,9 +421,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 0
 ```
 ### Linalool
+Mirror plot of alignID number 92 
+
+``` r
+plotSpectra(ex, 92, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(9.095, rti)
 ```
 
 ``` r 
@@ -383,9 +441,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 3
 ```
 ### 1,5,7-Octatrien-3-ol, 3,7-dimethyl-
+Mirror plot of alignID number 94 
+
+``` r
+plotSpectra(ex, 94, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(9.1327, rti)
 ```
 
 ``` r 
@@ -394,9 +461,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 4
 ```
 ### Butanoic acid, 3-methyl-, 3-methylbutyl ester
+Mirror plot of alignID number 98
+
+``` r
+plotSpectra(ex, 98, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(9.1435, rti)
 ```
 
 ``` r 
@@ -405,9 +481,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 0
 ```
 ### Phenylethyl Alcohol
+Mirror plot of alignID number 101 
+
+``` r
+plotSpectra(ex, 101, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(9.4149, rti)
 ```
 
 ``` r 
@@ -416,9 +501,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 2
 ```
 ### 2,6-Dimethyl-1,3,5,7-octatetraene, E,E-
+Mirror plot of alignID number 110 
+
+``` r
+plotSpectra(ex, 110, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(9.6486, rti)
 ```
 
 ``` r 
@@ -427,9 +521,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 0
 ```
 ### 2H-Pyran, 3,6-dihydro-4-methyl-2-(2-methyl-1-propenyl)-
+Mirror plot of alignID number 113 
+
+``` r
+plotSpectra(ex, 113, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(10.0588, rti)
 ```
 
 ``` r 
@@ -438,9 +541,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 1
 ```
 ### 1-Nonanol
+Mirror plot of alignID number 120 
+
+``` r
+plotSpectra(ex, 120, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(10.4074, rti)
 ```
 
 ``` r 
@@ -449,9 +561,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 2
 ```
 ### 3-Cyclohexene-1-acetaldehyde, α,4-dimethyl-
+Mirror plot of alignID number 131 
+
+``` r
+plotSpectra(ex, 131, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(11.3502, rti)
 ```
 
 ``` r 
@@ -460,9 +581,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 2
 ```
 ### Benzenemethanol, 4-methoxy-
+Mirror plot of alignID number 137 
+
+``` r
+plotSpectra(ex, 137, 1,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(12.4924, rti)
 ```
 
 ``` r 
@@ -471,9 +601,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 2
 ```
 ### 1-Dodecanol
+Mirror plot of alignID number 158 
+
+``` r
+plotSpectra(ex, 158, 7,
+            draw.color = "red", xlim = c(50,110))
+```
+
+imagen
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(15.3866, rti)
 ```
 
 ``` r 
@@ -482,9 +621,18 @@ indexRtime(10.4657, rti)
 # ΔRI = 2
 ```
 ### 2H-Pyran-2-one, tetrahydro-6-pentyl-
+Mirror plot of alignID number 161 
+
+``` r
+plotSpectra(ex, 62, 2,
+            draw.color = "red", xlim = c(50,110))
+```
+
+![](Spectral_Deconvolution_files/figure-gfm/2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-.png)<!-- -->
+
 ``` r
 # Experimental Retention Index (RI)
-indexRtime(10.4657, rti)
+indexRtime(15.6766, rti)
 ```
 
 ``` r 
