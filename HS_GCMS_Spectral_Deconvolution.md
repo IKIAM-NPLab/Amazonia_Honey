@@ -1,6 +1,6 @@
 HS_GCMS_Spectral_Deconvolution
 ================
-Angiely Camacho, Jefferson Pastuna
+Angiely Camacho, José Abata, Jefferson Pastuna
 2024-04-12
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
