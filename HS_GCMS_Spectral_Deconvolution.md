@@ -59,8 +59,8 @@ ex.dec.par <- setDecPar(min.peak.width = 2,
 ```
 
 parallel processing
+Adjusts the number of "workers" with the equipped cores of the pc.
 
-#el numero dependera de los cores que tenga tu computadora, la del lab tiene 16, pero la mia 4, por ende le cambio a 4 para procesar
 ``` r
 plan(future::multisession,
      workers = 16)
