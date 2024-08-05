@@ -1,6 +1,6 @@
 ---
 title: "HS_GCMS_Spectral_Deconvolution"
-author: "Angiely Camacho, Jefferson Pastuna"
+author: "Angiely Camacho, José Abata, Jefferson Pastuna"
 date: "2024-04-12"
 output:
   github_document:
