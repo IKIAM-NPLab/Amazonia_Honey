@@ -608,7 +608,7 @@ plotSpectra(ex, 158, 7,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/1-Dodecanol.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -628,7 +628,7 @@ plotSpectra(ex, 62, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-![](Spectral_Deconvolution_files/2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-.png)<!-- -->
+![](Spectral_Deconvolution_filesfigure-gfm/2H-Pyran, 3,6-dihydro-4-methyl-2-(2-methyl-1-propenyl)-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
