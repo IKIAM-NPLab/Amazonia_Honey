@@ -286,7 +286,7 @@ plotSpectra(ex, 38, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/2-Heptanol.png)<!-- -->
 
 
 ``` r
@@ -309,7 +309,7 @@ plotSpectra(ex, 46, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Benzaldehyde.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -329,7 +329,7 @@ plotSpectra(ex, 62, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Benzylalcohol.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -349,7 +349,8 @@ plotSpectra(ex, 71, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Benzeneacetaldehyde.png)<!-- -->
+
 ``` r
 # Experimental Retention Index (RI)
 indexRtime(8.0364, rti)
@@ -368,7 +369,7 @@ plotSpectra(ex, 74, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Benzenemethanol,α-methyl-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -388,7 +389,7 @@ plotSpectra(ex, 79, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/2-Furanmethanol,5-ethenyltetrahydro-α,α,5-trimethyl-,cis-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -408,7 +409,7 @@ plotSpectra(ex, 86, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/trans-Linalooloxide(furanoid).png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -428,7 +429,7 @@ plotSpectra(ex, 92, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Linalool.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -448,7 +449,7 @@ plotSpectra(ex, 94, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/1,5,7-Octatrien-3-ol,3,7-dimethyl-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -468,7 +469,8 @@ plotSpectra(ex, 98, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Butanoicacid,3-methyl-,3-methylbutylester.png)<!-- -->
+
 
 ``` r
 # Experimental Retention Index (RI)
@@ -488,7 +490,7 @@ plotSpectra(ex, 101, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/PhenylethylAlcohol.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -508,7 +510,7 @@ plotSpectra(ex, 110, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/2,6-Dimethyl-1,3,5,7-octatetraene,E,E-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -528,7 +530,7 @@ plotSpectra(ex, 113, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/2H-Pyran,3,6-dihydro-4-methyl-2-2-methyl-1-propenyl-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -548,7 +550,7 @@ plotSpectra(ex, 120, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/1-Nonanol.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -568,7 +570,7 @@ plotSpectra(ex, 131, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/3-Cyclohexene-1-acetaldehyde,α,4-dimethyl-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -588,7 +590,7 @@ plotSpectra(ex, 137, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-imagen
+![](Spectral_Deconvolution_filesfigure-gfm/Benzenemethanol,4-methoxy-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
@@ -624,11 +626,11 @@ indexRtime(15.3866, rti)
 Mirror plot of alignID number 161 
 
 ``` r
-plotSpectra(ex, 62, 2,
+plotSpectra(ex, 161, 1,
             draw.color = "red", xlim = c(50,110))
 ```
 
-![](Spectral_Deconvolution_filesfigure-gfm/2H-Pyran, 3,6-dihydro-4-methyl-2-(2-methyl-1-propenyl)-.png)<!-- -->
+![](Spectral_Deconvolution_filesfigure-gfm/2H-Pyran-2-one,tetrahydro-6-pentyl-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
