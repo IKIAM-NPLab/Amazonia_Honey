@@ -628,7 +628,7 @@ plotSpectra(ex, 62, 2,
             draw.color = "red", xlim = c(50,110))
 ```
 
-![] (Spectral_Deconvolution_files/figure-gfm/2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-.png)<!-- -->
+![](Spectral_Deconvolution_files/2-Furanmethanol, 5-ethenyltetrahydro-α,α,5-trimethyl-, cis-.png)<!-- -->
 
 ``` r
 # Experimental Retention Index (RI)
