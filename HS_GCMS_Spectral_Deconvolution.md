@@ -68,6 +68,7 @@ plan(future::multisession,
 ```
 
 Deconvolution
+
 The spectral deconvolution method uses multivariate techniques based on blind source separation (BSS), alignment of spectra between samples, quantification and automated identification of metabolites by comparison with spectral libraries.
 ``` r
 ex <- deconvolveComp(ex,
