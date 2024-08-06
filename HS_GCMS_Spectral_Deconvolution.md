@@ -50,7 +50,7 @@ ex <- newExp(instrumental = instrumental,
 
 Compound deconvolution
 
-
+is a mathematical and computational technique used to invert the convolution process in order to recover an original signal that has been altered by some kind of distortion or noise.
 
 Parameter
 
