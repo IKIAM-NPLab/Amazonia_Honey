@@ -28,7 +28,7 @@ To use Erah is needed to install the Erah packages and call it using library(era
 library(erah)
 ```
 
-Folder files
+To proceed is necesary to delete the unwanted files in an specific path and create a directory with wanted files
 
 ``` r
 # Delete all file that are not in folders
@@ -37,7 +37,7 @@ unlink('Data/Data_to_eRah/*')
 createdt('Data/Data_to_eRah/')
 ```
 
-New experiment.
+Load and process the necesary data from the CSV files, with the relevant information to proceed the the study about the volatilome of honey from different Amazonian stingless bees 
 
 ``` r
 instrumental <- read.csv('Data/Metadata_to_eRah/HS_GCMS_Data_inst.csv')
