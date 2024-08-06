@@ -280,7 +280,7 @@ export2MSP(ex,
     ## Spectra saved at: Result/eRah_Result/ExportMSP
 # List of identified compounds
  ## Compound level 2
- The compound with an MS2 Score over 700 and a RI difference -10:10
+ The compound with an MS2 Score over 700 and RI difference (-10:10)
  ### 2-Heptanol
 Mirror plot of alignID number 38
 
