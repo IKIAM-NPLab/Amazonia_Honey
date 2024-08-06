@@ -204,6 +204,9 @@ ex <- alignComp(ex,
 ```
 
 #### Missing compound recovery
+Missing Compound Recovery is a function that aims to identify and recover information about compounds that may have been missed or undetected in the initial analysis due to various reasons, such as background noise, low signal intensity or overlapping peaks.
+
+To recover missing compound is necessary to use the function "recMissComp" and save the result in "ex"
 
 ``` r
 ex <- recMissComp(ex,
