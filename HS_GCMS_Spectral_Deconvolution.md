@@ -48,12 +48,12 @@ ex <- newExp(instrumental = instrumental,
              info = 'Amazonia honey')
 ```
 
-Compound deconvolution
+# Compound deconvolution
 
 Is a mathematical and computational technique used to invert the convolution process in order to recover an original signal that has been altered by some kind of distortion or noise.
 
-Parameter
-
+### Parameter
+Set up the parameters with the minumun height and width of the peak, the threshold noise and the mz signals compounds wanted to exclude.
 ``` r
 ex.dec.par <- setDecPar(min.peak.width = 2,
                         min.peak.height = 450,
@@ -68,9 +68,11 @@ plan(future::multisession,
      workers = 16)
 ```
 
-Deconvolution
+### Deconvolution
 
 The spectral deconvolution method uses multivariate techniques based on blind source separation (BSS), alignment of spectra between samples, quantification and automated identification of metabolites by comparison with spectral libraries.
+
+To preceed use funtion "deconvolveComp" in raw data (refer to ex) using the parameters previously specified (ex.dec.par), and saved the result in "ex".
 ``` r
 ex <- deconvolveComp(ex,
                      ex.dec.par)
