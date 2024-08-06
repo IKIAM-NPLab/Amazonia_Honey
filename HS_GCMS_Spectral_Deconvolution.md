@@ -218,7 +218,7 @@ ex <- recMissComp(ex,
     ## Model fitted!
 
 # Identification
-
+To proceed is necesary to upload the library NIST sing the function "importMSP" from NIST20EI_2R.MSP
 ``` r
 # Loading NIST 20 (*.msp) library
 nist.database <- importMSP(filename = "E:/NIST_20_Library/Result/NIST20EI_2R.MSP",
@@ -262,13 +262,13 @@ write.csv(id.list, file = "Result/id_list.csv", row.names = FALSE)
     ## 8      23  4.27      37 Furfural
 
 ```r
-# Exporting spectra to NIST
+Exporting spectra to NIST
 export2MSP(ex,
            store.path = "Result/eRah_Result",
            alg.version = 2)
 ## Spectra saved at: Result/eRah_Result/ExportMSP
 ```
-## Exporting feature list to statistical analysis.
+Exporting feature list to statistical analysis.
 ```r
 # Extracting alignment feature list
 feat_list <- alignList(ex,
