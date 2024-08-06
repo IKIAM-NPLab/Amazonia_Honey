@@ -61,7 +61,7 @@ ex.dec.par <- setDecPar(min.peak.width = 2,
                         avoid.processing.mz = c(30:69,73:75,147:149))
 ```
 
-Parallel processing: Adjusts the number of "workers" with the equipped cores of the pc.
+To run the parallel processing is necesary to use the the package "future" (reminder: Adjusts the number of "workers" with the equipped cores of the pc.)
 
 ``` r
 plan(future::multisession,
