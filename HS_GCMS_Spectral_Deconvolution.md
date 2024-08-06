@@ -273,7 +273,6 @@ write.csv(feat_list,
 ```
 
 # Identification of metabolites
-To indetify metabolites
 
 Installation of R package to calculate linear retention index (RI).
 ```r
@@ -286,7 +285,6 @@ remotes::install_github("rformassspectrometry/MetaboCoreUtils")
 # Load MetaboCoreUtils library
 library("MetaboCoreUtils")
 ```
-Explain how retention time of n-alkanes was extract?
 
 Read of retention time list of n-alkanes
 ```r
