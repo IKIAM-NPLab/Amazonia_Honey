@@ -191,7 +191,7 @@ ex <- deconvolveComp(ex,
 
     ## Compounds deconvolved
 
-Alignment
+### Alignment
 
 ``` r
 # Alignment parameters
@@ -203,7 +203,7 @@ ex <- alignComp(ex,
                 alParameters = ex.al.par)
 ```
 
-Missing compound recovery
+#### Missing compound recovery
 
 ``` r
 ex <- recMissComp(ex,
