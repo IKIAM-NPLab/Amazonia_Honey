@@ -218,7 +218,7 @@ ex <- recMissComp(ex,
     ## Model fitted!
 
 # Identification
-To proceed is necesary to upload the library NIST sing the function "importMSP" from NIST20EI_2R.MSP
+To proceed is necesary to upload the library NIST using the function "importMSP" from NIST20EI_2R.MSP
 ``` r
 # Loading NIST 20 (*.msp) library
 nist.database <- importMSP(filename = "E:/NIST_20_Library/Result/NIST20EI_2R.MSP",
