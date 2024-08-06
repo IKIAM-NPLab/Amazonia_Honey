@@ -192,7 +192,7 @@ ex <- deconvolveComp(ex,
     ## Compounds deconvolved
 
 ### Alignment
-
+Correcting for retention time variation of eluting compounds, facilitating relative quantification and comparison of compounds between samples, is done by grouping compounds within these limits of retention time distance and spectral similarity.
 ``` r
 # Alignment parameters
 ex.al.par <- setAlPar(min.spectra.cor = 0.90,
