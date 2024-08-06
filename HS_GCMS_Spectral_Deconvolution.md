@@ -28,7 +28,7 @@ To use Erah is needed to install the Erah packages and call it using library(era
 library(erah)
 ```
 
-To proceed is necesary to delete the unwanted files in an specific path and create a directory with wanted files
+To proceed, it is necessary to delete the unwanted files in a specific path and create a directory with the wanted files
 
 ``` r
 # Delete all file that are not in folders
