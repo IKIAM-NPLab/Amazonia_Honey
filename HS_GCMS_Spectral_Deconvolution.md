@@ -18,7 +18,7 @@ The eRah package is a computational tool developed in the R programming language
 
 ### eRah package workflow
 
-How to star.
+The eRah workflow is based on 5 steps: (i) data pre-processing, (ii) spectral deconvolution, (iii) spectral alignment, (iv) retrieval of missing compounds, and (v) compound identification.
 
 ``` r
 # eRah package installation
