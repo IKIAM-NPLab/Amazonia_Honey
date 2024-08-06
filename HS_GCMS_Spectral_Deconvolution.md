@@ -239,6 +239,8 @@ ex <- identifyComp(ex,
 # Identified compound
 id.list <- idList(ex)
 head(id.list[,1:4], n = 8)
+# Export id_list
+write.csv(id.list, file = "Result/id_list.csv", row.names = FALSE)
 ```
 
     ## # A tibble: 8 x 4
@@ -252,6 +254,51 @@ head(id.list[,1:4], n = 8)
     ## 6       8  3.77      37 Heptane, 2,4-dimethyl-                                 
     ## 7      13  4.19      37 (2-Methyl-[1,3]dioxolan-2-yl)-acetic acid, phenyl ester
     ## 8      23  4.27      37 Furfural
+
+```r
+# Exporting spectra to NIST
+export2MSP(ex,
+           store.path = "Result/eRah_Result",
+           alg.version = 2)
+## Spectra saved at: Result/eRah_Result/ExportMSP
+```
+## Exporting feature list to statistical analysis.
+```r
+# Extracting alignment feature list
+feat_list <- alignList(ex,
+                       by.area = FALSE)
+#Exporting alignment feature list
+write.csv(feat_list,
+          file = "Result/eRah_Result/erah_Export_2Notame.csv")
+```
+
+# Identification of metabolites
+To indetify metabolites
+
+Installation of R package to calculate linear retention index (RI).
+```r
+# Install remotes package if not already installed
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+
+# Install MetaboCoreUtils package from GitHub
+remotes::install_github("rformassspectrometry/MetaboCoreUtils")
+
+# Load MetaboCoreUtils library
+library("MetaboCoreUtils")
+```
+Explain how retention time of n-alkanes was extract?
+
+Read of retention time list of n-alkanes
+```r
+# Loadding rt of each n-alkane
+rti <- data.frame(rtime = c(7.557, 10.006, 12.569, 15.111, 17.581, 19.937,
+                            22.190, 24.338, 26.399, 28.813, 32.000, 36.327,
+                            39.949, 42.506, 44.557, 46.309, 47.852, 49.257,
+                            50.554, 51.781, 52.936, 54.182, 55.604),
+                  rindex = c(1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800,
+                             1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600,
+                             2700, 2800, 2900, 3000, 3100, 3200, 3300))
+```
 
 Peak compound view
 
