@@ -698,7 +698,7 @@ indexRtime(15.6766, rti)
 # Literature RI = 1497 (NIST#: 22022)
 # ΔRI = 0
 ```
-# References
+### References
 1. 
 2. Domingo-Almenara, X., Brezmes, J., Vinaixa, M., Samino, S., Ramirez, N., Ramon-Krauel, M., Lerin, C., Díaz, M., Ibáñez, L., Correig, X., Perera-Lluna, A., & Yanes, O. (2016). eRah: A Computational Tool Integrating Spectral Deconvolution and Alignment with Quantification and Identification of Metabolites in GC/MS-Based Metabolomics. Analytical Chemistry, 88(19), 9821-9829. https://doi.org/10.1021/acs.analchem.6b02927
 3. Aron, A.T., Gentry, E.C., McPhail, K.L. et al. Reproducible molecular networking of untargeted mass spectrometry data using GNPS. Nat Protoc 15, 1954–1991 (2020). https://doi.org/10.1038/s41596-020-0317-5
