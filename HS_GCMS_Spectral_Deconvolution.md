@@ -16,11 +16,14 @@ Honey bee contains a variety of volatile compounds that contribute to its charac
 
 ### Before to start
 The eRah package is a computational tool developed in the R programming language and freely available from the CRAN public repository, used for preprocessing, annotation and analysis of liquid chromatography-mass spectrometry (LC-MS) and gas chromatography-GC-MS mass spectrometry data. It facilitates automatic peak detection, peak alignment, feature extraction and compound identification.
+
 (Domingo-Almenara et al., 2016).
 ### eRah package workflow
 
 The eRah workflow is based on 5 steps: (i) data pre-processing, (ii) spectral deconvolution, (iii) spectral alignment, (iv) retrieval of missing compounds, and (v) compound identification.
+
 (Domingo-Almenara et al., 2016).
+
 To use Erah is needed to install the Erah packages and call it using library(erah)
 ``` r
 # eRah package installation
