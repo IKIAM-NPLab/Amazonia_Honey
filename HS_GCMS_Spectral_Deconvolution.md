@@ -333,6 +333,7 @@ export2MSP(ex,
  ## Compound level 2
  Compounds that have supposedly been identified, for example, without reference standards
  The compound with an MS2 Score over 700 and RI difference (-10:10)
+(Aron et al., 2020) 
  ### 2-Heptanol
 Mirror plot of alignID number 38
 
@@ -697,3 +698,7 @@ indexRtime(15.6766, rti)
 # Literature RI = 1497 (NIST#: 22022)
 # ΔRI = 0
 ```
+# References
+1. 
+2. Aron, A.T., Gentry, E.C., McPhail, K.L. et al. Reproducible molecular networking of untargeted mass spectrometry data using GNPS. Nat Protoc 15, 1954–1991 (2020). https://doi.org/10.1038/s41596-020-0317-5
+
