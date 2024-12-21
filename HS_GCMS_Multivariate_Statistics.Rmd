@@ -41,6 +41,42 @@ library(notame)
 # Dependency packages installation
 install_dependencies
 
+#Intall packages openxlsx if there is a problem reading the .xlsx document
+install.packages("openxlsx")
+
+#Install pcaMethods
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("pcaMethods")
+install.packages(c("cowplot", "Rtsne", "ggdendro"))
+install.packages("futile.logger", "ggplot2")
+library(pcaMethods)
+
+# Package to plots visualization in a same windows
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools") }
+devtools::install_github("thomasp85/patchwork")
+library(patchwork)
+
+# Call the libraries
+library(Biobase)
+library(BiocGenerics)
+library(futile.logger)
+library(ggplot2)
+library(magrittr)
+library(foreach)
+library(iterators)
+library(parallel)
+library(doParallel)
+library(patchwork)
+library(cowplot)
+library(Rtsne)
+library(ggdendro)
+library(dplyr)
+library(readxl)
+library(openxlsx)
+library(ggsci)
 ```
 
 Then, a main path and a log system was added to have a record of each process executed.
@@ -133,12 +169,6 @@ corr_pca <- plot_pca(corrected,
                      center = TRUE,
                      shape = "Species",
                      color = "Species")
-# Package to plots visualization in a same windows
-#if (!requireNamespace("devtools", quietly = TRUE)) {
-#  install.packages("devtools")
-#}
-#devtools::install_github("thomasp85/patchwork")
-library(patchwork)
 # Plot
 corr_pca + corr_bp
 
@@ -191,7 +221,19 @@ clustered <- cluster_features(corrected_no_blank,
 compressed <- compress_clusters(clustered)
 
 ```
+If needed to evaluated the data
+```
+# Install the package (if necessary)
+install.packages("writexl")
+library(writexl)
+# Extract data
+feature_data_2 <- clustered@featureData@data
+feature_data_3 <- imputed@featureData@data
+# Export to xlsx 
+writexl::write_xlsx(feature_data_3, "Data/Data_to_notame/imputed_feature_data.xlsx")
+writexl::write_xlsx(feature_data_2, "Data/Data_to_notame/clustered_feature_data.xlsx")
 
+```
 We can visualize data...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
@@ -223,6 +265,10 @@ Finally the data is...
 Here read this paper: https://doi.org/10.1007%2Fs11306-016-1030-9
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# if needed install package missForest
+install.packages("missForest")
+library(missForest)
 
 # Impute missing values using random forest
 # To clean data
@@ -347,7 +393,7 @@ ggplot(scores,
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
 # Save plot
-#ggsave('Result/GCMS/GCMS_PCA_To_DQ.pdf', width = 5, height = 4, device='pdf', dpi="print")
+#ggsave('Result/GCMS/GCMS_PCA_To_DQ.pdf', width = 10, height = 8, device='pdf', dpi="print")
 
 ```
 
@@ -363,9 +409,12 @@ loadings <- ei_pca$rotation %>%           # Extract loadings
 Creating an artificial table with Feature name and Compound column.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+# If needed install GGrepel library
+install.packages("ggrepel")
+library(ggrepel)
 
 # Load a metabolite name table
-#metab_name <- readxl::read_excel("Data/GCMS_Metabolites.xlsx", 6)
+#metab_name <- readxl::read_excel("Data/GCMS_Metabolites.xlsx", 2)
 # Creating a new small table of the annotated compounds
 #ei_compouds <- left_join(metab_name, loadings)
 # Plotting results
@@ -373,12 +422,13 @@ ggplot(loadings, aes(PC1, PC2)) +
   geom_point(alpha = 0.2) +
   theme_classic() + 
   geom_point(data = loadings, size = 1) +
-  #ggrepel::geom_label_repel(data = ei_compouds,
-                            #aes(label = Metabolite_name),
-                            #box.padding = 0.8,
-                            #label.padding = 0.3,
-                            #label.r = 0.3,
-                            #cex = 3.7) +
+  ggrepel::geom_label_repel(data = ei_compouds,
+                            aes(label = `Metabolite_name`),
+                            box.padding = 1.5,
+                            label.padding = 0.02,
+                            label.r = 0.02,
+                            cex = 3.7,
+                            max.overlaps = 50) +
   guides(x=guide_axis(title = "PC1 (23.65 %)"),
          y=guide_axis(title = "PC2 (20.46 %)")) +
   theme(panel.grid = element_blank(), 
@@ -387,8 +437,7 @@ ggplot(loadings, aes(PC1, PC2)) +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
   ggsci::scale_color_aaas()
 # Save plot
-#ggsave('Result/GCMS/GCMS_Loadings_to_DQ.pdf', width = 5, height = 4, device='pdf', dpi="print")
-
+ggsave('Result/GCMS/GCMS_Loadings_to_DQ.pdf', width = 10, height = 8, device='pdf', dpi="print")
 ```
 
 # Heat map plot
@@ -414,6 +463,13 @@ library(colorRamp2)
 #install.packages("cowplot")
 library(cowplot)
 
+# If needed install gridtext packages
+install.packages("gridtext", repos = "https://cran.r-project.org")
+library(gridtext)
+if (!requireNamespace("circlize", quietly = TRUE)) {
+  install.packages("circlize")
+}
+library(circlize)
 ```
 
 Extracting and loaded of identified metabolites abundance.
@@ -421,7 +477,7 @@ Extracting and loaded of identified metabolites abundance.
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Metabolite name table without internal standard
-metab_name_hm <- readxl::read_excel("Data/GCMS_Metabolites.xlsx", 6)
+metab_name_hm <- readxl::read_excel("Data/GCMS_Metabolites_2.xlsx", 2)
 # Add identified metabolite to "notame" output
 add_met <- join_fData(no_flag, metab_name_hm)
 # Extracting identified metabolite data
@@ -432,7 +488,9 @@ hm_height <- exprs(raw_hm)
 hm_pdata <- raw_hm@phenoData@data
 # Extracting feature information
 hm_fdata <- raw_hm@featureData@data
-
+#  Filter QC from data
+hm_scl_filtered <- hm_scl[, hm_pdata$Species != "QC"]
+hm_pdata_filtered <- hm_pdata[hm_pdata$Species != "QC", ]
 ```
 
 Scaling, row and top heatmap anotation.
@@ -443,24 +501,27 @@ set.seed(1540)
 # Logarithmic scale
 hm_scl <- log10(hm_height)
 rownames(hm_scl) <- hm_fdata$Metabolite_name
-colnames(hm_scl) <- hm_pdata$Species
+colnames(hm_scl_filtered) <- hm_pdata_filtered$Species
 # Metabolite class color
 cols_metclass <- c("Benzenoids" = "#800000FF",
-                   "Organoheterocyclic compounds" = "#8A9045FF",
-                   "Organohalogen compounds" = "#FFA319FF",
-                   "Internal Standard" = "#767676FF")
+                   "Lipids and lipid-like molecules" = "#8A9045FF",
+                   "Hydrocarbons" = "#FFA319FF",
+                   "Organic acids and derivatives" = "#767676FF",
+                   "Organic oxygen compounds" = "#8DD3C7",
+                   "Organoheterocyclic compounds" = "#FFFFB3",
+                   "Organosulfur compounds" = "#BEBADA")
+
 # Add row anotation to HeatMap
 hm_row_ann <- rowAnnotation(`Class` = hm_fdata$Superclass,
                             col = list(`Class` = cols_metclass),
                             show_annotation_name = T,
                             show_legend=F)
 # Species color
-cols_species <- c("A. rigidum" = "#e6550d",
-                 "C. guianensis" = "#91cf60",
-                 "M. laevis" = "#33d2ff",
-                 "P. sagotianum" = "#d957f8")
+cols_species <- c("T. angustula" = "#e6550d",
+                  "M. fasciculata" = "#91cf60",
+                  "M. fuscopilosa" = "#33d2ff")
 # Add top anotation to HeatMap
-top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata$Species,
+top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata_filtered$Species,
                                   col = list(`Species` = cols_species),
                                   show_annotation_name = T,
                                   show_legend=F, 
@@ -469,17 +530,18 @@ top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata$Species,
 mycol <- colorRamp2(c(1.5, 2.75, 4),
                     c("blue", "white", "red"))
 # Heatmap matrix plotting
-hm_plot <- Heatmap(hm_scl,
-        col = mycol,
-        border_gp = grid::gpar(col = "black", lty = 0.05),
-        rect_gp = grid::gpar(col = "black", lwd = 0.75),
-        clustering_distance_columns = "euclidean",
-        clustering_method_columns = "complete",
-        top_annotation = top_info_ann,
-        column_names_gp = gpar(fontface = "italic"),
-        #right_annotation = hm_row_ann,
-        show_heatmap_legend = F,
-        row_km = 3, column_km = 2)
+hm_plot <- Heatmap(hm_scl_filtered,
+                   col = mycol,
+                   border_gp = grid::gpar(col = "black", lty = 0.02),
+                   rect_gp = grid::gpar(col = "black", lwd = 0.75),
+                   clustering_distance_columns = "euclidean",
+                   clustering_method_columns = "complete",
+                   top_annotation = top_info_ann,
+                   column_names_gp = gpar(fontface = "italic"),
+                   row_names_max_width = unit(10, "cm"),
+                   right_annotation = hm_row_ann,
+                   show_heatmap_legend = F,
+                   row_km = 3, column_km = 2)
 hm_plot
 
 ```
@@ -493,17 +555,18 @@ lgd1 <- Legend(col_fun = mycol,
                title = "log10 abundance",
                at = seq(4),
                direction = "horizontal" )
-# Plants species legend
-lgd2 <- Legend(labels = gt_render(c("*A. rigidum*",
-                                    "*C. guianensis*",
-                                    "*M. laevis*",
-                                    "*P. sagotianum*")),
-               legend_gp = gpar(fill = cols_species),
-               title = "Plant species", ncol = 4)
+
+# Bees species legend
+lgd2 <- Legend(labels = gt_render(c("*T. angustula*",
+                                    "*M. fasciculata*",
+                                    "*M. fuscopilosa*"
+)),
+legend_gp = gpar(fill = cols_species),
+title = "Bees species", ncol = 3)
 # Metabolite class Legend
-#lgd3 <- Legend(labels = c(unique(hm_fdata$Superclass)) ,
-#               legend_gp = gpar(fill = cols_metclass), 
-#               title = "Metabolite superclass", ncol = 1)
+lgd3 <- Legend(labels = c(unique(hm_fdata$Superclass)) ,
+               legend_gp = gpar(fill = cols_metclass), 
+               title = "Metabolite superclass", ncol = 2)
 
 ```
 
@@ -516,17 +579,17 @@ set.seed(1540)
 gg_heatmap <- grid.grabExpr(draw(hm_plot))
 gg_heatmap <- ggpubr::as_ggplot(gg_heatmap)
 # Legends
-all_legends <- packLegend(lgd1, lgd2, direction = "horizontal")
+all_legends <- packLegend(lgd1, lgd2, lgd3, direction = "horizontal")
 gg_legend <- grid.grabExpr(draw(all_legends))
 gg_legend_fn <- ggpubr::as_ggplot(gg_legend)
 # Heatmap plot
 gcms_hm <- plot_grid(gg_legend_fn,
-          gg_heatmap, ncol = 1,
-          rel_heights = c(0.195, 0.88))
+                     gg_heatmap, ncol = 1,
+                     rel_heights = c(0.055, 0.880))
 gcms_hm
 # Save heatmap plot
-#ggsave(filename = "Result/GCMS/GCMS_Heatmap_to_DQ.pdf", plot = gcms_hm,
-      #width = 5, height = 3, units = "in", dpi = 300, scale = 1.7)
+ggsave(filename = "Result/GCMS/GCMS_Heatmap_to_DQ3.pdf", plot = gcms_hm,
+       width = 8, height = 9, units = "in", dpi = 300, scale = 1.7)
 
 ```
 
