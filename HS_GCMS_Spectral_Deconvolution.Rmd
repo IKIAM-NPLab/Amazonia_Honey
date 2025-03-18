@@ -52,9 +52,14 @@ New experiment.
 
 ```{r echo=TRUE}
 
-instrumental <- read.csv('Data/Metadata_to_eRah/HS_GCMS_Data_inst.csv')
+# Loading (*.mzXML) chromatograms name (instrumental file)
+#instrumental <- read.csv('Data/Metadata_to_eRah/Metadata_inst_mzXML.csv')
+# If (*.mzXML) did not work
+# Loading (*.CDF) chromatograms
+instrumental <- read.csv('Data/Metadata_to_eRah/HS_GCMS_Data_inst_CDF.csv')
+# Loading metadata of the chromatograms (phenotype file)
 phenotype <- read.csv('Data/Metadata_to_eRah/HS_GCMS_Data_pheno.csv')
-
+# Merge of metadata information with chromatograms
 ex <- newExp(instrumental = instrumental,
              phenotype = phenotype,
              info = 'Amazonia honey')
@@ -97,7 +102,7 @@ Alignment
 ```{r echo=TRUE}
 
 # Alignment parameters
-ex.al.par <- setAlPar(min.spectra.cor = 0.90,
+ex.al.par <- setAlPar(min.spectra.cor = 0.80,
                       max.time.dist = 3,
                       mz.range = 70:550)
 # Alignment
@@ -116,54 +121,40 @@ ex <- recMissComp(ex,
 
 ```
 
-Identification
+Exporting alignment feature list.
 
 ```{r echo=TRUE}
 
-# Loading NIST 20 (*.msp) library
-nist.database <- importMSP(filename = "E:/NIST_20_Library/Result/NIST20EI_2R.MSP",
-                           DB.name = "NIST",
-                           DB.version = "NIST20",
-                           DB.info = "NIST_MS_Search_Export")
-# Save library for a posterior faster loading
-save(nist.database, file= "Data/Library/NIST20EI_2R.rda")
-# Load R library
-load("Data/Library/NIST20EI_2R.rda")
-mslib <- nist.database
+# Extracting alignment feature list
+feat_list <- alignList(ex,
+                       by.area = FALSE)
+# Exporting alignment feature list
+#write.csv(feat_list,
+#          file = "Result/eRah_Result/erah_Export_2Notame.csv")
+
+```
+
 # Identification
-ex <- identifyComp(ex,
-                   id.database = mslib,
-                   mz.range = NULL,
-                   n.putative = 10)
-# Identified compound
-id.list <- idList(ex)
-head(id.list[,1:4], n = 8)
+
+Metabolite identification was by comparing all the spectra found against a reference database. The eRah default database was used to metabolite identification. Metabolite identification was improve by exporting all the spectra found (.msp) in eRah to NIST MS Search 2.4 software.
+
+```{r echo=TRUE, warning=FALSE}
+
+# Identification
+peak_iden <- identifyComp(ex,
+                          id.database = mslib,
+                          mz.range = NULL,
+                          n.putative = 1)
 
 ```
 
-Peak compound view
+Exporting spectra to NIST MS Search software identification with NIST-20 library.
 
 ```{r echo=TRUE}
 
-plotProfile(ex, 7)
-
-```
-
-Mirror plot of identified compounds
-
-```{r echo=TRUE}
-
-plotSpectra(ex, 7, 1, draw.color = "red")
-
-```
-
-Exporting spectra to NIST
-
-```{r echo=TRUE}
-
-export2MSP(ex,
-           store.path = "Result/eRah_Result",
-           alg.version = 2)
+#export2MSP(peak_iden,
+#           store.path = "Result/eRah_Result",
+#           alg.version = 2)
 
 ```
 
