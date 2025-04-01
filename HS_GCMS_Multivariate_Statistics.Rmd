@@ -503,6 +503,79 @@ gcms_hm
 
 ```
 
+Antimicrobial test
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+#librerias
+library("psych")
+library("corrplot")
+library("readxl")
+
+e_coli <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 1)
+e_coli <- e_coli[,-1]
+
+#perform shapiro-wilk test
+shapiro.test(e_coli$E_coli_100)
+
+#perform shapiro-wilk test
+shapiro.test(e_coli$E_coli_75)
+
+
+
+
+
+s_aureus <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 2)
+s_aureus <- s_aureus[,-1]
+
+multi.hist(s_aureus, global = FALSE)
+
+#perform shapiro-wilk test
+shapiro.test(s_aureus$`25_%_v_v`)
+
+#perform shapiro-wilk test
+shapiro.test(s_aureus$`50_%_v_v`)
+
+#perform shapiro-wilk test
+shapiro.test(s_aureus$`75_%_v_v`)
+
+#perform shapiro-wilk test
+shapiro.test(s_aureus$`100_%_v_v`)
+
+
+
+
+
+
+k_pneumonia <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 3)
+k_pneumonia <- k_pneumonia[,-1]
+
+multi.hist(k_pneumonia, global = FALSE)
+
+#perform shapiro-wilk test
+shapiro.test(k_pneumonia$`75_%_v_v`)
+
+
+
+
+
+p_mirabilis <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 4)
+p_mirabilis <- p_mirabilis[,-1]
+
+multi.hist(p_mirabilis, global = FALSE)
+
+#perform shapiro-wilk test
+shapiro.test(p_mirabilis$`50_%_v_v`)
+
+#perform shapiro-wilk test
+shapiro.test(p_mirabilis$`75_%_v_v`)
+
+#perform shapiro-wilk test
+shapiro.test(p_mirabilis$`100_%_v_v`)
+
+```
+
+
 Finish a record.
 
 ```{r}
