@@ -15,15 +15,15 @@ usethis::git_vaccinate()
 
 ```
 
-## Introduction
+# Introduction
 
 Introduction...
 
-## Before to start
+# Before to start
 
 Before to start...
 
-## Notame workflow
+# Notame workflow
 
 As a first step...
 
@@ -58,8 +58,8 @@ Next...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-data <- read_from_excel(file = "Data/Data_to_notame/HS_GCMS_Data_to_notame.xlsx", sheet = 2, 
-                        corner_row = 5, corner_column = "L", 
+data <- read_from_excel(file = "Data/Data_to_notame/HS_GCMS_Data_to_notame.xlsx",
+                        sheet = 2, corner_row = 16, corner_column = "L",
                         split_by = c("Column", "Ion Mode"))
 
 ```
@@ -122,6 +122,8 @@ corr_pca <- plot_pca(corrected,
                      center = TRUE,
                      shape = "Species",
                      color = "Species")
+# Package to plots visualization in a same windows
+library(patchwork)
 # Plot
 corr_pca + corr_bp
 
@@ -164,9 +166,11 @@ Finally the data is...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-#save(imputed, file = paste0(ppath, "Result/notame_Result/HS_GCMS/Notame_HS_GC-MS_out.RData"))
+#save(compressed, file = paste0(ppath, "Result/notame_Result/HS_GCMS/Notame_HS_GC-MS_out.RData"))
 
 ```
+
+##Processing
 
 Here read this paper: https://doi.org/10.1007%2Fs11306-016-1030-9
 
@@ -231,6 +235,8 @@ pqn_pca + pqn_bp
 
 ```
 
+# Principal component analysis (PCA)
+
 Droping flagged features...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
@@ -239,7 +245,7 @@ Droping flagged features...
 pqn_noflag <- drop_flagged(pqn_set)
 # Extracting feature height table
 peak_height <- exprs(pqn_noflag)
-# Extracting Phenotipic data
+# Extracting phenotypic data
 pheno_data <- pqn_noflag@phenoData@data
 
 ```
@@ -265,7 +271,7 @@ library(dplyr)
 scores <- ei_pca$x %>%                   # Get PC coordinates
   data.frame %>%                         # Convert to data frames
   mutate(Sample_ID = rownames(.)) %>%    # Create a new column with the sample names
-  left_join(pheno_data )                 # Adding metadata
+  left_join(pheno_data)                  # Adding metadata
 # PCA plot
 figure_1a <- ggplot(scores,
        aes(PC1, PC2, shape = Species, color = Species)) +
@@ -338,7 +344,7 @@ figure_1c
 
 ```
 
-# Heat map plot
+# Heat map plot with HCA
 
 ComplexHeatmap package and dependency installation.
 
@@ -503,6 +509,214 @@ gcms_hm
 
 ```
 
+# Correlation with the antimicrobial activity
+
+Correlation between feature abundance and antibacterial result (zone inhibition diameter) using the PCA and Pearson correlation aproaches.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# "SummarizedExperiment" package installation
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("SummarizedExperiment")
+library(SummarizedExperiment)
+# Convert feature height table to SummarizedExperiment class
+pmp_data <- SummarizedExperiment(assays = exprs(pqn_noflag),
+                                 colData = pqn_noflag@phenoData@data)
+# Package for generalized logarithmic transform
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("pmp")
+library(pmp)
+# Generalised logarithmic transform
+glog_exprs <- glog_transformation(df = pmp_data@assays@data@listData[[1]],
+                                  classes = pmp_data$QC,
+                                  qc_label = "QC")
+# Adding glog transformation to notame MetaboSet
+glog_set <- pqn_noflag
+exprs(glog_set) <- glog_exprs
+
+```
+
+## Using the PCA
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Antimicrobial activity data extraction
+bacteria_data <- drop_qcs(modes$na_na)
+bacteria_data <- t(exprs(bacteria_data))
+# Drop QCs of metabolomics data
+no_qc <- drop_qcs(pqn_noflag)
+# Extracting feature height table
+corr_peak <- t(exprs(no_qc))
+# Merge the antimicrobial activity result with the feature list table
+bacteria_peak <- cbind(bacteria_data, corr_peak)
+# Extracting phenotypic data of metabolomics data
+corr_pdata <- no_qc@phenoData@data
+
+```
+
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Centering and Scaling features
+corr_pca <- prcomp(bacteria_peak, center = TRUE, scale. = TRUE)
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide', fig.width = 7, fig.height = 4}
+
+# PCA scores
+corr_scores <- corr_pca$x %>%            # Get PC coordinates
+  data.frame %>%                         # Convert to data frames
+  mutate(Sample_ID = rownames(.)) %>%    # Create a new column with the sample names
+  left_join(corr_pdata)                  # Adding metadata
+# PCA plot
+corr_pca_plot <- ggplot(corr_scores,
+                        aes(PC1, PC2, shape = Species, color = Species)) +
+  geom_point(size = 3) +
+  guides(x=guide_axis(title = "PC1 (22.46 %)"),
+         y=guide_axis(title = "PC2 (18.82 %)")) +
+  theme_classic() +
+  theme(legend.text = element_text(face="italic")) +
+  theme(legend.position = c(0.890, 0.790),
+        legend.background = element_rect(fill = "white", color = "black")) +
+  theme(panel.grid = element_blank(), 
+        panel.border = element_rect(fill= "transparent")) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
+  geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
+corr_pca_plot
+# Save plot
+#ggsave('Result/notame_Result/HS_GCMS/corr_pca_plot.pdf', width = 7, height = 4, #device='pdf', dpi="print")
+
+```
+
+Plotting loading results.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+corr_loadings <- corr_pca$rotation %>%    # Extract loadings
+  data.frame(Feature_ID = rownames(.))    # New column with feat name
+
+```
+
+Creating an artificial table with Feature name and Compound column.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide', fig.width = 14, fig.height = 7}
+
+# Extracting the antimicrobial metadata
+bacteria_table <- drop_qcs(modes$na_na)@featureData@data
+bacteria_table$Flag  <- as.character(bacteria_table$Flag)
+# Merge the antimicrobial metadata with the metabolite table
+corr_table <- merge(meta_table, bacteria_table, all = TRUE)
+# Creating a new small table of the annotated compounds and antimicrobial metadata
+corr_compouds <- left_join(corr_table, corr_loadings)
+# Plotting results
+corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) + 
+  geom_point(alpha = 0.2) +
+  theme_classic() + 
+  geom_point(data = corr_compouds,
+             aes(shape = corr_table$IL,
+                 color = corr_table$IL),
+             size = 2) +
+  labs(shape = 'Legend of features',
+       color = 'Legend of features') +
+  ggrepel::geom_label_repel(data = corr_compouds,
+                            aes(label = corr_table$Metabolite),
+                            box.padding = 0.37,
+                            label.padding = 0.22,
+                            label.r = 0.30,
+                            cex = 2.5,
+                            max.overlaps = 50,
+                            min.segment.length = 0) +
+  guides(x=guide_axis(title = "PC1 (22.46 %)"),
+         y=guide_axis(title = "PC2 (18.82 %)")) +
+  theme(legend.position = c(0.945, 0.925),
+        legend.background = element_rect(fill = "white", color = "black")) +
+  theme(panel.grid = element_blank(), 
+        panel.border = element_rect(fill= "transparent")) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
+  geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
+  ggsci::scale_color_aaas()
+corr_load_plot
+# Save plot
+#ggsave('Result/notame_Result/HS_GCMS/corr_load_plot.pdf', width = 14, height = 7, #device='pdf', dpi="print")
+
+```
+
+
+
+
+
+## Using the Pearson correlation
+
+Correlation between antimicrobial activity and feture abundance.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Drop QCs
+no_qc <- drop_qcs(glog_set)
+# Convert antimicrobial result to numeric
+no_qc$K_pneumonia_75 <- as.numeric(no_qc$K_pneumonia_75)
+no_qc$P_mirabilis_50 <- as.numeric(no_qc$P_mirabilis_50)
+no_qc$P_mirabilis_75 <- as.numeric(no_qc$P_mirabilis_75)
+no_qc$P_mirabilis_100 <- as.numeric(no_qc$P_mirabilis_100)
+# correlation of feature with the antimicrobial result
+antimicrobial <- perform_correlation_tests(no_qc,
+                                           x = featureNames(glog_set),
+                                           y = c("K_pneumonia_75",
+                                                 "P_mirabilis_50"
+                                                 #"P_mirabilis_75",
+                                                 #"P_mirabilis_100"
+                                                 ),
+                                           method = "pearson")
+
+
+ 
+
+
+```
+
+
+
+Plot of correlation result.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Adding row names to the correlation result table
+antimicrobial$Feature_ID <- antimicrobial$X
+# Log10 transformation of p-value
+antimicrobial$log10_P <- -log10(antimicrobial$Correlation_P)
+# Keep metabolites with positive correlation r > 0
+antimicrobial <- subset(antimicrobial, Correlation_coefficient > 0.5)
+# Adding metabolite names to the correlation result table
+antimicrobial_compouds <- left_join(meta_table, antimicrobial)
+
+
+corr_plot <- ggplot(antimicrobial, aes(Correlation_coefficient, log10_P,
+                                       color = Y, shape = Y)) +
+  geom_point(size = 2, alpha = 0.4) +
+  #ggrepel::geom_label_repel(data = antimicrobial_compouds,
+  #                          aes(label = meta_table$Metabolite),
+  #                          color = "black",
+  #                          box.padding = 0.37,
+  #                          label.padding = 0.22,
+  #                          label.r = 0.30,
+  #                          cex = 2.5,
+  #                          max.overlaps = 5,
+  #                          min.segment.length = 0,
+  #                          seed = 75) +
+  theme_classic()
+corr_plot
+
+
+
+
+```
+
+
+
 Antimicrobial test
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
@@ -513,65 +727,51 @@ library("corrplot")
 library("readxl")
 
 e_coli <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 1)
-e_coli <- e_coli[,-1]
 
-#perform shapiro-wilk test
+#perform shapiro-wilk test (p-value = 0.007755)
 shapiro.test(e_coli$E_coli_100)
-
-#perform shapiro-wilk test
+#perform shapiro-wilk test (p-value = 0.02356)
 shapiro.test(e_coli$E_coli_75)
 
 
 
 
-
 s_aureus <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 2)
-s_aureus <- s_aureus[,-1]
 
-multi.hist(s_aureus, global = FALSE)
+#perform shapiro-wilk test (p-value = 6.413e-05)
+shapiro.test(s_aureus$S_aureus_25)
+multi.hist(s_aureus$S_aureus_25, global = FALSE)
+#perform shapiro-wilk test (p-value = 0.007736)
+shapiro.test(s_aureus$S_aureus_50)
 
-#perform shapiro-wilk test
-shapiro.test(s_aureus$`25_%_v_v`)
+#perform shapiro-wilk test (p-value = 0.009524)
+shapiro.test(s_aureus$S_aureus_75)
 
-#perform shapiro-wilk test
-shapiro.test(s_aureus$`50_%_v_v`)
-
-#perform shapiro-wilk test
-shapiro.test(s_aureus$`75_%_v_v`)
-
-#perform shapiro-wilk test
-shapiro.test(s_aureus$`100_%_v_v`)
-
-
+#perform shapiro-wilk test (p-value = 0.01106)
+shapiro.test(s_aureus$S_aureus_100)
 
 
 
 
 k_pneumonia <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 3)
-k_pneumonia <- k_pneumonia[,-1]
 
-multi.hist(k_pneumonia, global = FALSE)
-
-#perform shapiro-wilk test
-shapiro.test(k_pneumonia$`75_%_v_v`)
-
+#perform shapiro-wilk test (p-value = 0.2401)
+shapiro.test(k_pneumonia$K_pneumonia_75)
 
 
 
 
 p_mirabilis <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 4)
-p_mirabilis <- p_mirabilis[,-1]
 
-multi.hist(p_mirabilis, global = FALSE)
+#perform shapiro-wilk test (p-value = 0.07623)
+shapiro.test(p_mirabilis$P_mirabilis_50)
 
-#perform shapiro-wilk test
-shapiro.test(p_mirabilis$`50_%_v_v`)
+#perform shapiro-wilk test (p-value = 0.1249)
+shapiro.test(p_mirabilis$P_mirabilis_75)
 
-#perform shapiro-wilk test
-shapiro.test(p_mirabilis$`75_%_v_v`)
+#perform shapiro-wilk test (p-value = 0.05333)
+shapiro.test(p_mirabilis$P_mirabilis_100)
 
-#perform shapiro-wilk test
-shapiro.test(p_mirabilis$`100_%_v_v`)
 
 ```
 
