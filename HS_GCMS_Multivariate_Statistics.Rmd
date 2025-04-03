@@ -93,7 +93,7 @@ Then...
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Low detection rate
-mode <- flag_detection(mode, qc_limit = 6/9, group_limit = 2/3)
+mode <- flag_detection(mode, qc_limit = 7/9, group_limit = 2/3)
 
 ```
 
@@ -103,7 +103,7 @@ The next step...
 
 # Drift correction
 corrected <- correct_drift(mode)
-corrected <- correct_drift(corrected)
+#corrected <- correct_drift(corrected)
 # Flag low quality features
 #corrected <- flag_quality(corrected, condition = "RSD_r < 0.3 & D_ratio_r < 0.6")
 
@@ -133,13 +133,8 @@ The next step...
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-clustered <- cluster_features(corrected,
-                              rt_window = 1/60,
-                              corr_thresh = 0.95,
-                              d_thresh = 0.85,
-                              #plotting = TRUE,
-                              #prefix = paste0(ppath, "Result/notame_Result/HS_GCMS/Cluster")
-                              )
+clustered <- cluster_features(corrected, rt_window = 1/60, corr_thresh = 0.95,
+                              d_thresh = 0.80)
 compressed <- compress_clusters(clustered)
 
 ```
@@ -273,20 +268,21 @@ scores <- ei_pca$x %>%                   # Get PC coordinates
   mutate(Sample_ID = rownames(.)) %>%    # Create a new column with the sample names
   left_join(pheno_data)                  # Adding metadata
 # PCA plot
-figure_1a <- ggplot(scores,
+pca_plot <- ggplot(scores,
        aes(PC1, PC2, shape = Species, color = Species)) +
   geom_point(size = 3) +
-  guides(x=guide_axis(title = "PC1 (20.05 %)"),
-         y=guide_axis(title = "PC2 (17.78 %)")) +
+  guides(x=guide_axis(title = "PC1 (20.14 %)"),
+         y=guide_axis(title = "PC2 (17.62 %)")) +
+  labs(shape = 'Bees species', color= 'Bees species') +
   theme_classic() +
   theme(legend.text = element_text(face="italic")) +
-  theme(legend.position = c(0.890, 0.790),
+  theme(legend.position = c(0.120, 0.230),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
-figure_1a
+pca_plot
 # Save plot
 #ggsave('Result/notame_Result/HS_GCMS/figure_1a.pdf', width = 7, height = 4, device='pdf', dpi="print")
 
@@ -312,13 +308,13 @@ meta_table <- metab_data@featureData@data
 # Creating a new small table of the annotated compounds
 ei_compouds <- left_join(meta_table, loadings)
 # Plotting results
-figure_1c <- ggplot(loadings, aes(PC1, PC2)) + 
-  geom_point(alpha = 0.2) +
+load_pca <- ggplot(loadings, aes(PC1, PC2)) + 
+  geom_point(alpha = 0.3, size = 2) +
   theme_classic() + 
   geom_point(data = ei_compouds,
              aes(shape = meta_table$IL,
                  color = meta_table$IL),
-             size = 2) +
+             size = 2.5) +
   labs(shape = 'Identification level',
        color = 'Identification level') +
   ggrepel::geom_label_repel(data = ei_compouds,
@@ -329,18 +325,18 @@ figure_1c <- ggplot(loadings, aes(PC1, PC2)) +
                             cex = 2.5,
                             max.overlaps = 50,
                             min.segment.length = 0) +
-  guides(x=guide_axis(title = "PC1 (20.05 %)"),
-         y=guide_axis(title = "PC2 (17.78 %)")) +
-  theme(legend.position = c(0.945, 0.925),
+  guides(x=guide_axis(title = "PC1 (20.14 %)"),
+         y=guide_axis(title = "PC2 (17.62 %)")) +
+  theme(legend.position = c(0.070, 0.090),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
   ggsci::scale_color_aaas()
-figure_1c
+load_pca
 # Save plot
-#ggsave('Result/notame_Result/HS_GCMS/figure_1c.pdf', width = 14, height = 7, device='pdf', dpi="print")
+#ggsave('Result/notame_Result/HS_GCMS/load_pca.pdf', width = 14, height = 7, device='pdf', dpi="print")
 
 ```
 
@@ -430,14 +426,14 @@ cols_metclass <- c("Benzenoids" = "#800000FF",
                    "Organohalogen compounds" = "#BEBADA",
                    "Organoheterocyclic compounds" = "#FFFFB3")
 # Add row anotation to HeatMap
-hm_row_ann <- rowAnnotation(`Class` = hm_fdata$classyfireR_Superclass,
-                            col = list(`Class` = cols_metclass),
+hm_row_ann <- rowAnnotation(`Superclass` = hm_fdata$classyfireR_Superclass,
+                            col = list(`Superclass` = cols_metclass),
                             show_annotation_name = T,
                             show_legend = F)
 # Species color
 cols_species <- c("T. angustula" = "#E76BF3",
-                  "M. fasciculata" = "#e6550d",
-                  "M. fuscopilosa" = "#91cf60")
+                  "M. fasciculata" = "#F8766D",
+                  "M. fuscopilosa" = "#7CAE00")
 # Add top anotation to HeatMap
 top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata$Species,
                                   col = list(`Species` = cols_species),
@@ -459,7 +455,8 @@ hm_plot <- Heatmap(hm_scl,
                    row_names_max_width = unit(10, "cm"),
                    right_annotation = hm_row_ann,
                    show_heatmap_legend = F,
-                   row_km = 3, column_km = 2)
+                   row_km = 3, column_km = 2,
+                   row_title = c("a", "b", "c"))
 hm_plot
 
 ```
@@ -504,41 +501,18 @@ gcms_hm <- plot_grid(gg_legend_fn,
                      rel_heights = c(0.055, 0.880))
 gcms_hm
 # Save heatmap plot
-#ggsave(filename = "Result/GCMS/GCMS_Heatmap_to_DQ3.pdf", plot = gcms_hm,
+#ggsave(filename = "Result/GCMS/gcms_hm.pdf", plot = gcms_hm,
 #       width = 8, height = 9, units = "in", dpi = 300, scale = 1.7)
 
 ```
 
 # Correlation with the antimicrobial activity
 
-Correlation between feature abundance and antibacterial result (zone inhibition diameter) using the PCA and Pearson correlation aproaches.
-
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
-
-# "SummarizedExperiment" package installation
-#if (!require("BiocManager", quietly = TRUE))
-#    install.packages("BiocManager")
-#BiocManager::install("SummarizedExperiment")
-library(SummarizedExperiment)
-# Convert feature height table to SummarizedExperiment class
-pmp_data <- SummarizedExperiment(assays = exprs(pqn_noflag),
-                                 colData = pqn_noflag@phenoData@data)
-# Package for generalized logarithmic transform
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-#    install.packages("BiocManager")
-#BiocManager::install("pmp")
-library(pmp)
-# Generalised logarithmic transform
-glog_exprs <- glog_transformation(df = pmp_data@assays@data@listData[[1]],
-                                  classes = pmp_data$QC,
-                                  qc_label = "QC")
-# Adding glog transformation to notame MetaboSet
-glog_set <- pqn_noflag
-exprs(glog_set) <- glog_exprs
-
-```
+Correlation between feature abundance and antibacterial result (zone inhibition diameter) using the PCA and Pearson correlation approaches.
 
 ## Using the PCA
+
+Data and metadata preparation, merging the antimicrobial data with feature abundance.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
@@ -556,7 +530,7 @@ corr_pdata <- no_qc@phenoData@data
 
 ```
 
-
+PCA scores calculation of the antimicrobial and feature abundance merge data.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
@@ -564,6 +538,8 @@ corr_pdata <- no_qc@phenoData@data
 corr_pca <- prcomp(bacteria_peak, center = TRUE, scale. = TRUE)
 
 ```
+
+Plotting PCA score.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide', fig.width = 7, fig.height = 4}
 
@@ -575,12 +551,17 @@ corr_scores <- corr_pca$x %>%            # Get PC coordinates
 # PCA plot
 corr_pca_plot <- ggplot(corr_scores,
                         aes(PC1, PC2, shape = Species, color = Species)) +
+  scale_color_manual(values=c("#F8766D",
+                              "#7CAE00",
+                              "#E76BF3")) +
+  scale_shape_manual(values=c(16, 17, 3)) +
   geom_point(size = 3) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
+  labs(shape = 'Bees species', color= 'Bees species') +
   theme_classic() +
   theme(legend.text = element_text(face="italic")) +
-  theme(legend.position = c(0.890, 0.790),
+  theme(legend.position = c(0.120, 0.200),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
@@ -614,12 +595,13 @@ corr_table <- merge(meta_table, bacteria_table, all = TRUE)
 corr_compouds <- left_join(corr_table, corr_loadings)
 # Plotting results
 corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) + 
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.3, size = 2) +
   theme_classic() + 
   geom_point(data = corr_compouds,
              aes(shape = corr_table$IL,
                  color = corr_table$IL),
-             size = 2) +
+             size = 2.5) +
+  scale_shape_manual(values = c(15, 16, 17)) +
   labs(shape = 'Legend of features',
        color = 'Legend of features') +
   ggrepel::geom_label_repel(data = corr_compouds,
@@ -632,7 +614,7 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
-  theme(legend.position = c(0.945, 0.925),
+  theme(legend.position = c(0.070, 0.107),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
@@ -644,10 +626,6 @@ corr_load_plot
 #ggsave('Result/notame_Result/HS_GCMS/corr_load_plot.pdf', width = 14, height = 7, #device='pdf', dpi="print")
 
 ```
-
-
-
-
 
 ## Using the Pearson correlation
 
