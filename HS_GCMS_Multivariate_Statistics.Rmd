@@ -283,8 +283,6 @@ pca_plot <- ggplot(scores,
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
 pca_plot
-# Save plot
-#ggsave('Result/notame_Result/HS_GCMS/figure_1a.pdf', width = 7, height = 4, device='pdf', dpi="print")
 
 ```
 
@@ -411,7 +409,7 @@ hm_fdata <- raw_hm@featureData@data
 
 Scaling, row and top heatmap anotation.
 
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, fig.width = 10, fig.height = 9}
 
 set.seed(1540)
 # Adding row and column names
@@ -434,15 +432,14 @@ hm_row_ann <- rowAnnotation(`Superclass` = hm_fdata$classyfireR_Superclass,
 cols_species <- c("T. angustula" = "#E76BF3",
                   "M. fasciculata" = "#F8766D",
                   "M. fuscopilosa" = "#7CAE00")
-# Add top anotation to HeatMap
+# Add top anotation to Heatmap
 top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata$Species,
                                   col = list(`Species` = cols_species),
                                   show_annotation_name = T,
                                   show_legend = F,
                                   border = T)
 # Color scale
-mycol <- colorRamp2(c(-4, 0, 4),
-                    c("blue", "white", "red"))
+mycol <- colorRamp2(c(-4, 0, 4), c("blue", "white", "red"))
 # Heatmap matrix plotting
 hm_plot <- Heatmap(hm_scl,
                    col = mycol,
@@ -469,7 +466,6 @@ Adding legends to heatmap.
 lgd1 <- Legend(col_fun = mycol,
                title = "Autoscaled abundance",
                direction = "horizontal" )
-
 # Bees species legend
 lgd2 <- Legend(labels = gt_render(c("*T. angustula*",
                                     "*M. fasciculata*",
@@ -485,7 +481,7 @@ lgd3 <- Legend(labels = c(unique(hm_fdata$classyfireR_Superclass)) ,
 
 ComplexHeatmap plot
 
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, fig.width = 10, fig.height = 12}
 
 set.seed(1540)
 # Converting to ggplot
@@ -500,9 +496,6 @@ gcms_hm <- plot_grid(gg_legend_fn,
                      gg_heatmap, ncol = 1,
                      rel_heights = c(0.055, 0.880))
 gcms_hm
-# Save heatmap plot
-#ggsave(filename = "Result/GCMS/gcms_hm.pdf", plot = gcms_hm,
-#       width = 8, height = 9, units = "in", dpi = 300, scale = 1.7)
 
 ```
 
@@ -529,6 +522,8 @@ bacteria_peak <- cbind(bacteria_data, corr_peak)
 corr_pdata <- no_qc@phenoData@data
 
 ```
+
+### Score PCA
 
 PCA scores calculation of the antimicrobial and feature abundance merge data.
 
@@ -568,10 +563,10 @@ corr_pca_plot <- ggplot(corr_scores,
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
 corr_pca_plot
-# Save plot
-#ggsave('Result/notame_Result/HS_GCMS/corr_pca_plot.pdf', width = 7, height = 4, #device='pdf', dpi="print")
 
 ```
+
+### Loading PCA
 
 Plotting loading results.
 
@@ -582,7 +577,7 @@ corr_loadings <- corr_pca$rotation %>%    # Extract loadings
 
 ```
 
-Creating an artificial table with Feature name and Compound column.
+Creating an artificial table with feature name and compound column.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide', fig.width = 14, fig.height = 7}
 
@@ -622,137 +617,319 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
   ggsci::scale_color_aaas()
 corr_load_plot
-# Save plot
-#ggsave('Result/notame_Result/HS_GCMS/corr_load_plot.pdf', width = 14, height = 7, #device='pdf', dpi="print")
 
 ```
 
 ## Using the Pearson correlation
 
-Correlation between antimicrobial activity and feture abundance.
+The Pearson correlation between antimicrobial activity and feature abundance was performed.
+
+### Normality of the antimicrobial data
+
+First, the antimicrobial data normality was evaluated using the Shapiro-Wilk test.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Loading the antimicrobial activity data
+all_bacteria <- read_excel("Data/Antimicrobial_of_honey.xlsx", sheet = 1)
+# Deleting the group column to perform Shapiro-Wilk test in batch
+no_group <- all_bacteria[,-1]
+# Perform the Shapiro-Wilk test
+shapiro <- do.call(rbind, lapply(no_group,
+                                 function(x) shapiro.test(x)[c("statistic", "p.value")]))
+shapiro
+
+```
+
+The result showed that only the microorganisms *K. pneumonia* and *P. mirabilis* have a normal distribution (p-value > 0.05). However, when we inspected the data, we found that the values in the ATA001 and RIG003 group in the *E. coli* could be outliers; also, a possible outlier in the RYMG001 group in the *S. aureus* was found. When we delete all the possible outliers, we find that all the microorganisms (not including *S. aureus* at 25 % v/v) have a normal distribution, as seen below.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Delete outlier data in E. coli
+no_outliers <- all_bacteria
+no_outliers[no_outliers$Group == "ATA001",]$E_coli_75 <- NA
+no_outliers[no_outliers$Group == "ATA001",]$E_coli_100 <- NA
+no_outliers[no_outliers$Group == "RIG003",]$E_coli_75 <- NA
+no_outliers[no_outliers$Group == "RIG003",]$E_coli_100 <- NA
+# Delete outlier data in S. aureus
+no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_25 <- NA
+no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_50 <- NA
+no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_75 <- NA
+no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_100 <- NA
+# Deleting the group column to perform Shapiro-Wilk test in batch
+no_outliers <- no_outliers[,-1]
+# Perform the Shapiro-Wilk test
+shapiro_outl <- do.call(rbind, lapply(no_outliers,
+                                 function(x) shapiro.test(x)[c("statistic", "p.value")]))
+shapiro_outl
+
+```
+
+The antimicrobial activity result of honey at 75 % v/v was used in the further analysis because this concentration showed activity in most of the tested microorganisms. (*E. coli*, *K. pneumonia*, *P. mirabilis*, and *S. aureus*).
+
+### Metabolomics data transformation
+
+Before the Pearson correlation of feature abundance with the antimicrobial activity (zone inhibition diameter), the previously normalized data by probabilistic quotient normalization (PQN) was transformed using the generalised logarithm (glog) method.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# "SummarizedExperiment" package installation
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("SummarizedExperiment")
+library(SummarizedExperiment)
+# Convert feature height table to SummarizedExperiment class
+pmp_data <- SummarizedExperiment(assays = exprs(pqn_noflag),
+                                 colData = pqn_noflag@phenoData@data)
+# Package for generalized logarithmic transform
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("pmp")
+library(pmp)
+# Generalised logarithmic transform
+glog_exprs <- glog_transformation(df = pmp_data@assays@data@listData[[1]],
+                                  classes = pmp_data$QC,
+                                  qc_label = "QC")
+# Adding glog transformation to notame MetaboSet
+glog_set <- pqn_noflag
+exprs(glog_set) <- glog_exprs
+
+```
+
+Preparing the metabolomics data for the antimicrobial correlation.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Drop QCs
-no_qc <- drop_qcs(glog_set)
+glog_no_qc <- drop_qcs(glog_set)
+# Preparing the data for E. coli correlation (drop outlier data)
+glog_E.coli <- glog_no_qc[, glog_no_qc$Group != "ATA001"]
+pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
+glog_E.coli <- glog_E.coli[, glog_E.coli$Group != "RIG003"]
+pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
+# Preparing the data for S. aureus (dropn outlier data)
+glog_S.aureus <- glog_no_qc[, glog_no_qc$Group != "RYMG001"]
+pData(glog_S.aureus) <- droplevels(pData(glog_S.aureus))
 # Convert antimicrobial result to numeric
-no_qc$K_pneumonia_75 <- as.numeric(no_qc$K_pneumonia_75)
-no_qc$P_mirabilis_50 <- as.numeric(no_qc$P_mirabilis_50)
-no_qc$P_mirabilis_75 <- as.numeric(no_qc$P_mirabilis_75)
-no_qc$P_mirabilis_100 <- as.numeric(no_qc$P_mirabilis_100)
-# correlation of feature with the antimicrobial result
-antimicrobial <- perform_correlation_tests(no_qc,
-                                           x = featureNames(glog_set),
-                                           y = c("K_pneumonia_75",
-                                                 "P_mirabilis_50"
-                                                 #"P_mirabilis_75",
-                                                 #"P_mirabilis_100"
-                                                 ),
+glog_E.coli$E_coli_75 <- as.numeric(glog_E.coli$E_coli_75)
+glog_no_qc$K_pneumonia_75 <- as.numeric(glog_no_qc$K_pneumonia_75)
+glog_no_qc$P_mirabilis_75 <- as.numeric(glog_no_qc$P_mirabilis_75)
+glog_S.aureus$S_aureus_75 <- as.numeric(glog_S.aureus$S_aureus_75)
+
+```
+
+Perform the Pearson correlation analysis.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Feature correlation with the E. coli antimicrobial activity
+E.coli_corr <- perform_correlation_tests(glog_E.coli,
+                                         x = featureNames(glog_no_qc),
+                                         y = c("E_coli_75"),
+                                         method = "pearson")
+# Feature correlation with the K. pneumonia antimicrobial activity
+K.pneumonia_corr <- perform_correlation_tests(glog_no_qc,
+                                              x = featureNames(glog_set),
+                                              y = c("K_pneumonia_75"),
+                                              method = "pearson")
+# Feature correlation with the P. mirabilis antimicrobial activity
+P.mirabilis_corr <- perform_correlation_tests(glog_no_qc,
+                                              x = featureNames(glog_set),
+                                              y = c("P_mirabilis_75"),
+                                              method = "pearson")
+# Feature correlation with the S. aureus antimicrobial activity
+S.aureus_corr <- perform_correlation_tests(glog_S.aureus,
+                                           x = featureNames(glog_no_qc),
+                                           y = c("S_aureus_75"),
                                            method = "pearson")
 
+```
 
- 
+### Correlation of identified metabolites
 
+Create a matrix for the heatmap of correlation.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# Correlation table for the heatmap
+hm_corr_table <- data.frame(Feature_ID = E.coli_corr$X,
+                            E_coli = E.coli_corr$Correlation_coefficient,
+                            K_pneumonia = K.pneumonia_corr$Correlation_coefficient,
+                            P_mirabilis = P.mirabilis_corr$Correlation_coefficient,
+                            S_aureus = S.aureus_corr$Correlation_coefficient)
+# Feature data table
+feat_corr_table <- data.frame(Feature_ID = hm_fdata$Feature_ID,
+                             Metabolite = hm_fdata$Metabolite)
+# Adding the metabolie name to the correlation table
+hm_corr_table <- left_join(hm_corr_table, feat_corr_table)
+# Extracting data of the identified metabolites
+hm_corr_table <- hm_corr_table[!is.na(hm_corr_table$Metabolite),]
+# Adding row name
+rownames(hm_corr_table) <- hm_corr_table$Metabolite
+# Delete extra information
+hm_corr_table <- subset(hm_corr_table, select = -c(Feature_ID, Metabolite) )
+# Converting DataFrame to data matrix
+hm_corr_table <- data.matrix(hm_corr_table, rownames.force = NA)
+# Adding column name
+colnames(hm_corr_table) <- c("E. coli", "K. pneumonia", "P. mirabilis", "S. aureus")
 
 ```
 
+Create a matrix showing the statistical significance of the correlation result.
 
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
 
-Plot of correlation result.
+# Correlation table for the heatmap
+hm_sign_table <- data.frame(Feature_ID = E.coli_corr$X,
+                            E_coli = E.coli_corr$Correlation_P,
+                            K_pneumonia = K.pneumonia_corr$Correlation_P,
+                            P_mirabilis = P.mirabilis_corr$Correlation_P,
+                            S_aureus = S.aureus_corr$Correlation_P)
+# Adding the metabolie name to the correlation table
+hm_sign_table <- left_join(hm_sign_table, feat_corr_table)
+# Extracting data of the identified metabolites
+hm_sign_table <- hm_sign_table[!is.na(hm_sign_table$Metabolite),]
+# Adding row name
+rownames(hm_sign_table) <- hm_sign_table$Metabolite
+# Delete extra information
+hm_sign_table <- subset(hm_sign_table, select = -c(Feature_ID, Metabolite) )
+# Converting DataFrame to data matrix
+hm_sign_table <- data.matrix(hm_sign_table, rownames.force = NA)
+# Adding column name
+colnames(hm_sign_table) <- c("E. coli", "K. pneumonia", "P. mirabilis", "S. aureus")
+
+```
+
+Plot the correlation heatmap.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, fig.width = 5, fig.height = 9}
+
+# Add top anotation to Heatmap
+ann_corr <- HeatmapAnnotation(
+  foo = anno_block(gp = gpar(fill = 0, col = "white"),
+                   labels = "Pearson correlation",
+                   labels_gp = gpar(col = "black", fontsize = 12,
+                                    fontface = "bold")))
+# Color scale
+col_fun <- colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
+# Heatmap plot
+hm_corr <- Heatmap(hm_corr_table, col = col_fun, cluster_rows = FALSE,
+                   cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
+                   right_annotation = hm_row_ann,
+                   border_gp = grid::gpar(col = "black", lty = 0.02),
+                   rect_gp = grid::gpar(col = "black", lwd = 0.75),
+                   top_annotation = ann_corr,
+                   cell_fun = function(j, i, x, y, w, h, fill) {
+                     if(hm_sign_table[i, j] < 0.05) {
+                       grid.text(sprintf("%.1f", hm_corr_table[i, j]), x, y,
+                                 gp = gpar(fontsize = 12, fontface = "bold"))
+                       } else if(hm_sign_table[i, j] > 0.05) {
+                         grid.text(sprintf("%.1f", hm_corr_table[i, j]), x, y,
+                                   gp = gpar(fontsize = 12))}},
+                   show_heatmap_legend = F)
+hm_corr
+
+```
+
+### Correlation of unknown metabolites
+
+Filtering the metabolites with positive and high Pearson correlation coefficient (r >0.5).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-# Adding row names to the correlation result table
-antimicrobial$Feature_ID <- antimicrobial$X
-# Log10 transformation of p-value
-antimicrobial$log10_P <- -log10(antimicrobial$Correlation_P)
-# Keep metabolites with positive correlation r > 0
-antimicrobial <- subset(antimicrobial, Correlation_coefficient > 0.5)
-# Adding metabolite names to the correlation result table
-antimicrobial_compouds <- left_join(meta_table, antimicrobial)
-
-
-corr_plot <- ggplot(antimicrobial, aes(Correlation_coefficient, log10_P,
-                                       color = Y, shape = Y)) +
-  geom_point(size = 2, alpha = 0.4) +
-  #ggrepel::geom_label_repel(data = antimicrobial_compouds,
-  #                          aes(label = meta_table$Metabolite),
-  #                          color = "black",
-  #                          box.padding = 0.37,
-  #                          label.padding = 0.22,
-  #                          label.r = 0.30,
-  #                          cex = 2.5,
-  #                          max.overlaps = 5,
-  #                          min.segment.length = 0,
-  #                          seed = 75) +
-  theme_classic()
-corr_plot
-
-
-
+# Library to change character values
+library('stringr')
+# Correlation table for the heatmap with the best features
+best_feat <- data.frame(Feature_ID = E.coli_corr$X,
+                        E_coli = E.coli_corr$Correlation_coefficient,
+                        E_coli_p = E.coli_corr$Correlation_P,
+                        K_pneumonia = K.pneumonia_corr$Correlation_coefficient,
+                        K_pneumonia_p = K.pneumonia_corr$Correlation_P,
+                        P_mirabilis = P.mirabilis_corr$Correlation_coefficient,
+                        P_mirabilis_p = P.mirabilis_corr$Correlation_P,
+                        S_aureus = S.aureus_corr$Correlation_coefficient,
+                        S_aureus_p = S.aureus_corr$Correlation_P)
+# Filtering the feature with the correlation >= 0.5
+best_feat <- best_feat[best_feat$E_coli >= 0.5 |
+                         best_feat$K_pneumonia >= 0.5 |
+                         best_feat$P_mirabilis >= 0.5 |
+                         best_feat$S_aureus >= 0.5, ]
+# Adding the metabolite name to the correlation table
+best_feat <- left_join(best_feat, feat_corr_table)
+# Extracting data of no identified metabolites
+best_feat <- best_feat[!complete.cases(best_feat$Metabolite),]
+# Replace the column name and ionization type "RTX5MS_EI" with unknown
+best_feat$Feature_ID <- sub('RTX5MS_EI_','Unknown-', best_feat$Feature_ID)
+best_feat$Feature_ID <- str_replace_all(best_feat$Feature_ID, '_', '.')
 
 ```
 
+Create a matrix for the heatmap of correlation.
 
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
 
-Antimicrobial test
-
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
-
-#librerias
-library("psych")
-library("corrplot")
-library("readxl")
-
-e_coli <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 1)
-
-#perform shapiro-wilk test (p-value = 0.007755)
-shapiro.test(e_coli$E_coli_100)
-#perform shapiro-wilk test (p-value = 0.02356)
-shapiro.test(e_coli$E_coli_75)
-
-
-
-
-s_aureus <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 2)
-
-#perform shapiro-wilk test (p-value = 6.413e-05)
-shapiro.test(s_aureus$S_aureus_25)
-multi.hist(s_aureus$S_aureus_25, global = FALSE)
-#perform shapiro-wilk test (p-value = 0.007736)
-shapiro.test(s_aureus$S_aureus_50)
-
-#perform shapiro-wilk test (p-value = 0.009524)
-shapiro.test(s_aureus$S_aureus_75)
-
-#perform shapiro-wilk test (p-value = 0.01106)
-shapiro.test(s_aureus$S_aureus_100)
-
-
-
-
-k_pneumonia <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 3)
-
-#perform shapiro-wilk test (p-value = 0.2401)
-shapiro.test(k_pneumonia$K_pneumonia_75)
-
-
-
-
-p_mirabilis <- read_excel("Antimicrobial_of_honey.xlsx", sheet = 4)
-
-#perform shapiro-wilk test (p-value = 0.07623)
-shapiro.test(p_mirabilis$P_mirabilis_50)
-
-#perform shapiro-wilk test (p-value = 0.1249)
-shapiro.test(p_mirabilis$P_mirabilis_75)
-
-#perform shapiro-wilk test (p-value = 0.05333)
-shapiro.test(p_mirabilis$P_mirabilis_100)
-
+# Correlation table for the heatmap
+hm_corr_table1 <- data.frame(Feature_ID = best_feat$Feature_ID,
+                             E_coli = best_feat$E_coli,
+                             K_pneumonia = best_feat$K_pneumonia,
+                             P_mirabilis = best_feat$P_mirabilis,
+                             S_aureus = best_feat$S_aureus)
+# Adding row name
+rownames(hm_corr_table1) <- hm_corr_table1$Feature_ID
+# Delete extra information
+hm_corr_table1 <- subset(hm_corr_table1, select = -c(Feature_ID) )
+# Converting DataFrame to data matrix
+hm_corr_table1 <- data.matrix(hm_corr_table1, rownames.force = NA)
+# Adding column name
+colnames(hm_corr_table1) <- c("E. coli", "K. pneumonia", "P. mirabilis", "S. aureus")
 
 ```
 
+Create a matrix showing the statistical significance of the correlation result.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# Correlation table for the heatmap
+hm_sign_table1 <- data.frame(Feature_ID = best_feat$Feature_ID,
+                             E_coli = best_feat$E_coli_p,
+                             K_pneumonia = best_feat$K_pneumonia_p,
+                             P_mirabilis = best_feat$P_mirabilis_p,
+                             S_aureus = best_feat$S_aureus_p)
+# Adding row name
+rownames(hm_sign_table1) <- hm_sign_table1$Feature_ID
+# Delete extra information
+hm_sign_table1 <- subset(hm_sign_table1, select = -c(Feature_ID) )
+# Converting DataFrame to data matrix
+hm_sign_table1 <- data.matrix(hm_sign_table1, rownames.force = NA)
+# Adding column name
+colnames(hm_sign_table1) <- c("E. coli", "K. pneumonia", "P. mirabilis", "S. aureus")
+
+```
+
+Plot the correlation heatmap.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, fig.width = 5, fig.height = 6}
+
+# Packed legends
+pd = packLegend(lgd1a, direction = "horizontal")
+# Heatmap plot
+hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
+                   cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
+                   border_gp = grid::gpar(col = "black", lty = 0.02),
+                   rect_gp = grid::gpar(col = "black", lwd = 0.75),
+                   top_annotation = ann_corr,
+                   cell_fun = function(j, i, x, y, w, h, fill) {
+                     if(hm_sign_table1[i, j] < 0.05) {
+                       grid.text(sprintf("%.1f", hm_corr_table1[i, j]), x, y,
+                                 gp = gpar(fontsize = 10, fontface = "bold"))
+                       } else if(hm_sign_table1[i, j] > 0.05) {
+                         grid.text(sprintf("%.1f", hm_corr_table1[i, j]), x, y,
+                                   gp = gpar(fontsize = 10))}},
+                   show_heatmap_legend = F)
+hm_corr1
+draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
+
+```
 
 Finish a record.
 
@@ -761,6 +938,3 @@ Finish a record.
 finish_log()
 
 ```
-
-
-

@@ -2175,3 +2175,15 @@ INFO [2025-04-02 16:32:46] Found 72 clusters of 2 or more features, clustering f
 INFO [2025-04-02 16:32:46] Clusters compressed, left with 179 features
 INFO [2025-04-02 16:33:52] Starting PQN normalization
 INFO [2025-04-02 16:33:52] Using median of qc samples as reference spectrum
+INFO [2025-04-03 17:36:51] Starting correlation tests.
+INFO [2025-04-03 17:36:52] Correlation tests performed.
+INFO [2025-04-03 17:37:04] Starting correlation tests.
+INFO [2025-04-03 17:37:05] Correlation tests performed.
+INFO [2025-04-03 17:42:51] Starting correlation tests.
+INFO [2025-04-03 17:42:52] Correlation tests performed.
+INFO [2025-04-03 17:49:45] Starting correlation tests.
+INFO [2025-04-03 17:49:46] Correlation tests performed.
+INFO [2025-04-03 17:53:14] Starting correlation tests.
+INFO [2025-04-03 17:53:14] Correlation tests performed.
+INFO [2025-04-03 17:59:09] Starting correlation tests.
+INFO [2025-04-03 17:59:10] Correlation tests performed.
