@@ -171,12 +171,6 @@ Here read this paper: https://doi.org/10.1007%2Fs11306-016-1030-9
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
 
-# Impute missing values using random forest
-# To clean data
-#set.seed(615)
-#imputed <- impute_rf(compressed)
-# To all data
-#imputed <- impute_rf(imputed, all_features = TRUE)
 # Impute missing values using noise threshold
 imputed <- impute_simple(compressed, value = 45, na_limit = 0)
 
@@ -256,6 +250,8 @@ ei_pca <- prcomp(transp_table, center = TRUE, scale. = TRUE)
 
 ```
 
+### Score PCA
+
 Plotting PCA results.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide', fig.width = 7, fig.height = 4}
@@ -286,6 +282,8 @@ pca_plot
 
 ```
 
+### Loading PCA
+
 Plotting loading results.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
@@ -315,6 +313,9 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
              size = 2.5) +
   labs(shape = 'Identification level',
        color = 'Identification level') +
+  scale_color_manual(values = c("green",
+                                "darkblue")) +
+  scale_shape_manual(values = c(17, 19)) +
   ggrepel::geom_label_repel(data = ei_compouds,
                             aes(label = meta_table$Metabolite),
                             box.padding = 0.37,
@@ -330,8 +331,8 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
-  geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
-  ggsci::scale_color_aaas()
+  geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
+  #ggsci::scale_color_aaas()
 load_pca
 # Save plot
 #ggsave('Result/notame_Result/HS_GCMS/load_pca.pdf', width = 14, height = 7, device='pdf', dpi="print")
@@ -591,16 +592,19 @@ corr_compouds <- left_join(corr_table, corr_loadings)
 # Plotting results
 corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) + 
   geom_point(alpha = 0.3, size = 2) +
-  theme_classic() + 
-  geom_point(data = corr_compouds,
-             aes(shape = corr_table$IL,
-                 color = corr_table$IL),
-             size = 2.5) +
-  scale_shape_manual(values = c(15, 16, 17)) +
+  theme_classic() +
+  geom_point(data = corr_compouds, aes(shape = corr_table$IL,
+                                       color = corr_table$IL), size = 2.5) +
   labs(shape = 'Legend of features',
        color = 'Legend of features') +
+  scale_color_manual(values = c("red",
+                                "green",
+                                "darkblue")) +
+  scale_shape_manual(values = c(15, 17, 19)) +
   ggrepel::geom_label_repel(data = corr_compouds,
-                            aes(label = corr_table$Metabolite),
+                            aes(label = corr_table$Metabolite,
+                                fontface = ifelse(corr_table$IL == "Antimicrobial activity",
+                                                  'italic', 'plain')),
                             box.padding = 0.37,
                             label.padding = 0.22,
                             label.r = 0.30,
@@ -614,8 +618,8 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
-  geom_hline(yintercept = 0, linetype = "longdash", colour="gray") +
-  ggsci::scale_color_aaas()
+  geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
+  #ggsci::scale_color_aaas()
 corr_load_plot
 
 ```
@@ -767,7 +771,7 @@ hm_corr_table <- hm_corr_table[!is.na(hm_corr_table$Metabolite),]
 # Adding row name
 rownames(hm_corr_table) <- hm_corr_table$Metabolite
 # Delete extra information
-hm_corr_table <- subset(hm_corr_table, select = -c(Feature_ID, Metabolite) )
+hm_corr_table <- subset(hm_corr_table, select = -c(Feature_ID, Metabolite))
 # Converting DataFrame to data matrix
 hm_corr_table <- data.matrix(hm_corr_table, rownames.force = NA)
 # Adding column name
@@ -792,7 +796,7 @@ hm_sign_table <- hm_sign_table[!is.na(hm_sign_table$Metabolite),]
 # Adding row name
 rownames(hm_sign_table) <- hm_sign_table$Metabolite
 # Delete extra information
-hm_sign_table <- subset(hm_sign_table, select = -c(Feature_ID, Metabolite) )
+hm_sign_table <- subset(hm_sign_table, select = -c(Feature_ID, Metabolite))
 # Converting DataFrame to data matrix
 hm_sign_table <- data.matrix(hm_sign_table, rownames.force = NA)
 # Adding column name
@@ -877,7 +881,7 @@ hm_corr_table1 <- data.frame(Feature_ID = best_feat$Feature_ID,
 # Adding row name
 rownames(hm_corr_table1) <- hm_corr_table1$Feature_ID
 # Delete extra information
-hm_corr_table1 <- subset(hm_corr_table1, select = -c(Feature_ID) )
+hm_corr_table1 <- subset(hm_corr_table1, select = -c(Feature_ID))
 # Converting DataFrame to data matrix
 hm_corr_table1 <- data.matrix(hm_corr_table1, rownames.force = NA)
 # Adding column name
@@ -898,7 +902,7 @@ hm_sign_table1 <- data.frame(Feature_ID = best_feat$Feature_ID,
 # Adding row name
 rownames(hm_sign_table1) <- hm_sign_table1$Feature_ID
 # Delete extra information
-hm_sign_table1 <- subset(hm_sign_table1, select = -c(Feature_ID) )
+hm_sign_table1 <- subset(hm_sign_table1, select = -c(Feature_ID))
 # Converting DataFrame to data matrix
 hm_sign_table1 <- data.matrix(hm_sign_table1, rownames.force = NA)
 # Adding column name
@@ -928,6 +932,70 @@ hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                    show_heatmap_legend = F)
 hm_corr1
 draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
+
+```
+# UpSet plot
+
+The UpSet plot was implemented to inspect the unique or shared features of the honeys from each bees species and collection site (beehive). 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Mean of technical replicate
+upset_aver <- summary_statistics(compressed, grouping_cols = "Group")
+# Dataframe with average values by the collection sites (beehive)
+upset_mat <- data.frame(Feature_ID = upset_aver$Feature_ID,
+                        ata001 = upset_aver$ATA001_mean,
+                        er001 = upset_aver$ER001_mean,
+                        fied001 = upset_aver$FIED001_mean,
+                        rgb004 = upset_aver$RGB004_mean,
+                        rgy001 = upset_aver$RGY001_mean,
+                        rig003 = upset_aver$RIG003_mean,
+                        rig005 = upset_aver$RIG005_mean,
+                        rymg001 = upset_aver$RYMG001_mean,
+                        ryta006 = upset_aver$RYTA006_mean)
+# Adding rownames
+row.names(upset_mat) <- upset_mat$Feature_ID
+upset_mat$Feature_ID <- NULL
+# Adding colnames
+colnames(upset_mat) <- c("T. angustula ATA001",
+                         "T. angustula ER001",
+                         "M. fuscopilosa FIED001",
+                         "M. fasciculata RGB004",
+                         "M. fuscopilosa RGY001",
+                         "M. fuscopilosa RIG003",
+                         "M. fasciculata RIG005",
+                         "M. fasciculata RYMG001",
+                         "T. angustula RYTA006")
+# Change the values by presence using one (1) or absence using 0
+upset_mat[upset_mat > 0] <- 1       # presence 
+upset_mat[is.na(upset_mat)] <- 0    # absence
+# Make the combination matrix
+comb_mat = make_comb_mat(upset_mat)
+upset_plot <- UpSet(comb_mat,
+                    row_names_gp = gpar(fontsize = 10, fontface = "italic"),
+                    top_annotation =
+                      upset_top_annotation(comb_mat,
+                                           gp = gpar(fill = "#F8766D",
+                                                     col = "#F8766D"),
+                                           add_numbers = TRUE,
+                                           annotation_name_rot = 90,),
+                    right_annotation =
+                      upset_right_annotation(comb_mat,
+                                             gp = gpar(fill = "#1C6AA8",
+                                                     col = "#1C6AA8"),
+                                             add_numbers = TRUE),
+                    set_order = c("T. angustula ATA001",
+                                  "T. angustula ER001",
+                                  "T. angustula RYTA006",
+                                  "M. fuscopilosa FIED001",
+                                  "M. fuscopilosa RGY001",
+                                  "M. fuscopilosa RIG003",
+                                  "M. fasciculata RGB004",
+                                  "M. fasciculata RIG005",
+                                  "M. fasciculata RYMG001"))
+#pdf(file="Result/notame_Result/HS_GCMS/FigureA2.pdf", width = 7, height = 3.5)
+upset_plot
+#dev.off()
 
 ```
 

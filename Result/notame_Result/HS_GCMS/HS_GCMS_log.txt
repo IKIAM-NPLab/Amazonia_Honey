@@ -2187,3 +2187,5 @@ INFO [2025-04-03 17:53:14] Starting correlation tests.
 INFO [2025-04-03 17:53:14] Correlation tests performed.
 INFO [2025-04-03 17:59:09] Starting correlation tests.
 INFO [2025-04-03 17:59:10] Correlation tests performed.
+INFO [2025-04-07 14:12:48] Starting homoscedasticity tests.
+INFO [2025-04-07 14:12:49] Homoscedasticity tests performed.
