@@ -1,5 +1,5 @@
 ---
-title: "HS_GCMS_Spectral_Deconvolution"
+title: "Spectral deconvolution of stingless bee honeys HS-GC-MS metabolomics"
 author: "Angiely Camacho, José Abata, Jefferson Pastuna"
 date: "2024-04-12"
 output:
@@ -15,17 +15,23 @@ usethis::git_vaccinate()
 
 ```
 
-### Introduction
+# Introduction
 
-Write an Introduction.
+The present document aims to record the HS-GC-EI (Q)MS spectral deconvolution procedure of the volatile profile of honeys of 3 native bee species (*Tetragonisca angustula*, *Melipona fasciculata*, *Melipona fuscopilosa*) from 3 different localities in the Chontapunta parish, Tena, Ecuadorian Amazonia region.
 
-### Before to start
+The workflow used is taken from the paper [eRah: A Computational Tool Integrating Spectral Deconvolution and Alignment with Quantification and Identification of Metabolites in GC/MS-Based Metabolomics](https://doi.org/10.1021/acs.analchem.6b02927). It offers a wide variety of functions to automatically detect and deconvolve the spectra of the compounds appearing in GC–MS chromatograms. The "*eRah*" R package includes automatic peak detection, peak alignment, feature extraction, and compound identification.
 
-Write a package description.
+# Before to start
 
-### eRah package workflow
+The "*eRah*" R package accepts raw data files (netCDF or mzXML) obtained in GC–q/MS, GC-TOF/MS, and GC-qTOF/MS (using nominal mass) equipment.
 
-How to star.
+In this case, the data was obtained with a GC-2030 gas chromatograph coupled to a GCMS-QP2020 NX quadrupole mass spectrometer operating in electron ionization (GC-EI-q/MS). The raw MS data (.qgd) were converted to (netCDF) format using the proprietary software of the instrument GCMS Postrun Analysis 4.53SP1. The data was organized in an experiment folder named Data_to_eRah. This contains three class-folders called ’Blank’, ’Quality_Control’, and ’Samples’, each containing the sample files for that class.
+
+# eRah package workflow
+
+The "*eRah*" R package workflow is based on five steps: (i) data pre-processing, (ii) spectral deconvolution, (iii) spectral alignment, (iv) retrieval of missing compounds, and (v) compound identification.
+
+To use the "*eRah*" R package, you need to install the "*eRah*" package and call the library() function.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -36,7 +42,7 @@ library(erah)
 
 ```
 
-Folder files
+To proceed, you must delete the unwanted files in a specific path and create a directory with the wanted files.
 
 ```{r echo=TRUE}
 
@@ -47,8 +53,9 @@ createdt('Data/Data_to_eRah/')
 
 ```
 
-New experiment.
+Load and process the necessary data from the CSV files, which contain the relevant information to proceed with the study about the volatilome of honey from different Amazonian stingless bees. The MetaboSet object was created to store the sample metadata and process.
 
+**NOTE.** The instrumental and phenotype files created by eRah were relocated to a new directory. In both files, the semicolon delimiter has been changed to a comma delimiter. The complete directory path of the chromatograms has been added to the instrumental file.
 
 ```{r echo=TRUE}
 
@@ -66,9 +73,11 @@ ex <- newExp(instrumental = instrumental,
 
 ```
 
-Compound deconvolution
+## Compound deconvolution
 
-Parameter
+It is a mathematical and computational technique used to recover an original signal from a complex pool of information.
+
+Set up the parameters with the minimum height and width of the peak, the noise threshold, and the mz signals compounds wanted to exclude.
 
 ```{r echo=TRUE}
 
@@ -79,7 +88,9 @@ ex.dec.par <- setDecPar(min.peak.width = 2,
 
 ```
 
-parallel processing
+To run parallel processing, the package "future" must be used.
+
+**NOTE.** Adjusts the number of "workers" with the equipped PC cores.
 
 ```{r echo=TRUE}
 
@@ -88,7 +99,7 @@ plan(future::multisession,
 
 ```
 
-Deconvolution
+We proceed to the deconvolution of compounds using the parameters specified in “dec_par”. The results obtained will be saved in (dec_data).
 
 ```{r echo=TRUE, warning=FALSE}
 
@@ -97,7 +108,9 @@ ex <- deconvolveComp(ex,
 
 ```
 
-Alignment
+## Alignment
+
+Correcting for retention time variation of eluting compounds, facilitating relative quantification and comparison of compounds between samples, is done by grouping compounds within these limits of retention time distance and spectral similarity.
 
 ```{r echo=TRUE}
 
@@ -111,8 +124,11 @@ ex <- alignComp(ex,
 
 ```
 
-Missing compound recovery
+## Missing compound recovery
 
+Missing Compound Recovery is a function that aims to identify and recover information about compounds that may have been missed or undetected in the initial analysis due to various reasons, such as background noise, low signal intensity, or overlapping peaks.
+
+To recover missing compounds, use the function "recMissComp" and save the result in "ex."
 
 ```{r echo=TRUE}
 
@@ -136,7 +152,7 @@ feat_list <- alignList(ex,
 
 # Identification
 
-Metabolite identification was by comparing all the spectra found against a reference database. The eRah default database was used to metabolite identification. Metabolite identification was improve by exporting all the spectra found (.msp) in eRah to NIST MS Search 2.4 software.
+Metabolite identification was by comparing all the spectra found against a reference database. The "*eRah*" R package default database was used for metabolite identification. Metabolite identification was improved by exporting all the spectra found (.msp) in the "*eRah*" R package to the NIST MS Search 2.4 software.
 
 ```{r echo=TRUE, warning=FALSE}
 
@@ -148,7 +164,7 @@ peak_iden <- identifyComp(ex,
 
 ```
 
-Exporting spectra to NIST MS Search software identification with NIST-20 library.
+Exporting spectra to NIST MS Search software for identification with the NIST-20 library.
 
 ```{r echo=TRUE}
 
