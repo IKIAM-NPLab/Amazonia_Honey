@@ -18,9 +18,9 @@ Angiely Camacho, José Abata, Jefferson Pastuna
 
 The present document aims to record the HS-GC-EI (Q)MS spectral
 deconvolution procedure of the volatile profile of honeys of 3 native
-bee species (*Tetragonisca angustula*, *Melipona fasciculata*, *Melipona
-fuscopilosa*) from 3 different localities in the Chontapunta parish,
-Tena, Ecuadorian Amazonia region.
+bee species (*Melipona fasciculata*, *Melipona fuscopilosa*, and
+*Tetragonisca angustula*) from 3 different localities in the Chontapunta
+parish, Tena, Ecuadorian Amazonia region.
 
 The workflow used is taken from the paper [eRah: A Computational Tool
 Integrating Spectral Deconvolution and Alignment with Quantification and
