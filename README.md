@@ -5,19 +5,19 @@ The present document aims to record the procedure given for the statistical anal
 # Analysis Notebooks
 
 - [GC-MS in-house library](https://github.com/IKIAM-NPLab/I_guayusa_volatilome/blob/main/Noteboks/in-house_Library.md)
-- [GC-MS spectral deconvolution](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/HS_GCMS_Spectral_Deconvolution.md)
-- [Statistical analysis](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/HS_GCMS_Multivariate_Statistics.md)
+- [GC-MS spectral deconvolution](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/Notebooks/HS_GCMS_Spectral_Deconvolution.md)
+- [Statistical analysis](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/Notebooks/HS_GCMS_Multivariate_Statistics.md)
 
 # Useful results
 
 ## PCA analysis
 
-- GC-EI-(Q)MS
+PCA analysis of chemical profile only (A and C), and PCA analysis of chemical profile with antimicrobial activity (B and D).
 
 ![PCA analysis](Result/notame_Result/HS_GCMS/Figure1.png)
 
 ## Heatmap with HCA
 
-Heatmap of the annotated features.
+Heatmap of the annotated features, and heatplot of feature abundance correlation with antimicrobial activity (zone inhibition diameter).
 
 ![Heatmap](Result/notame_Result/HS_GCMS/Figure2.png)
