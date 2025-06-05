@@ -14,10 +14,10 @@ The present document aims to record the procedure given for the statistical anal
 
 - GC-EI-(Q)MS
 
-![PCA analysis](Result/notame_Result/HS_GCMS/figure_1.png)
+![PCA analysis](Result/notame_Result/HS_GCMS/Figure1.png)
 
-## Heatmaps with HCA
+## Heatmap with HCA
 
 Heatmap of the annotated features.
 
-![Heatmap](Result/notame_Result/HS_GCMS/figure_3.png)
+![Heatmap](Result/notame_Result/HS_GCMS/Figure2.png)
