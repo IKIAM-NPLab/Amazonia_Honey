@@ -1,0 +1,286 @@
+---
+title: "Chemical characterization of volatile compounds and biological activity of stingless bee honeys from the Ecuadorian Amazon using Headspace Gas Chromatography-Mass Spectrometry - Statistics of antimicrobial activity"
+author: "Jefferson Pastuña"
+date: "2025-06-17"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+usethis::git_vaccinate()
+
+```
+
+# Introduction
+
+Description...
+
+# Before to start
+
+Description...
+
+# Data normality test
+
+First, the antimicrobial data normality was evaluated using the Shapiro-Wilk test.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Loading the "readxl" package
+library(readxl)
+# Loading the antimicrobial activity data
+all_bacteria <- read_excel("Data/Antimicrobial_of_honey.xlsx", sheet = 2)
+# Deleting the group column to perform Shapiro-Wilk test in batch
+no_group <- all_bacteria[,-1]
+# Perform the Shapiro-Wilk test
+shapiro <- do.call(rbind, lapply(no_group,
+                                 function(x) shapiro.test(x)[c("statistic", "p.value")]))
+shapiro
+
+```
+
+# Data homoscedasticity test
+
+Second, the antimicrobial data homoscedasticity was evaluated using the Bartlett test.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+cols_aa <- names(all_bacteria)[2:ncol(all_bacteria)]
+# Perform the Bartlett test test
+bartlett <- lapply(cols_aa,
+                   function(x) bartlett.test(reformulate("Group", x), data = all_bacteria))
+bartlett
+
+```
+
+The result showed that only the microorganism *P. mirabilis* at 75 and 100 % v/v have a normal distribution (Shapiro-Wilk test p-value > 0.05) and equality of variance (Bartlett test p-value > 0.05). Therefore, the parametric statistical test was performed on the *P. mirabilis* data, and nonparametric tests were performed on the rest of the data.
+
+# Parametric statistical test
+
+For statistical analysis of *P. mirabilis* at 75 and 100 % v/v, the analysis of variance ANOVA and Tukey's honest significant difference (HSD) test were used.
+
+## ANOVA test
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# ANOVA test of P. mirabilis at 75 % v/v
+oneway.test(all_bacteria$P_mirabilis_75 ~ all_bacteria$Group,
+            data = all_bacteria, var.equal = TRUE)
+# ANOVA test of P. mirabilis at 100 % v/v
+oneway.test(all_bacteria$P_mirabilis_100 ~ all_bacteria$Group,
+            data = all_bacteria, var.equal = TRUE)
+
+```
+
+The ANOVA test showed that the antimicrobial activity of honey from three different bee species collected from three different colonies was significantly different.
+
+## Tukey test
+
+The Tukey test was performed to inspect which groups have significantly different means.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# "agricolae" package installation and library loadding
+#install.packages("agricolae", repos = "https://cran.r-project.org")
+library(agricolae)
+# Loading the "ggplot2" package
+library(ggplot2)
+# Tukey test of P. mirabilis at 75 % v/v
+modelo_pm75 <- aov(all_bacteria$P_mirabilis_75 ~ all_bacteria$Group,
+                  data = all_bacteria)
+tukey_pm75 <- HSD.test(modelo_pm75, "all_bacteria$Group",
+                       group = TRUE, console = TRUE)
+# Plotting result
+ggplot(tukey_pm75$groups,
+                   aes(rownames(tukey_pm75[["groups"]]),
+                       tukey_pm75$groups$`all_bacteria$P_mirabilis_75`,
+                       color = tukey_pm75[["groups"]][["groups"]],
+                       label = tukey_pm75[["groups"]][["groups"]])) +
+  geom_point() +
+  geom_text(hjust = -0.6, vjust = 0) +
+  geom_errorbar(aes(ymin = tukey_pm75$groups$`all_bacteria$P_mirabilis_75`-tukey_pm75[["means"]][["std"]],
+                    ymax = tukey_pm75$groups$`all_bacteria$P_mirabilis_75`+tukey_pm75[["means"]][["std"]]),
+                width = 0, position = position_dodge(0.05)) +
+  theme_classic() +
+  labs(x = NULL, y = "Mean difference") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none")
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Tukey test of of P. mirabilis at 100 % v/v
+modelo_pm100 <- aov(all_bacteria$P_mirabilis_100 ~ all_bacteria$Group,
+                    data = all_bacteria)
+tukey_pm100 <- HSD.test(modelo_pm100, "all_bacteria$Group",
+                        group = TRUE, console = TRUE)
+# Plotting result
+ggplot(tukey_pm100$groups,
+                   aes(rownames(tukey_pm100[["groups"]]),
+                       tukey_pm100$groups$`all_bacteria$P_mirabilis_100`,
+                       color = tukey_pm100[["groups"]][["groups"]],
+                       label = tukey_pm100[["groups"]][["groups"]])) +
+  geom_point() +
+  geom_text(hjust = -0.6, vjust = 0) +
+  geom_errorbar(aes(ymin = tukey_pm100$groups$`all_bacteria$P_mirabilis_100`-tukey_pm100[["means"]][["std"]],
+                    ymax = tukey_pm100$groups$`all_bacteria$P_mirabilis_100`+tukey_pm100[["means"]][["std"]]),
+                width = 0, position = position_dodge(0.05)) +
+  theme_classic() +
+  labs(x = NULL, y = "Mean difference") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none")
+
+```
+
+# Nonparametric statistical test
+
+## Kruskal-Wallis test
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Kruskal-Wallis test of S. aureus (Honey at 25 % v/v)
+kruskal.test(all_bacteria$S_aureus_25 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of S. aureus (Honey at 50 % v/v)
+kruskal.test(all_bacteria$S_aureus_50 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of K. pneumoniae (Honey at 50 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of P. mirabilis (Honey at 50 % v/v)
+kruskal.test(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of E. coli (Honey at 75 % v/v)
+kruskal.test(all_bacteria$E_coli_75 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of S. aureus (Honey at 75 % v/v)
+kruskal.test(all_bacteria$S_aureus_75 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of K. pneumoniae (Honey at 75 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of E. coli (Honey at 100 % v/v)
+kruskal.test(all_bacteria$E_coli_100 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of S. aureus (Honey at 100 % v/v)
+kruskal.test(all_bacteria$S_aureus_100 ~ all_bacteria$Group, data = all_bacteria)
+# Kruskal-Wallis test of K. pneumoniae (Honey at 100 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_100 ~ all_bacteria$Group, data = all_bacteria)
+
+```
+
+The Kruskal-Wallis test showed that the antimicrobial activity of honey from three different bee species collected from three different colonies was significantly different.
+
+## Dunn test
+
+The Dunn test was performed to inspect which groups have significantly different means.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# dunn.test library loadding
+library(dunn.test)
+# FSA library loadding
+library(FSA)
+# rcompanion library loadding
+library(rcompanion)
+# Dunn test of S. aureus (Honey at 25 % v/v)
+test <- dunn.test(all_bacteria$S_aureus_25, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_sa25 = dunnTest(all_bacteria$S_aureus_25 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_sa25_pt = dunn_sa25$res
+cldList(P.adj ~ Comparison,
+        data = dunn_sa25_pt,
+        threshold = 0.05)
+# Dunn test of S. aureus (Honey at 50 % v/v)
+dunn.test(all_bacteria$S_aureus_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_sa50 = dunnTest(all_bacteria$S_aureus_50 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_sa50_pt = dunn_sa50$res
+cldList(P.adj ~ Comparison,
+        data = dunn_sa50_pt,
+        threshold = 0.05)
+# Dunn test of K. pneumoniae (Honey at 50 % v/v)
+dunn.test(all_bacteria$K_pneumonia_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_kp50 = dunnTest(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_kp50_pt = dunn_kp50$res
+cldList(P.adj ~ Comparison,
+        data = dunn_kp50_pt,
+        threshold = 0.05)
+# Dunn test of P. mirabilis (Honey at 50 % v/v)
+dunn.test(all_bacteria$P_mirabilis_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_pm50 = dunnTest(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_pm50_pt = dunn_pm50$res
+cldList(P.adj ~ Comparison,
+        data = dunn_pm50_pt,
+        threshold = 0.05)
+# Dunn test of E. coli (Honey at 75 % v/v)
+dunn.test(all_bacteria$E_coli_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_ec75 = dunnTest(all_bacteria$E_coli_75 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_ec75_pt = dunn_ec75$res
+cldList(P.adj ~ Comparison,
+        data = dunn_ec75_pt,
+        threshold = 0.05)
+# Dunn test of S. aureus (Honey at 75 % v/v)
+dunn.test(all_bacteria$S_aureus_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_sa75 = dunnTest(all_bacteria$S_aureus_75 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_sa75_pt = dunn_sa75$res
+cldList(P.adj ~ Comparison,
+        data = dunn_sa75_pt,
+        threshold = 0.05)
+# Dunn test of K. pneumoniae (Honey at 75 % v/v)
+dunn.test(all_bacteria$K_pneumonia_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_kp75 = dunnTest(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_kp75_pt = dunn_kp75$res
+cldList(P.adj ~ Comparison,
+        data = dunn_kp75_pt,
+        threshold = 0.05)
+# Dunn test of E. coli (Honey at 100 % v/v)
+dunn.test(all_bacteria$E_coli_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_ec100 = dunnTest(all_bacteria$E_coli_100 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_ec100_pt = dunn_ec100$res
+cldList(P.adj ~ Comparison,
+        data = dunn_ec100_pt,
+        threshold = 0.05)
+# Dunn test of S. aureus (Honey at 100 % v/v)
+dunn.test(all_bacteria$S_aureus_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_sa100 = dunnTest(all_bacteria$S_aureus_100 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_sa100_pt = dunn_sa100$res
+cldList(P.adj ~ Comparison,
+        data = dunn_sa100_pt,
+        threshold = 0.05)
+# Dunn test of K. pneumoniae (Honey at 100 % v/v)
+dunn.test(all_bacteria$K_pneumonia_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+# Compact letter display
+dunn_kp100 = dunnTest(all_bacteria$K_pneumonia_100 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_kp100_pt = dunn_kp100$res
+cldList(P.adj ~ Comparison,
+        data = dunn_kp100_pt,
+        threshold = 0.05)
+
+```
+
