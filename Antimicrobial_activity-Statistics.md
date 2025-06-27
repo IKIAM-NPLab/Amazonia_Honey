@@ -357,20 +357,21 @@ tukey_pm100 <- HSD.test(modelo_pm100, "all_bacteria$Group",
 
 ``` r
 # Plotting result
-ggplot(tukey_pm100$groups,
-                   aes(rownames(tukey_pm100[["groups"]]),
-                       tukey_pm100$groups$`all_bacteria$P_mirabilis_100`,
-                       color = tukey_pm100[["groups"]][["groups"]],
-                       label = tukey_pm100[["groups"]][["groups"]])) +
-  geom_point() +
-  geom_text(hjust = -0.6, vjust = 0) +
-  geom_errorbar(aes(ymin = tukey_pm100$groups$`all_bacteria$P_mirabilis_100`-tukey_pm100[["means"]][["std"]],
-                    ymax = tukey_pm100$groups$`all_bacteria$P_mirabilis_100`+tukey_pm100[["means"]][["std"]]),
-                width = 0, position = position_dodge(0.05)) +
+ggplot(all_bacteria,
+                   aes(all_bacteria$Group,
+                       all_bacteria$P_mirabilis_100,
+                       color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#A73030", "#8F7700", "#4A6990",
+                              "#A73030", "#7AA6DC", "#CD534C", "#7AA6DC",
+                              "#4A6990", "#4A6990")) +
+  geom_boxplot() + ylim(10, 18) +
+  stat_summary(geom = 'text',
+               label = c("B","BC","A","B","D","CD","D","A","A"),
+               fun.y = max, vjust = -0.5) +
   theme_classic() +
-  labs(x = NULL, y = "Mean difference") +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 45, hjust = 1)) +
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
   theme(legend.position="none")
 ```
 
@@ -1130,6 +1131,28 @@ cldList(P.adj ~ Comparison,
     ## 9   T.angustulaRYTA6(1)    abc        abc
 
 ``` r
+# Plotting result
+ggplot(all_bacteria,
+                   aes(all_bacteria$Group,
+                       all_bacteria$E_coli_100,
+                       color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#8F7700", "#8F7700", "#4A6990",
+                              "#8F7700", "#A73030", "#CD534C", "#8F7700",
+                              "#7AA6DC", "#8F7700")) +
+  geom_boxplot() +
+  stat_summary(geom = 'text',
+               label = c("abc","abc","a","abc","b","bc","abc","ac","abc"),
+               fun.y = max, vjust = -0.5) +
+  theme_classic() +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(legend.position="none")
+```
+
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
 # Dunn test of S. aureus (Honey at 100 % v/v)
 dunn.test(all_bacteria$S_aureus_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
 ```
@@ -1208,6 +1231,28 @@ cldList(P.adj ~ Comparison,
     ## 9   T.angustulaRYTA6(1)     ab        ab
 
 ``` r
+# Plotting result
+ggplot(all_bacteria,
+                   aes(all_bacteria$Group,
+                       all_bacteria$S_aureus_100,
+                       color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#A73030", "#8F7700", "#4A6990",
+                              "#8F7700", "#7AA6DC", "#CD534C", "#8F7700",
+                              "#8F7700", "#A73030")) +
+  geom_boxplot() +
+  stat_summary(geom = 'text',
+               label = c("ab","abc","a","abc","c","bc","abc","abc","ab"),
+               fun.y = max, vjust = -0.5) +
+  theme_classic() +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(legend.position="none")
+```
+
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+``` r
 # Dunn test of K. pneumoniae (Honey at 100 % v/v)
 dunn.test(all_bacteria$K_pneumonia_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
 ```
@@ -1284,3 +1329,25 @@ cldList(P.adj ~ Comparison,
     ## 7    T.angustulaATA1(3)      b          b
     ## 8     T.angustulaER1(2)     ab         ab
     ## 9   T.angustulaRYTA6(1)     ab         ab
+
+``` r
+# Plotting result
+ggplot(all_bacteria,
+                   aes(all_bacteria$Group,
+                       all_bacteria$K_pneumonia_100,
+                       color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#4A6990", "#CD534C", "#CD534C",
+                              "#CD534C", "#CD534C", "#CD534C", "#A73030",
+                              "#CD534C", "#CD534C")) +
+  geom_boxplot() + ylim(8, 16.2) +
+  stat_summary(geom = 'text',
+               label = c("a","ab","ab","ab","ab","ab","b","ab","ab"),
+               fun.y = max, vjust = -0.5) +
+  theme_classic() +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(legend.position="none")
+```
+
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
