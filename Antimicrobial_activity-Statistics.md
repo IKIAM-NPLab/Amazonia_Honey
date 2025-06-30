@@ -39,10 +39,11 @@ Jefferson Pastuña
 # Introduction
 
 This R Script aims to record the procedure for analyzing the
-antimicrobial activity of honeys from three different species (*Melipona
-fasciculata*, *Melipona fuscopilosa*, and *Tetragonisca angustula*)
-against the following microbial strains: *Candida albicans* ATCC 10231,
-*Escherichia coli* ATCC 25922, *Staphylococcus aureus* ATCC 29213, and
+antimicrobial activity of honeys (at different concentrations, 25, 50,
+75, and 100 % v/v) from three different species (*Melipona fasciculata*,
+*Melipona fuscopilosa*, and *Tetragonisca angustula*) against the
+following microbial strains: *Candida albicans* ATCC 10231, *Escherichia
+coli* ATCC 25922, *Staphylococcus aureus* ATCC 29213, and
 antibiotic-resistant *Klebsiella pneumoniae*, and *Proteus mirabilis*.
 The result of *C. albicans* was not used for statistical analysis
 because the antimicrobial activity was observed in only a few honey
@@ -406,7 +407,7 @@ tk_pm100 <- ggplot(all_bacteria,
   theme_classic() +
   labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 50, hjust = 1)) +
+        axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme(legend.position="none")
 tk_pm100
 ```
@@ -622,7 +623,7 @@ dn_ec100 <- ggplot(all_bacteria,
   theme_classic() +
   labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 50, hjust = 1)) +
+        axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme(legend.position="none")
 dn_ec100
 ```
@@ -1014,7 +1015,7 @@ dn_sa100 <- ggplot(all_bacteria,
   theme_classic() +
   labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 50, hjust = 1)) +
+        axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme(legend.position="none")
 dn_sa100
 ```
@@ -1317,7 +1318,7 @@ dn_kp100 <- ggplot(all_bacteria,
   theme_classic() +
   labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 50, hjust = 1)) +
+        axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme(legend.position="none")
 dn_kp100
 ```

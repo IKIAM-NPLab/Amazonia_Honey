@@ -5,6 +5,7 @@
 
 ### Library loading
 library(gridExtra)
+library(cowplot)
 ### Figure matrix
 figure_1 <- arrangeGrob(pca_plot,
                         corr_pca_plot,
@@ -100,4 +101,35 @@ ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.png", plot = figure2,
 ### Exporting (*.jpg) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.jpg", plot = figure2,
        width = 160, height = 120, units = "mm", dpi = 300, scale = 2.5)
+
+## Antimicrobial activity
+
+# Avoid x labels
+dn_ec100_nxl <- dn_ec100 + theme(axis.text.x = element_blank())
+dn_sa100_nxl <- dn_sa100 + theme(axis.text.x = element_blank())
+
+### Figure matrix
+figure_a3 <- arrangeGrob(dn_ec100_nxl,
+                         dn_sa100_nxl,
+                         dn_kp100,
+                         tk_pm100,
+                         layout_matrix = rbind(c(1, 2),
+                                               c(3, 4)),
+                         heights=c(2.9, 4))
+### Adding label to the figures
+figure_athree <- ggpubr::as_ggplot(figure_a3) +
+  draw_plot_label(label = LETTERS[1:4],
+                  x = c(0, 0.5, 0, 0.5),
+                  y = c(.99, .99, .57, .57))
+### Exporting (*.pdf) file
+ggsave(filename = "Result/Antimicrobial/Figure_A3.pdf", plot = figure_athree,
+       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+### Exporting (*.png) file
+ggsave(filename = "Result/Antimicrobial/Figure_A3.png", plot = figure_athree,
+       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+### Exporting (*.jpg) file
+ggsave(filename = "Result/Antimicrobial/Figure_A3.jpg", plot = figure_athree,
+       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+
+
 
