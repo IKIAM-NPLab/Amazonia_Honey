@@ -6,38 +6,74 @@ Jefferson Pastuña
 2025-06-17
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
-- <a href="#before-to-start" id="toc-before-to-start">Before to start</a>
 - <a href="#data-normality-test" id="toc-data-normality-test">Data
   normality test</a>
 - <a href="#data-homoscedasticity-test"
   id="toc-data-homoscedasticity-test">Data homoscedasticity test</a>
 - <a href="#parametric-statistical-test"
   id="toc-parametric-statistical-test">Parametric statistical test</a>
-  - <a href="#anova-test" id="toc-anova-test">ANOVA test</a>
-  - <a href="#tukey-test" id="toc-tukey-test">Tukey test</a>
+  - <a href="#p-mirabilis" id="toc-p-mirabilis"><em>P. mirabilis</em></a>
+    - <a href="#anova-test" id="toc-anova-test">ANOVA test</a>
+    - <a href="#tukey-test" id="toc-tukey-test">Tukey test</a>
 - <a href="#nonparametric-statistical-test"
   id="toc-nonparametric-statistical-test">Nonparametric statistical
   test</a>
-  - <a href="#kruskal-wallis-test"
-    id="toc-kruskal-wallis-test">Kruskal-Wallis test</a>
-  - <a href="#dunn-test" id="toc-dunn-test">Dunn test</a>
+  - <a href="#e-coli" id="toc-e-coli"><em>E. coli</em></a>
+    - <a href="#kruskal-wallis-test"
+      id="toc-kruskal-wallis-test">Kruskal-Wallis test</a>
+    - <a href="#dunn-test" id="toc-dunn-test">Dunn test</a>
+  - <a href="#s-aureus" id="toc-s-aureus"><em>S. aureus</em></a>
+    - <a href="#kruskal-wallis-test-1"
+      id="toc-kruskal-wallis-test-1">Kruskal-Wallis test</a>
+    - <a href="#dunn-test-1" id="toc-dunn-test-1">Dunn test</a>
+  - <a href="#k-pneumoniae" id="toc-k-pneumoniae"><em>K. pneumoniae</em></a>
+    - <a href="#kruskal-wallis-test-2"
+      id="toc-kruskal-wallis-test-2">Kruskal-Wallis test</a>
+    - <a href="#dunn-test-2" id="toc-dunn-test-2">Dunn test</a>
+  - <a href="#p-mirabilis-1" id="toc-p-mirabilis-1"><em>P.
+    mirabilis</em></a>
+    - <a href="#kruskal-wallis-test-3"
+      id="toc-kruskal-wallis-test-3">Kruskal-Wallis test</a>
+    - <a href="#dunn-test-3" id="toc-dunn-test-3">Dunn test</a>
 
 # Introduction
 
-Description…
-
-# Before to start
-
-Description…
+This R Script aims to record the procedure for analyzing the
+antimicrobial activity of honeys from three different species (*Melipona
+fasciculata*, *Melipona fuscopilosa*, and *Tetragonisca angustula*)
+against the following microbial strains: *Candida albicans* ATCC 10231,
+*Escherichia coli* ATCC 25922, *Staphylococcus aureus* ATCC 29213, and
+antibiotic-resistant *Klebsiella pneumoniae*, and *Proteus mirabilis*.
+The result of *C. albicans* was not used for statistical analysis
+because the antimicrobial activity was observed in only a few honey
+samples. The agar well diffusion method was used to measure the
+antimicrobial activity, and the diameter of the inhibition zone was used
+for statistical analysis.
 
 # Data normality test
+
+All necessary libraries were loaded.
+
+``` r
+# Loading the "readxl" package
+library(readxl)
+# "agricolae" package installation and library loadding
+#install.packages("agricolae", repos = "https://cran.r-project.org")
+library(agricolae)
+# Loading the "ggplot2" package
+library(ggplot2)
+# dunn.test library loadding
+library(dunn.test)
+# FSA library loadding
+library(FSA)
+# rcompanion library loadding
+library(rcompanion)
+```
 
 First, the antimicrobial data normality was evaluated using the
 Shapiro-Wilk test.
 
 ``` r
-# Loading the "readxl" package
-library(readxl)
 # Loading the antimicrobial activity data
 all_bacteria <- read_excel("Data/Antimicrobial_of_honey.xlsx", sheet = 2)
 # Deleting the group column to perform Shapiro-Wilk test in batch
@@ -182,7 +218,9 @@ For statistical analysis of *P. mirabilis* at 75 and 100 % v/v, the
 analysis of variance ANOVA and Tukey’s honest significant difference
 (HSD) test were used.
 
-## ANOVA test
+## *P. mirabilis*
+
+### ANOVA test
 
 ``` r
 # ANOVA test of P. mirabilis at 75 % v/v
@@ -212,17 +250,12 @@ The ANOVA test showed that the antimicrobial activity of honey from
 three different bee species collected from three different colonies was
 significantly different.
 
-## Tukey test
+### Tukey test
 
 The Tukey test was performed to inspect which groups have significantly
 different means.
 
 ``` r
-# "agricolae" package installation and library loadding
-#install.packages("agricolae", repos = "https://cran.r-project.org")
-library(agricolae)
-# Loading the "ggplot2" package
-library(ggplot2)
 # Tukey test of P. mirabilis at 75 % v/v
 modelo_pm75 <- aov(all_bacteria$P_mirabilis_75 ~ all_bacteria$Group,
                   data = all_bacteria)
@@ -280,24 +313,26 @@ tukey_pm75 <- HSD.test(modelo_pm75, "all_bacteria$Group",
 
 ``` r
 # Plotting result
-ggplot(tukey_pm75$groups,
-                   aes(rownames(tukey_pm75[["groups"]]),
-                       tukey_pm75$groups$`all_bacteria$P_mirabilis_75`,
-                       color = tukey_pm75[["groups"]][["groups"]],
-                       label = tukey_pm75[["groups"]][["groups"]])) +
-  geom_point() +
-  geom_text(hjust = -0.6, vjust = 0) +
-  geom_errorbar(aes(ymin = tukey_pm75$groups$`all_bacteria$P_mirabilis_75`-tukey_pm75[["means"]][["std"]],
-                    ymax = tukey_pm75$groups$`all_bacteria$P_mirabilis_75`+tukey_pm75[["means"]][["std"]]),
-                width = 0, position = position_dodge(0.05)) +
+tk_pm75 <- ggplot(all_bacteria,
+                  aes(all_bacteria$Group,
+                      all_bacteria$P_mirabilis_75,
+                      color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#A73030", "#8F7700", "#4A6990",
+                              "#CD534C", "#EFC000", "#EFC000",
+                              "#7AA6DC", "#A73030", "#8F7700")) +
+  geom_boxplot() +
+  stat_summary(geom = 'text',
+               label = c("C","EF","A","CD","F","F","DE","B","BC"),
+               fun.y = max, vjust = -0.5) +
   theme_classic() +
-  labs(x = NULL, y = "Mean difference") +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
   theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 45, hjust = 1)) +
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
   theme(legend.position="none")
+tk_pm75
 ```
 
-![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 # Tukey test of of P. mirabilis at 100 % v/v
@@ -357,7 +392,7 @@ tukey_pm100 <- HSD.test(modelo_pm100, "all_bacteria$Group",
 
 ``` r
 # Plotting result
-ggplot(all_bacteria,
+tk_pm100 <- ggplot(all_bacteria,
                    aes(all_bacteria$Group,
                        all_bacteria$P_mirabilis_100,
                        color = all_bacteria$Group)) +
@@ -373,13 +408,230 @@ ggplot(all_bacteria,
   theme(plot.title = element_text(face = "italic"),
         axis.text.x = element_text(angle = 50, hjust = 1)) +
   theme(legend.position="none")
+tk_pm100
 ```
 
-![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Nonparametric statistical test
 
-## Kruskal-Wallis test
+## *E. coli*
+
+### Kruskal-Wallis test
+
+``` r
+# Kruskal-Wallis test of E. coli (Honey at 75 % v/v)
+kruskal.test(all_bacteria$E_coli_75 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$E_coli_75 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 24.427, df = 8, p-value = 0.001943
+
+``` r
+# Kruskal-Wallis test of E. coli (Honey at 100 % v/v)
+kruskal.test(all_bacteria$E_coli_100 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$E_coli_100 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 22.45, df = 8, p-value = 0.004147
+
+The Kruskal-Wallis test showed that the *E. coli* antimicrobial activity
+of honey from three different bee species collected from three different
+colonies was significantly different.
+
+### Dunn test
+
+The Dunn test was performed to inspect which groups have significantly
+different means.
+
+``` r
+# Dunn test of E. coli (Honey at 75 % v/v)
+dunn.test(all_bacteria$E_coli_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+```
+
+    ##   Kruskal-Wallis rank sum test
+    ## 
+    ## data: x and group
+    ## Kruskal-Wallis chi-squared = 24.4267, df = 8, p-value = 0
+    ## 
+    ## 
+    ##                            Comparison of x by group                            
+    ##                              (Benjamini-Hochberg)                              
+    ## 
+    ## List of pairwise comparisons: Z statistic (adjusted p-value)
+    ## -----------------------------------------------------------------------------
+    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  0.025776 (0.4897)
+    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -2.010551 (0.0799)
+    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.036328 (0.0834)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.773289 (0.2727)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -0.799065 (0.2828)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.237262 (0.2046)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  1.546578 (0.1291)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  1.520801 (0.1283)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.557130 (0.0067)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.319867 (0.0458)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  1.185710 (0.2021)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  1.159933 (0.2013)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  3.196261 (0.0125)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.958999 (0.0752)
+    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.360868 (0.3917)
+    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.979499 (0.2562)
+    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.953723 (0.2552)
+    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.990051 (0.0126)*
+    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.752788 (0.1024)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.567078 (0.3314)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.206210 (0.4429)
+    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -1.546578 (0.1372)
+    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.572354 (0.1390)
+    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.463973 (0.3615)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.773289 (0.2824)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -3.093156 (0.0119)*
+    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.732288 (0.0226)*
+    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -2.526077 (0.0346)
+    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -0.799065 (0.2937)
+    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -0.824841 (0.2948)
+    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   :  1.211486 (0.2031)
+    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.025776 (0.5037)
+    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.345643 (0.0488)
+    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.984775 (0.0772)
+    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.778565 (0.1043)
+    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.747512 (0.2729)
+    ## 
+    ## alpha = 0.05
+    ## Reject Ho if p <= alpha/2
+
+``` r
+# Compact letter display
+dunn_ec75 = dunnTest(all_bacteria$E_coli_75 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_ec75_pt = dunn_ec75$res
+cldList(P.adj ~ Comparison,
+        data = dunn_ec75_pt,
+        threshold = 0.05)
+```
+
+    ##                   Group Letter MonoLetter
+    ## 1  M.fasciculataRGB4(6)    abc        abc
+    ## 2  M.fasciculataRIG5(5)    abc        abc
+    ## 3 M.fasciculataRYMG1(4)      a        a  
+    ## 4 M.fuscopilosaFIED1(7)    abc        abc
+    ## 5  M.fuscopilosaRGY1(8)      b         b 
+    ## 6  M.fuscopilosaRIG3(9)      b         b 
+    ## 7    T.angustulaATA1(3)     bc         bc
+    ## 8     T.angustulaER1(2)     ac        a c
+    ## 9   T.angustulaRYTA6(1)    abc        abc
+
+``` r
+# Dunn test of E. coli (Honey at 100 % v/v)
+dunn.test(all_bacteria$E_coli_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+```
+
+    ##   Kruskal-Wallis rank sum test
+    ## 
+    ## data: x and group
+    ## Kruskal-Wallis chi-squared = 22.4498, df = 8, p-value = 0
+    ## 
+    ## 
+    ##                            Comparison of x by group                            
+    ##                              (Benjamini-Hochberg)                              
+    ## 
+    ## List of pairwise comparisons: Z statistic (adjusted p-value)
+    ## -----------------------------------------------------------------------------
+    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  0.543305 (0.3522)
+    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -2.043863 (0.0737)
+    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.587168 (0.0348)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.620920 (0.3319)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.164225 (0.2199)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.422942 (0.1639)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  1.397070 (0.1624)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.853765 (0.2831)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.440933 (0.0104)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.017991 (0.0713)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  0.983123 (0.2664)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.439818 (0.3713)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  3.026987 (0.0222)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.604044 (0.1505)
+    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.413946 (0.3703)
+    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.620920 (0.3437)
+    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.077615 (0.4691)
+    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.664783 (0.0347)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.241840 (0.2030)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.776150 (0.3030)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.362203 (0.3797)
+    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -1.578172 (0.1472)
+    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -2.121478 (0.0678)
+    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.465690 (0.3724)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.957252 (0.2649)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -2.975243 (0.0176)*
+    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.561296 (0.0313)
+    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -2.199093 (0.0627)
+    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -0.931380 (0.2637)
+    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -1.474685 (0.1578)
+    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   :  1.112482 (0.2279)
+    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.310460 (0.3889)
+    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.328451 (0.0511)
+    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.914504 (0.0833)
+    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.552301 (0.1447)
+    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.646792 (0.3452)
+    ## 
+    ## alpha = 0.05
+    ## Reject Ho if p <= alpha/2
+
+``` r
+# Compact letter display
+dunn_ec100 = dunnTest(all_bacteria$E_coli_100 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_ec100_pt = dunn_ec100$res
+cldList(P.adj ~ Comparison,
+        data = dunn_ec100_pt,
+        threshold = 0.05)
+```
+
+    ##                   Group Letter MonoLetter
+    ## 1  M.fasciculataRGB4(6)    abc        abc
+    ## 2  M.fasciculataRIG5(5)    abc        abc
+    ## 3 M.fasciculataRYMG1(4)      a        a  
+    ## 4 M.fuscopilosaFIED1(7)    abc        abc
+    ## 5  M.fuscopilosaRGY1(8)      b         b 
+    ## 6  M.fuscopilosaRIG3(9)     bc         bc
+    ## 7    T.angustulaATA1(3)    abc        abc
+    ## 8     T.angustulaER1(2)     ac        a c
+    ## 9   T.angustulaRYTA6(1)    abc        abc
+
+``` r
+# Plotting result
+dn_ec100 <- ggplot(all_bacteria,
+                   aes(all_bacteria$Group,
+                       all_bacteria$E_coli_100,
+                       color = all_bacteria$Group)) +
+  scale_color_manual(values=c("#8F7700", "#8F7700", "#4A6990",
+                              "#8F7700", "#A73030", "#CD534C", "#8F7700",
+                              "#7AA6DC", "#8F7700")) +
+  geom_boxplot() +
+  stat_summary(geom = 'text',
+               label = c("abc","abc","a","abc","b","bc","abc","ac","abc"),
+               fun.y = max, vjust = -0.5) +
+  theme_classic() +
+  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
+  theme(plot.title = element_text(face = "italic"),
+        axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(legend.position="none")
+dn_ec100
+```
+
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+## *S. aureus*
+
+### Kruskal-Wallis test
 
 ``` r
 # Kruskal-Wallis test of S. aureus (Honey at 25 % v/v)
@@ -404,39 +656,6 @@ kruskal.test(all_bacteria$S_aureus_50 ~ all_bacteria$Group, data = all_bacteria)
     ## Kruskal-Wallis chi-squared = 24.922, df = 8, p-value = 0.001603
 
 ``` r
-# Kruskal-Wallis test of K. pneumoniae (Honey at 50 % v/v)
-kruskal.test(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group, data = all_bacteria)
-```
-
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$K_pneumonia_50 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 24.798, df = 8, p-value = 0.001682
-
-``` r
-# Kruskal-Wallis test of P. mirabilis (Honey at 50 % v/v)
-kruskal.test(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group, data = all_bacteria)
-```
-
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$P_mirabilis_50 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 24.718, df = 8, p-value = 0.001735
-
-``` r
-# Kruskal-Wallis test of E. coli (Honey at 75 % v/v)
-kruskal.test(all_bacteria$E_coli_75 ~ all_bacteria$Group, data = all_bacteria)
-```
-
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$E_coli_75 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 24.427, df = 8, p-value = 0.001943
-
-``` r
 # Kruskal-Wallis test of S. aureus (Honey at 75 % v/v)
 kruskal.test(all_bacteria$S_aureus_75 ~ all_bacteria$Group, data = all_bacteria)
 ```
@@ -446,28 +665,6 @@ kruskal.test(all_bacteria$S_aureus_75 ~ all_bacteria$Group, data = all_bacteria)
     ## 
     ## data:  all_bacteria$S_aureus_75 by all_bacteria$Group
     ## Kruskal-Wallis chi-squared = 25.139, df = 8, p-value = 0.001472
-
-``` r
-# Kruskal-Wallis test of K. pneumoniae (Honey at 75 % v/v)
-kruskal.test(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group, data = all_bacteria)
-```
-
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$K_pneumonia_75 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 24.331, df = 8, p-value = 0.002016
-
-``` r
-# Kruskal-Wallis test of E. coli (Honey at 100 % v/v)
-kruskal.test(all_bacteria$E_coli_100 ~ all_bacteria$Group, data = all_bacteria)
-```
-
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$E_coli_100 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 22.45, df = 8, p-value = 0.004147
 
 ``` r
 # Kruskal-Wallis test of S. aureus (Honey at 100 % v/v)
@@ -480,35 +677,18 @@ kruskal.test(all_bacteria$S_aureus_100 ~ all_bacteria$Group, data = all_bacteria
     ## data:  all_bacteria$S_aureus_100 by all_bacteria$Group
     ## Kruskal-Wallis chi-squared = 25.058, df = 8, p-value = 0.00152
 
-``` r
-# Kruskal-Wallis test of K. pneumoniae (Honey at 100 % v/v)
-kruskal.test(all_bacteria$K_pneumonia_100 ~ all_bacteria$Group, data = all_bacteria)
-```
+The Kruskal-Wallis test showed that the *S. aureus* antimicrobial
+activity of honey from three different bee species collected from three
+different colonies was significantly different.
 
-    ## 
-    ##  Kruskal-Wallis rank sum test
-    ## 
-    ## data:  all_bacteria$K_pneumonia_100 by all_bacteria$Group
-    ## Kruskal-Wallis chi-squared = 22.095, df = 8, p-value = 0.004743
-
-The Kruskal-Wallis test showed that the antimicrobial activity of honey
-from three different bee species collected from three different colonies
-was significantly different.
-
-## Dunn test
+### Dunn test
 
 The Dunn test was performed to inspect which groups have significantly
 different means.
 
 ``` r
-# dunn.test library loadding
-library(dunn.test)
-# FSA library loadding
-library(FSA)
-# rcompanion library loadding
-library(rcompanion)
 # Dunn test of S. aureus (Honey at 25 % v/v)
-test <- dunn.test(all_bacteria$S_aureus_25, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+dunn.test(all_bacteria$S_aureus_25, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
 ```
 
     ##   Kruskal-Wallis rank sum test
@@ -663,240 +843,6 @@ cldList(P.adj ~ Comparison,
     ## 9   T.angustulaRYTA6(1)    abc        abc
 
 ``` r
-# Dunn test of K. pneumoniae (Honey at 50 % v/v)
-dunn.test(all_bacteria$K_pneumonia_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
-```
-
-    ##   Kruskal-Wallis rank sum test
-    ## 
-    ## data: x and group
-    ## Kruskal-Wallis chi-squared = 24.7979, df = 8, p-value = 0
-    ## 
-    ## 
-    ##                            Comparison of x by group                            
-    ##                              (Benjamini-Hochberg)                              
-    ## 
-    ## List of pairwise comparisons: Z statistic (adjusted p-value)
-    ## -----------------------------------------------------------------------------
-    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  3.399866 (0.0061)*
-    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  :  1.674176 (0.1059)
-    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -1.725689 (0.1013)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  :  0.927236 (0.2547)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -2.472630 (0.0345)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) : -0.746940 (0.3034)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.936248 (0.0199)*
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   : -0.463618 (0.3507)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  1.262071 (0.1862)
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.009012 (0.0802)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  3.399866 (0.0121)*
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.000000 (0.5000)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  1.725689 (0.1085)
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  2.472630 (0.0402)
-    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   :  0.463618 (0.3616)
-    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  2.318090 (0.0409)
-    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     : -1.081775 (0.2186)
-    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  0.643914 (0.3340)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.390854 (0.1556)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.618157 (0.3330)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -1.081775 (0.2286)
-    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      :  1.519637 (0.1362)
-    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.880229 (0.0901)
-    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     : -0.154539 (0.4511)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     :  0.592401 (0.3321)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -1.416611 (0.1566)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -1.880229 (0.0983)
-    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -0.798453 (0.2940)
-    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    :  0.515131 (0.3521)
-    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.884735 (0.0141)*
-    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -1.159045 (0.2112)
-    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.412105 (0.3601)
-    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.421117 (0.0348)
-    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -2.884735 (0.0176)*
-    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.802959 (0.0989)
-    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       : -1.004506 (0.2364)
-    ## 
-    ## alpha = 0.05
-    ## Reject Ho if p <= alpha/2
-
-``` r
-# Compact letter display
-dunn_kp50 = dunnTest(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group,
-                     data = all_bacteria,
-                     method = "bh")
-dunn_kp50_pt = dunn_kp50$res
-cldList(P.adj ~ Comparison,
-        data = dunn_kp50_pt,
-        threshold = 0.05)
-```
-
-    ##                   Group Letter MonoLetter
-    ## 1  M.fasciculataRGB4(6)      a        a  
-    ## 2  M.fasciculataRIG5(5)      b         b 
-    ## 3 M.fasciculataRYMG1(4)    abc        abc
-    ## 4 M.fuscopilosaFIED1(7)    abc        abc
-    ## 5  M.fuscopilosaRGY1(8)     bc         bc
-    ## 6  M.fuscopilosaRIG3(9)      b         b 
-    ## 7    T.angustulaATA1(3)    abc        abc
-    ## 8     T.angustulaER1(2)    abc        abc
-    ## 9   T.angustulaRYTA6(1)     ac        a c
-
-``` r
-# Dunn test of P. mirabilis (Honey at 50 % v/v)
-dunn.test(all_bacteria$P_mirabilis_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
-```
-
-    ##   Kruskal-Wallis rank sum test
-    ## 
-    ## data: x and group
-    ## Kruskal-Wallis chi-squared = 24.7183, df = 8, p-value = 0
-    ## 
-    ## 
-    ##                            Comparison of x by group                            
-    ##                              (Benjamini-Hochberg)                              
-    ## 
-    ## List of pairwise comparisons: Z statistic (adjusted p-value)
-    ## -----------------------------------------------------------------------------
-    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  1.416611 (0.1658)
-    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -1.313584 (0.1620)
-    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.730195 (0.0190)*
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.025756 (0.4897)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.442367 (0.1678)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.287828 (0.1618)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.086281 (0.0665)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.669670 (0.3018)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.399866 (0.0061)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.112038 (0.0694)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  1.519637 (0.1543)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.103026 (0.4860)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  2.833222 (0.0207)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.545393 (0.1572)
-    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.566644 (0.3315)
-    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.746940 (0.2926)
-    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     : -0.669670 (0.3122)
-    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.060525 (0.0644)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  0.772696 (0.2931)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -1.339341 (0.1624)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.772696 (0.3044)
-    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -0.515131 (0.3411)
-    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.931742 (0.0739)
-    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.798453 (0.3057)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.489374 (0.3407)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -2.601413 (0.0239)*
-    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.034768 (0.0628)
-    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -1.262071 (0.1619)
-    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -1.365097 (0.1722)
-    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.781709 (0.0195)*
-    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -0.051513 (0.4932)
-    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -1.339341 (0.1710)
-    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -3.451379 (0.0100)*
-    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -2.884735 (0.0235)*
-    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -2.112038 (0.0780)
-    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       : -0.849966 (0.2965)
-    ## 
-    ## alpha = 0.05
-    ## Reject Ho if p <= alpha/2
-
-``` r
-# Compact letter display
-dunn_pm50 = dunnTest(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group,
-                     data = all_bacteria,
-                     method = "bh")
-dunn_pm50_pt = dunn_pm50$res
-cldList(P.adj ~ Comparison,
-        data = dunn_pm50_pt,
-        threshold = 0.05)
-```
-
-    ##                   Group Letter MonoLetter
-    ## 1  M.fasciculataRGB4(6)    abc        abc
-    ## 2  M.fasciculataRIG5(5)     ab        ab 
-    ## 3 M.fasciculataRYMG1(4)      c          c
-    ## 4 M.fuscopilosaFIED1(7)    abc        abc
-    ## 5  M.fuscopilosaRGY1(8)      a        a  
-    ## 6  M.fuscopilosaRIG3(9)     ab        ab 
-    ## 7    T.angustulaATA1(3)    abc        abc
-    ## 8     T.angustulaER1(2)     bc         bc
-    ## 9   T.angustulaRYTA6(1)      c          c
-
-``` r
-# Dunn test of E. coli (Honey at 75 % v/v)
-dunn.test(all_bacteria$E_coli_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
-```
-
-    ##   Kruskal-Wallis rank sum test
-    ## 
-    ## data: x and group
-    ## Kruskal-Wallis chi-squared = 24.4267, df = 8, p-value = 0
-    ## 
-    ## 
-    ##                            Comparison of x by group                            
-    ##                              (Benjamini-Hochberg)                              
-    ## 
-    ## List of pairwise comparisons: Z statistic (adjusted p-value)
-    ## -----------------------------------------------------------------------------
-    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  0.025776 (0.4897)
-    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -2.010551 (0.0799)
-    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.036328 (0.0834)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.773289 (0.2727)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -0.799065 (0.2828)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.237262 (0.2046)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  1.546578 (0.1291)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  1.520801 (0.1283)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.557130 (0.0067)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.319867 (0.0458)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  1.185710 (0.2021)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  1.159933 (0.2013)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  3.196261 (0.0125)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.958999 (0.0752)
-    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.360868 (0.3917)
-    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.979499 (0.2562)
-    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.953723 (0.2552)
-    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.990051 (0.0126)*
-    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.752788 (0.1024)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.567078 (0.3314)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.206210 (0.4429)
-    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -1.546578 (0.1372)
-    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.572354 (0.1390)
-    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.463973 (0.3615)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.773289 (0.2824)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -3.093156 (0.0119)*
-    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.732288 (0.0226)*
-    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -2.526077 (0.0346)
-    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -0.799065 (0.2937)
-    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -0.824841 (0.2948)
-    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   :  1.211486 (0.2031)
-    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.025776 (0.5037)
-    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.345643 (0.0488)
-    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.984775 (0.0772)
-    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.778565 (0.1043)
-    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.747512 (0.2729)
-    ## 
-    ## alpha = 0.05
-    ## Reject Ho if p <= alpha/2
-
-``` r
-# Compact letter display
-dunn_ec75 = dunnTest(all_bacteria$E_coli_75 ~ all_bacteria$Group,
-                     data = all_bacteria,
-                     method = "bh")
-dunn_ec75_pt = dunn_ec75$res
-cldList(P.adj ~ Comparison,
-        data = dunn_ec75_pt,
-        threshold = 0.05)
-```
-
-    ##                   Group Letter MonoLetter
-    ## 1  M.fasciculataRGB4(6)    abc        abc
-    ## 2  M.fasciculataRIG5(5)    abc        abc
-    ## 3 M.fasciculataRYMG1(4)      a        a  
-    ## 4 M.fuscopilosaFIED1(7)    abc        abc
-    ## 5  M.fuscopilosaRGY1(8)      b         b 
-    ## 6  M.fuscopilosaRIG3(9)      b         b 
-    ## 7    T.angustulaATA1(3)     bc         bc
-    ## 8     T.angustulaER1(2)     ac        a c
-    ## 9   T.angustulaRYTA6(1)    abc        abc
-
-``` r
 # Dunn test of S. aureus (Honey at 75 % v/v)
 dunn.test(all_bacteria$S_aureus_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
 ```
@@ -973,184 +919,6 @@ cldList(P.adj ~ Comparison,
     ## 7    T.angustulaATA1(3)     bc         bc
     ## 8     T.angustulaER1(2)    abc        abc
     ## 9   T.angustulaRYTA6(1)    abc        abc
-
-``` r
-# Dunn test of K. pneumoniae (Honey at 75 % v/v)
-dunn.test(all_bacteria$K_pneumonia_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
-```
-
-    ##   Kruskal-Wallis rank sum test
-    ## 
-    ## data: x and group
-    ## Kruskal-Wallis chi-squared = 24.3312, df = 8, p-value = 0
-    ## 
-    ## 
-    ##                            Comparison of x by group                            
-    ##                              (Benjamini-Hochberg)                              
-    ## 
-    ## List of pairwise comparisons: Z statistic (adjusted p-value)
-    ## -----------------------------------------------------------------------------
-    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  2.400880 (0.0368)
-    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  :  0.851925 (0.2839)
-    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -1.548955 (0.1285)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  :  1.316611 (0.1781)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.084268 (0.2277)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  0.464686 (0.3729)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.917198 (0.0159)*
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.516318 (0.3634)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  2.065273 (0.0583)
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  1.600586 (0.1232)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  2.091089 (0.0598)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   : -0.309791 (0.3892)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  1.239164 (0.1938)
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  0.774477 (0.2924)
-    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.826109 (0.2830)
-    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  2.504144 (0.0316)
-    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.103263 (0.4589)
-    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  1.652218 (0.1182)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.187532 (0.2014)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.413054 (0.3707)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     :  0.413054 (0.3823)
-    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -0.542134 (0.3648)
-    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -2.943014 (0.0195)*
-    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     : -1.394059 (0.1633)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -1.858746 (0.0873)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -3.459332 (0.0097)*
-    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.633223 (0.0304)
-    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -3.046278 (0.0209)*
-    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    :  0.309791 (0.4006)
-    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.091089 (0.0657)
-    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -0.542134 (0.3778)
-    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -1.006820 (0.2458)
-    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.607407 (0.0274)
-    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.781298 (0.0963)
-    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -2.194352 (0.0564)
-    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.851925 (0.2957)
-    ## 
-    ## alpha = 0.05
-    ## Reject Ho if p <= alpha/2
-
-``` r
-# Compact letter display
-dunn_kp75 = dunnTest(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group,
-                     data = all_bacteria,
-                     method = "bh")
-dunn_kp75_pt = dunn_kp75$res
-cldList(P.adj ~ Comparison,
-        data = dunn_kp75_pt,
-        threshold = 0.05)
-```
-
-    ##                   Group Letter MonoLetter
-    ## 1  M.fasciculataRGB4(6)     ab        ab 
-    ## 2  M.fasciculataRIG5(5)     ac        a c
-    ## 3 M.fasciculataRYMG1(4)    abc        abc
-    ## 4 M.fuscopilosaFIED1(7)    abc        abc
-    ## 5  M.fuscopilosaRGY1(8)      c          c
-    ## 6  M.fuscopilosaRIG3(9)    abc        abc
-    ## 7    T.angustulaATA1(3)     ac        a c
-    ## 8     T.angustulaER1(2)      b         b 
-    ## 9   T.angustulaRYTA6(1)    abc        abc
-
-``` r
-# Dunn test of E. coli (Honey at 100 % v/v)
-dunn.test(all_bacteria$E_coli_100, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
-```
-
-    ##   Kruskal-Wallis rank sum test
-    ## 
-    ## data: x and group
-    ## Kruskal-Wallis chi-squared = 22.4498, df = 8, p-value = 0
-    ## 
-    ## 
-    ##                            Comparison of x by group                            
-    ##                              (Benjamini-Hochberg)                              
-    ## 
-    ## List of pairwise comparisons: Z statistic (adjusted p-value)
-    ## -----------------------------------------------------------------------------
-    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  0.543305 (0.3522)
-    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -2.043863 (0.0737)
-    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.587168 (0.0348)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.620920 (0.3319)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.164225 (0.2199)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.422942 (0.1639)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  1.397070 (0.1624)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.853765 (0.2831)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.440933 (0.0104)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.017991 (0.0713)
-    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  0.983123 (0.2664)
-    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.439818 (0.3713)
-    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  3.026987 (0.0222)*
-    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.604044 (0.1505)
-    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.413946 (0.3703)
-    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.620920 (0.3437)
-    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.077615 (0.4691)
-    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.664783 (0.0347)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.241840 (0.2030)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.776150 (0.3030)
-    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.362203 (0.3797)
-    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -1.578172 (0.1472)
-    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -2.121478 (0.0678)
-    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.465690 (0.3724)
-    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.957252 (0.2649)
-    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -2.975243 (0.0176)*
-    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.561296 (0.0313)
-    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -2.199093 (0.0627)
-    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -0.931380 (0.2637)
-    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -1.474685 (0.1578)
-    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   :  1.112482 (0.2279)
-    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.310460 (0.3889)
-    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.328451 (0.0511)
-    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.914504 (0.0833)
-    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.552301 (0.1447)
-    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.646792 (0.3452)
-    ## 
-    ## alpha = 0.05
-    ## Reject Ho if p <= alpha/2
-
-``` r
-# Compact letter display
-dunn_ec100 = dunnTest(all_bacteria$E_coli_100 ~ all_bacteria$Group,
-                     data = all_bacteria,
-                     method = "bh")
-dunn_ec100_pt = dunn_ec100$res
-cldList(P.adj ~ Comparison,
-        data = dunn_ec100_pt,
-        threshold = 0.05)
-```
-
-    ##                   Group Letter MonoLetter
-    ## 1  M.fasciculataRGB4(6)    abc        abc
-    ## 2  M.fasciculataRIG5(5)    abc        abc
-    ## 3 M.fasciculataRYMG1(4)      a        a  
-    ## 4 M.fuscopilosaFIED1(7)    abc        abc
-    ## 5  M.fuscopilosaRGY1(8)      b         b 
-    ## 6  M.fuscopilosaRIG3(9)     bc         bc
-    ## 7    T.angustulaATA1(3)    abc        abc
-    ## 8     T.angustulaER1(2)     ac        a c
-    ## 9   T.angustulaRYTA6(1)    abc        abc
-
-``` r
-# Plotting result
-ggplot(all_bacteria,
-                   aes(all_bacteria$Group,
-                       all_bacteria$E_coli_100,
-                       color = all_bacteria$Group)) +
-  scale_color_manual(values=c("#8F7700", "#8F7700", "#4A6990",
-                              "#8F7700", "#A73030", "#CD534C", "#8F7700",
-                              "#7AA6DC", "#8F7700")) +
-  geom_boxplot() +
-  stat_summary(geom = 'text',
-               label = c("abc","abc","a","abc","b","bc","abc","ac","abc"),
-               fun.y = max, vjust = -0.5) +
-  theme_classic() +
-  labs(x = NULL, y = "Zone inhibition diameter (mm)") +
-  theme(plot.title = element_text(face = "italic"),
-        axis.text.x = element_text(angle = 50, hjust = 1)) +
-  theme(legend.position="none")
-```
-
-![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 # Dunn test of S. aureus (Honey at 100 % v/v)
@@ -1232,7 +1000,7 @@ cldList(P.adj ~ Comparison,
 
 ``` r
 # Plotting result
-ggplot(all_bacteria,
+dn_sa100 <- ggplot(all_bacteria,
                    aes(all_bacteria$Group,
                        all_bacteria$S_aureus_100,
                        color = all_bacteria$Group)) +
@@ -1248,9 +1016,212 @@ ggplot(all_bacteria,
   theme(plot.title = element_text(face = "italic"),
         axis.text.x = element_text(angle = 50, hjust = 1)) +
   theme(legend.position="none")
+dn_sa100
 ```
 
-![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## *K. pneumoniae*
+
+### Kruskal-Wallis test
+
+``` r
+# Kruskal-Wallis test of K. pneumoniae (Honey at 50 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$K_pneumonia_50 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 24.798, df = 8, p-value = 0.001682
+
+``` r
+# Kruskal-Wallis test of K. pneumoniae (Honey at 75 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$K_pneumonia_75 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 24.331, df = 8, p-value = 0.002016
+
+``` r
+# Kruskal-Wallis test of K. pneumoniae (Honey at 100 % v/v)
+kruskal.test(all_bacteria$K_pneumonia_100 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$K_pneumonia_100 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 22.095, df = 8, p-value = 0.004743
+
+The Kruskal-Wallis test showed that the *K. pneumoniae* antimicrobial
+activity of honey from three different bee species collected from three
+different colonies was significantly different.
+
+### Dunn test
+
+The Dunn test was performed to inspect which groups have significantly
+different means.
+
+``` r
+# Dunn test of K. pneumoniae (Honey at 50 % v/v)
+dunn.test(all_bacteria$K_pneumonia_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+```
+
+    ##   Kruskal-Wallis rank sum test
+    ## 
+    ## data: x and group
+    ## Kruskal-Wallis chi-squared = 24.7979, df = 8, p-value = 0
+    ## 
+    ## 
+    ##                            Comparison of x by group                            
+    ##                              (Benjamini-Hochberg)                              
+    ## 
+    ## List of pairwise comparisons: Z statistic (adjusted p-value)
+    ## -----------------------------------------------------------------------------
+    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  3.399866 (0.0061)*
+    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  :  1.674176 (0.1059)
+    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -1.725689 (0.1013)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  :  0.927236 (0.2547)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -2.472630 (0.0345)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) : -0.746940 (0.3034)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.936248 (0.0199)*
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   : -0.463618 (0.3507)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  1.262071 (0.1862)
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.009012 (0.0802)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  3.399866 (0.0121)*
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.000000 (0.5000)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  1.725689 (0.1085)
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  2.472630 (0.0402)
+    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   :  0.463618 (0.3616)
+    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  2.318090 (0.0409)
+    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     : -1.081775 (0.2186)
+    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  0.643914 (0.3340)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.390854 (0.1556)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.618157 (0.3330)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -1.081775 (0.2286)
+    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      :  1.519637 (0.1362)
+    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.880229 (0.0901)
+    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     : -0.154539 (0.4511)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     :  0.592401 (0.3321)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -1.416611 (0.1566)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -1.880229 (0.0983)
+    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -0.798453 (0.2940)
+    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    :  0.515131 (0.3521)
+    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.884735 (0.0141)*
+    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -1.159045 (0.2112)
+    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -0.412105 (0.3601)
+    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.421117 (0.0348)
+    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -2.884735 (0.0176)*
+    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -1.802959 (0.0989)
+    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       : -1.004506 (0.2364)
+    ## 
+    ## alpha = 0.05
+    ## Reject Ho if p <= alpha/2
+
+``` r
+# Compact letter display
+dunn_kp50 = dunnTest(all_bacteria$K_pneumonia_50 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_kp50_pt = dunn_kp50$res
+cldList(P.adj ~ Comparison,
+        data = dunn_kp50_pt,
+        threshold = 0.05)
+```
+
+    ##                   Group Letter MonoLetter
+    ## 1  M.fasciculataRGB4(6)      a        a  
+    ## 2  M.fasciculataRIG5(5)      b         b 
+    ## 3 M.fasciculataRYMG1(4)    abc        abc
+    ## 4 M.fuscopilosaFIED1(7)    abc        abc
+    ## 5  M.fuscopilosaRGY1(8)     bc         bc
+    ## 6  M.fuscopilosaRIG3(9)      b         b 
+    ## 7    T.angustulaATA1(3)    abc        abc
+    ## 8     T.angustulaER1(2)    abc        abc
+    ## 9   T.angustulaRYTA6(1)     ac        a c
+
+``` r
+# Dunn test of K. pneumoniae (Honey at 75 % v/v)
+dunn.test(all_bacteria$K_pneumonia_75, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+```
+
+    ##   Kruskal-Wallis rank sum test
+    ## 
+    ## data: x and group
+    ## Kruskal-Wallis chi-squared = 24.3312, df = 8, p-value = 0
+    ## 
+    ## 
+    ##                            Comparison of x by group                            
+    ##                              (Benjamini-Hochberg)                              
+    ## 
+    ## List of pairwise comparisons: Z statistic (adjusted p-value)
+    ## -----------------------------------------------------------------------------
+    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  2.400880 (0.0368)
+    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  :  0.851925 (0.2839)
+    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -1.548955 (0.1285)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  :  1.316611 (0.1781)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.084268 (0.2277)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  0.464686 (0.3729)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.917198 (0.0159)*
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.516318 (0.3634)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  2.065273 (0.0583)
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  1.600586 (0.1232)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  2.091089 (0.0598)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   : -0.309791 (0.3892)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  1.239164 (0.1938)
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  0.774477 (0.2924)
+    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.826109 (0.2830)
+    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  2.504144 (0.0316)
+    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     :  0.103263 (0.4589)
+    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  1.652218 (0.1182)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  1.187532 (0.2014)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -0.413054 (0.3707)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     :  0.413054 (0.3823)
+    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -0.542134 (0.3648)
+    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -2.943014 (0.0195)*
+    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     : -1.394059 (0.1633)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -1.858746 (0.0873)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -3.459332 (0.0097)*
+    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.633223 (0.0304)
+    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -3.046278 (0.0209)*
+    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    :  0.309791 (0.4006)
+    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.091089 (0.0657)
+    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -0.542134 (0.3778)
+    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -1.006820 (0.2458)
+    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -2.607407 (0.0274)
+    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -1.781298 (0.0963)
+    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -2.194352 (0.0564)
+    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       :  0.851925 (0.2957)
+    ## 
+    ## alpha = 0.05
+    ## Reject Ho if p <= alpha/2
+
+``` r
+# Compact letter display
+dunn_kp75 = dunnTest(all_bacteria$K_pneumonia_75 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_kp75_pt = dunn_kp75$res
+cldList(P.adj ~ Comparison,
+        data = dunn_kp75_pt,
+        threshold = 0.05)
+```
+
+    ##                   Group Letter MonoLetter
+    ## 1  M.fasciculataRGB4(6)     ab        ab 
+    ## 2  M.fasciculataRIG5(5)     ac        a c
+    ## 3 M.fasciculataRYMG1(4)    abc        abc
+    ## 4 M.fuscopilosaFIED1(7)    abc        abc
+    ## 5  M.fuscopilosaRGY1(8)      c          c
+    ## 6  M.fuscopilosaRIG3(9)    abc        abc
+    ## 7    T.angustulaATA1(3)     ac        a c
+    ## 8     T.angustulaER1(2)      b         b 
+    ## 9   T.angustulaRYTA6(1)    abc        abc
 
 ``` r
 # Dunn test of K. pneumoniae (Honey at 100 % v/v)
@@ -1332,7 +1303,7 @@ cldList(P.adj ~ Comparison,
 
 ``` r
 # Plotting result
-ggplot(all_bacteria,
+dn_kp100 <- ggplot(all_bacteria,
                    aes(all_bacteria$Group,
                        all_bacteria$K_pneumonia_100,
                        color = all_bacteria$Group)) +
@@ -1348,6 +1319,109 @@ ggplot(all_bacteria,
   theme(plot.title = element_text(face = "italic"),
         axis.text.x = element_text(angle = 50, hjust = 1)) +
   theme(legend.position="none")
+dn_kp100
 ```
 
-![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
+![](Antimicrobial_activity-Statistics_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+## *P. mirabilis*
+
+### Kruskal-Wallis test
+
+``` r
+# Kruskal-Wallis test of P. mirabilis (Honey at 50 % v/v)
+kruskal.test(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group, data = all_bacteria)
+```
+
+    ## 
+    ##  Kruskal-Wallis rank sum test
+    ## 
+    ## data:  all_bacteria$P_mirabilis_50 by all_bacteria$Group
+    ## Kruskal-Wallis chi-squared = 24.718, df = 8, p-value = 0.001735
+
+The Kruskal-Wallis test showed that the *P. mirabilis* antimicrobial
+activity of honey from three different bee species collected from three
+different colonies was significantly different.
+
+### Dunn test
+
+The Dunn test was performed to inspect which groups have significantly
+different means.
+
+``` r
+# Dunn test of P. mirabilis (Honey at 50 % v/v)
+dunn.test(all_bacteria$P_mirabilis_50, all_bacteria$Group, method = "bh", list = TRUE, table = FALSE)
+```
+
+    ##   Kruskal-Wallis rank sum test
+    ## 
+    ## data: x and group
+    ## Kruskal-Wallis chi-squared = 24.7183, df = 8, p-value = 0
+    ## 
+    ## 
+    ##                            Comparison of x by group                            
+    ##                              (Benjamini-Hochberg)                              
+    ## 
+    ## List of pairwise comparisons: Z statistic (adjusted p-value)
+    ## -----------------------------------------------------------------------------
+    ## M. fasciculata RGB004 (6) - M. fasciculata RIG005 (5)   :  1.416611 (0.1658)
+    ## M. fasciculata RGB004 (6) - M. fasciculata RYMG001 (4)  : -1.313584 (0.1620)
+    ## M. fasciculata RIG005 (5) - M. fasciculata RYMG001 (4)  : -2.730195 (0.0190)*
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa FIED001 (7)  : -0.025756 (0.4897)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa FIED001 (7)  : -1.442367 (0.1678)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa FIED001 (7) :  1.287828 (0.1618)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RGY001 (8)   :  2.086281 (0.0665)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RGY001 (8)   :  0.669670 (0.3018)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RGY001 (8)  :  3.399866 (0.0061)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RGY001 (8)  :  2.112038 (0.0694)
+    ## M. fasciculata RGB004 (6) - M. fuscopilosa RIG003 (9)   :  1.519637 (0.1543)
+    ## M. fasciculata RIG005 (5) - M. fuscopilosa RIG003 (9)   :  0.103026 (0.4860)
+    ## M. fasciculata RYMG001 (4) - M. fuscopilosa RIG003 (9)  :  2.833222 (0.0207)*
+    ## M. fuscopilosa FIED001 (7) - M. fuscopilosa RIG003 (9)  :  1.545393 (0.1572)
+    ## M. fuscopilosa RGY001 (8) - M. fuscopilosa RIG003 (9)   : -0.566644 (0.3315)
+    ## M. fasciculata RGB004 (6) - T. angustula ATA001 (3)     :  0.746940 (0.2926)
+    ## M. fasciculata RIG005 (5) - T. angustula ATA001 (3)     : -0.669670 (0.3122)
+    ## M. fasciculata RYMG001 (4) - T. angustula ATA001 (3)    :  2.060525 (0.0644)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ATA001 (3)    :  0.772696 (0.2931)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ATA001 (3)     : -1.339341 (0.1624)
+    ## M. fuscopilosa RIG003 (9) - T. angustula ATA001 (3)     : -0.772696 (0.3044)
+    ## M. fasciculata RGB004 (6) - T. angustula ER001 (2)      : -0.515131 (0.3411)
+    ## M. fasciculata RIG005 (5) - T. angustula ER001 (2)      : -1.931742 (0.0739)
+    ## M. fasciculata RYMG001 (4) - T. angustula ER001 (2)     :  0.798453 (0.3057)
+    ## M. fuscopilosa FIED001 (7) - T. angustula ER001 (2)     : -0.489374 (0.3407)
+    ## M. fuscopilosa RGY001 (8) - T. angustula ER001 (2)      : -2.601413 (0.0239)*
+    ## M. fuscopilosa RIG003 (9) - T. angustula ER001 (2)      : -2.034768 (0.0628)
+    ## T. angustula ATA001 (3) - T. angustula ER001 (2)        : -1.262071 (0.1619)
+    ## M. fasciculata RGB004 (6) - T. angustula RYTA006 (1)    : -1.365097 (0.1722)
+    ## M. fasciculata RIG005 (5) - T. angustula RYTA006 (1)    : -2.781709 (0.0195)*
+    ## M. fasciculata RYMG001 (4) - T. angustula RYTA006 (1)   : -0.051513 (0.4932)
+    ## M. fuscopilosa FIED001 (7) - T. angustula RYTA006 (1)   : -1.339341 (0.1710)
+    ## M. fuscopilosa RGY001 (8) - T. angustula RYTA006 (1)    : -3.451379 (0.0100)*
+    ## M. fuscopilosa RIG003 (9) - T. angustula RYTA006 (1)    : -2.884735 (0.0235)*
+    ## T. angustula ATA001 (3) - T. angustula RYTA006 (1)      : -2.112038 (0.0780)
+    ## T. angustula ER001 (2) - T. angustula RYTA006 (1)       : -0.849966 (0.2965)
+    ## 
+    ## alpha = 0.05
+    ## Reject Ho if p <= alpha/2
+
+``` r
+# Compact letter display
+dunn_pm50 = dunnTest(all_bacteria$P_mirabilis_50 ~ all_bacteria$Group,
+                     data = all_bacteria,
+                     method = "bh")
+dunn_pm50_pt = dunn_pm50$res
+cldList(P.adj ~ Comparison,
+        data = dunn_pm50_pt,
+        threshold = 0.05)
+```
+
+    ##                   Group Letter MonoLetter
+    ## 1  M.fasciculataRGB4(6)    abc        abc
+    ## 2  M.fasciculataRIG5(5)     ab        ab 
+    ## 3 M.fasciculataRYMG1(4)      c          c
+    ## 4 M.fuscopilosaFIED1(7)    abc        abc
+    ## 5  M.fuscopilosaRGY1(8)      a        a  
+    ## 6  M.fuscopilosaRIG3(9)     ab        ab 
+    ## 7    T.angustulaATA1(3)    abc        abc
+    ## 8     T.angustulaER1(2)     bc         bc
+    ## 9   T.angustulaRYTA6(1)      c          c
