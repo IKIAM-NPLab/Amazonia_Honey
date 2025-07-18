@@ -273,9 +273,11 @@ scores <- ei_pca$x %>%                   # Get PC coordinates
   mutate(Sample_ID = rownames(.)) %>%    # Create a new column with the sample names
   left_join(pheno_data)                  # Adding metadata
 # PCA plot
-pca_plot <- ggplot(scores,
-       aes(PC1, PC2, shape = Species, color = Species)) +
+pca_plot <- ggplot(scores, aes(PC1, PC2, shape = Species, color = Species)) +
   geom_point(size = 3) +
+  #geom_segment(data = loadings, aes(x = 0, y = 0, xend = PC1 , yend = PC2),
+  #             arrow = arrow(length = unit(0.3, "cm"), type = "open", angle = 25),
+  #             size = 1, color = "darkblue") +
   ggforce::geom_mark_ellipse(aes(filter = Species == "T. angustula"),
                              show.legend = FALSE, expand = unit(3, 'mm'),
                              tol = 0.01) +
@@ -338,11 +340,8 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
   scale_shape_manual(values = c(17, 19)) +
   ggrepel::geom_label_repel(data = ei_compouds,
                             aes(label = meta_table$Metabolite),
-                            box.padding = 0.37,
-                            label.padding = 0.22,
-                            label.r = 0.30,
-                            cex = 2.5,
-                            max.overlaps = 50,
+                            box.padding = 0.37, label.padding = 0.22,
+                            label.r = 0.30, cex = 2.5, max.overlaps = 50,
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (20.14 %)"),
          y=guide_axis(title = "PC2 (17.62 %)")) +
