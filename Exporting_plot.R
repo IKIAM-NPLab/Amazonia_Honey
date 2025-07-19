@@ -131,5 +131,43 @@ ggsave(filename = "Result/Antimicrobial/Figure_A3.png", plot = figure_athree,
 ggsave(filename = "Result/Antimicrobial/Figure_A3.jpg", plot = figure_athree,
        width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
 
+## PCA biplot
 
-
+# Package for label the loading of the PCA biplot
+library(ggrepel)
+# PCA biplot result
+fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
+  geom_point(aes(shape = Species, color = Species), size = 3) +
+  geom_segment(data = ei_compouds, aes(x = 0, y = 0, xend = PC1*100, yend = PC2*100),
+               arrow = arrow(length = unit(0.3, "cm"), type = "open", angle = 25),
+               size = 0.01, color = "darkblue") +
+  geom_label_repel(data = ei_compouds, aes(label = meta_table$Metabolite,
+                                           x = PC1*100, y = PC2*100),
+                   box.padding = 0.37, label.padding = 0.22, label.r = 0.30, size = 3,
+                   force = 4, max.overlaps = 50, min.segment.length = 0) +
+  ggforce::geom_mark_ellipse(aes(filter = Species == "T. angustula", color = Species),
+                             show.legend = FALSE, expand = unit(3, 'mm'),
+                             tol = 0.01) +
+  ggforce::geom_mark_ellipse(aes(filter = Species == "M. fasciculata", color = Species),
+                             show.legend = FALSE, expand = unit(8.2, 'mm'),
+                             tol = 0.01) +
+  guides(x=guide_axis(title = "Loadings on PC1 (20.14 %)"),
+         y=guide_axis(title = "Loadings on PC2 (17.62 %)")) +
+  labs(shape = 'Bees species', color= 'Bees species') +
+  theme_classic() +
+  theme(legend.text = element_text(face="italic")) +
+  theme(legend.position = c(0.050, 0.100),
+        legend.background = element_rect(fill = "white", color = "black")) +
+  theme(panel.grid = element_blank(), 
+        panel.border = element_rect(fill= "transparent")) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
+  geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
+### Exporting (*.pdf) file
+ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.pdf", plot = fig_a4,
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
+### Exporting (*.png) file
+ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.png", plot = fig_a4,
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
+### Exporting (*.jpg) file
+ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.jpg", plot = fig_a4,
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
