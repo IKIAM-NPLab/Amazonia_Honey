@@ -139,7 +139,7 @@ library(ggrepel)
 fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   geom_point(aes(shape = Species, color = Species), size = 3) +
   geom_segment(data = ei_compouds, aes(x = 0, y = 0, xend = PC1*100, yend = PC2*100),
-               arrow = arrow(length = unit(0.3, "cm"), type = "open", angle = 25),
+               arrow = arrow(length = unit(0.3, "cm"), type = "closed", angle = 25),
                size = 0.01, color = "darkblue") +
   geom_label_repel(data = ei_compouds, aes(label = meta_table$Metabolite,
                                            x = PC1*100, y = PC2*100),
