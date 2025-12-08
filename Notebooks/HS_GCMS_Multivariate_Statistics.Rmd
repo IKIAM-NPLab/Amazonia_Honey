@@ -273,6 +273,18 @@ scores <- ei_pca$x %>%                   # Get PC coordinates
 pca_plot <- ggplot(scores,
        aes(PC1, PC2, shape = Species, color = Species)) +
   geom_point(size = 3) +
+  scale_color_manual(values=c("#7CAE00",
+                              "#F8766D",
+                              "#00BFC4",
+                              "#E76BF3")) +
+  ggforce::geom_mark_ellipse(aes(filter = Species == "T. angustula"),
+                             show.legend = FALSE, expand = unit(3, 'mm'),
+                             tol = 0.01) +
+  ggforce::geom_mark_ellipse(aes(filter = Species == "M. grandis"),
+                             show.legend = FALSE, expand = unit(3.5, 'mm'),
+                             tol = 0.01) +
+  geom_text(aes(label = Site), hjust = 0, nudge_x = 0.55,
+            check_overlap = TRUE, show.legend = FALSE) +
   guides(x=guide_axis(title = "PC1 (20.14 %)"),
          y=guide_axis(title = "PC2 (17.62 %)")) +
   labs(shape = 'Bees species', color= 'Bees species') +
@@ -355,8 +367,8 @@ PERMANOVA analysis of *T. angustula* by collection site.
 
 # Drop QC
 pqn_noqc <- drop_qcs(pqn_noflag)
-# Removal of the M. fasciculata group from the dataset
-permanova_ta <- pqn_noqc[, pqn_noqc$Species != "M. fasciculata"]
+# Removal of the M. grandis group from the dataset
+permanova_ta <- pqn_noqc[, pqn_noqc$Species != "M. grandis"]
 pData(permanova_ta) <- droplevels(pData(permanova_ta))
 # Removal of the M. fuscopilosa group from the dataset
 permanova_ta <- permanova_ta[, permanova_ta$Species != "M. fuscopilosa"]
@@ -381,9 +393,9 @@ permanova_2vs3ta
 
 ```
 
-## *M. fasciculata*
+## *M. grandis*
 
-PERMANOVA analysis of *M. fasciculata* by collection site.
+PERMANOVA analysis of *M. grandis* by collection site.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
@@ -395,17 +407,17 @@ permanova_mfa <- permanova_mfa[, permanova_mfa$Species != "M. fuscopilosa"]
 pData(permanova_mfa) <- droplevels(pData(permanova_mfa))
 # Change to factor varibles
 permanova_mfa@phenoData@data$Group <- as.factor(permanova_mfa@phenoData@data$Group)
-# PERMANOVA between close hives of bees M. fasciculata site 5 and 6 (Removal of site 4)
+# PERMANOVA between close hives of bees M. grandis site 5 and 6 (Removal of site 4)
 permanova_5vs6mfa <- permanova_mfa[, permanova_mfa$Site != "4"]
 pData(permanova_5vs6mfa) <- droplevels(pData(permanova_5vs6mfa))
 permanova_5vs6mfa <- perform_permanova(permanova_5vs6mfa, group = "Group", nperm = 999)
 permanova_5vs6mfa
-# PERMANOVA between close hives of bees M. fasciculata site 5 and 4 (Removal of site 6)
+# PERMANOVA between close hives of bees M. grandis site 5 and 4 (Removal of site 6)
 permanova_5vs4mfa <- permanova_mfa[, permanova_mfa$Site != "6"]
 pData(permanova_5vs4mfa) <- droplevels(pData(permanova_5vs4mfa))
 permanova_5vs4mfa <- perform_permanova(permanova_5vs4mfa, group = "Group", nperm = 999)
 permanova_5vs4mfa
-# PERMANOVA between close hives of bees M. fasciculata site 6 and 4 (Removal of site 5)
+# PERMANOVA between close hives of bees M. grandis site 6 and 4 (Removal of site 5)
 permanova_6vs4mfa <- permanova_mfa[, permanova_mfa$Site != "5"]
 pData(permanova_6vs4mfa) <- droplevels(pData(permanova_6vs4mfa))
 permanova_6vs4mfa <- perform_permanova(permanova_6vs4mfa, group = "Group", nperm = 999)
@@ -422,8 +434,8 @@ PERMANOVA analysis of *M. fuscopilosa* by collection site.
 # Removal of the T. angustula group from the dataset
 permanova_mfu <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
 pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
-# Removal of the M. fasciculata group from the dataset
-permanova_mfu <- permanova_mfu[, permanova_mfu$Species != "M. fasciculata"]
+# Removal of the M. grandis group from the dataset
+permanova_mfu <- permanova_mfu[, permanova_mfu$Species != "M. grandis"]
 pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
 # Change to factor varibles
 permanova_mfu@phenoData@data$Group <- as.factor(permanova_mfu@phenoData@data$Group)
@@ -444,58 +456,6 @@ permanova_9vs7mfu <- perform_permanova(permanova_9vs7mfu, group = "Group", nperm
 permanova_9vs7mfu
 
 ```
-
-
-
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
-
-# Removal of the T. angustula group from the dataset
-permanova_fa_fu <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
-pData(permanova_fa_fu) <- droplevels(pData(permanova_fa_fu))
-# Change to factor varibles
-permanova_fa_fu@phenoData@data$Group <- as.factor(permanova_fa_fu@phenoData@data$Group)
-
-permanova_fa_fu <- permanova_fa_fu[, permanova_fa_fu$Site != "9"]
-pData(permanova_fa_fu) <- droplevels(pData(permanova_fa_fu))
-
-
-
-perform_permanova(permanova_fa_fu, group = "Species", nperm = 999)
-
-
-
-
-
-
-
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 9 (Removal of site 7)
-permanova_8vs9mfu <- permanova_mfu[, permanova_mfu$Site != "7"]
-pData(permanova_8vs9mfu) <- droplevels(pData(permanova_8vs9mfu))
-permanova_8vs9mfu <- perform_permanova(permanova_8vs9mfu, group = "Group", nperm = 999)
-permanova_8vs9mfu
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 7 (Removal of site 9)
-permanova_8vs7mfu <- permanova_mfu[, permanova_mfu$Site != "9"]
-pData(permanova_8vs7mfu) <- droplevels(pData(permanova_8vs7mfu))
-permanova_8vs7mfu <- perform_permanova(permanova_8vs7mfu, group = "Group", nperm = 999)
-permanova_8vs7mfu
-# PERMANOVA between close hives of bees M. fuscopilosa site 9 and 7 (Removal of site 8)
-permanova_9vs7mfu <- permanova_mfu[, permanova_mfu$Site != "8"]
-pData(permanova_9vs7mfu) <- droplevels(pData(permanova_9vs7mfu))
-permanova_9vs7mfu <- perform_permanova(permanova_9vs7mfu, group = "Group", nperm = 999)
-permanova_9vs7mfu
-
-```
-
-
-
-
-
-
-
-
-
-
-
 
 # Heatmap with HCA
 
@@ -590,7 +550,7 @@ hm_row_ann <- rowAnnotation(`Superclass` = hm_fdata$classyfireR_Superclass,
                             show_legend = F)
 # Species color
 cols_species <- c("T. angustula" = "#E76BF3",
-                  "M. fasciculata" = "#F8766D",
+                  "M. grandis" = "#F8766D",
                   "M. fuscopilosa" = "#7CAE00")
 # Add top anotation to Heatmap
 top_info_ann <- HeatmapAnnotation(`Species` = hm_pdata$Species,
@@ -628,7 +588,7 @@ lgd1 <- Legend(col_fun = mycol,
                direction = "horizontal" )
 # Bees species legend
 lgd2 <- Legend(labels = gt_render(c("*T. angustula*",
-                                    "*M. fasciculata*",
+                                    "*M. grandis*",
                                     "*M. fuscopilosa*")),
                legend_gp = gpar(fill = cols_species),
                title = "Bees species", ncol = 1)
@@ -706,8 +666,8 @@ corr_scores <- corr_pca$x %>%            # Get PC coordinates
 # PCA plot
 corr_pca_plot <- ggplot(corr_scores,
                         aes(PC1, PC2, shape = Species, color = Species)) +
-  scale_color_manual(values=c("#F8766D",
-                              "#7CAE00",
+  scale_color_manual(values=c("#7CAE00",
+                              "#F8766D",
                               "#E76BF3")) +
   scale_shape_manual(values=c(16, 17, 3)) +
   geom_point(size = 3) +
@@ -772,7 +732,7 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
-  theme(legend.position = c(0.070, 0.107),
+  theme(legend.position = c(0.075, 0.127),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
@@ -880,13 +840,9 @@ glog_E.coli$E_coli_75 <- as.numeric(glog_E.coli$E_coli_75)
 glog_no_qc$K_pneumonia_75 <- as.numeric(glog_no_qc$K_pneumonia_75)
 glog_no_qc$P_mirabilis_75 <- as.numeric(glog_no_qc$P_mirabilis_75)
 glog_S.aureus$S_aureus_75 <- as.numeric(glog_S.aureus$S_aureus_75)
-
-
 # Exporting MetaboSet data to Excel
-write_to_excel(glog_no_qc, file = paste0(ppath, "../Result/notame_Result/HS_GCMS/glog_no_qc.xlsx"))
-
-
-
+#write_to_excel(glog_no_qc,
+#               file = paste0(ppath, "../Result/notame_Result/HS_GCMS/glog_no_qc.xlsx"))
 
 ```
 
@@ -1135,11 +1091,11 @@ upset_mat$Feature_ID <- NULL
 colnames(upset_mat) <- c("T. angustula ATA001",
                          "T. angustula ER001",
                          "M. fuscopilosa FIED001",
-                         "M. fasciculata RGB004",
+                         "M. grandis RGB004",
                          "M. fuscopilosa RGY001",
                          "M. fuscopilosa RIG003",
-                         "M. fasciculata RIG005",
-                         "M. fasciculata RYMG001",
+                         "M. grandis RIG005",
+                         "M. grandis RYMG001",
                          "T. angustula RYTA006")
 # Change the values by presence using one (1) or absence using 0
 upset_mat[upset_mat > 0] <- 1       # presence 
@@ -1166,9 +1122,9 @@ upset_plot <- UpSet(comb_mat,
                                   "M. fuscopilosa FIED001",
                                   "M. fuscopilosa RGY001",
                                   "M. fuscopilosa RIG003",
-                                  "M. fasciculata RGB004",
-                                  "M. fasciculata RIG005",
-                                  "M. fasciculata RYMG001"))
+                                  "M. grandis RGB004",
+                                  "M. grandis RIG005",
+                                  "M. grandis RYMG001"))
 #pdf(file="Result/notame_Result/HS_GCMS/FigureA2.pdf", width = 7, height = 3.5)
 upset_plot
 #dev.off()

@@ -9,30 +9,31 @@ library(cowplot)
 ### Figure matrix
 figure_1 <- arrangeGrob(pca_plot,
                         corr_pca_plot,
-                        load_pca,
+                        #load_pca,
                         corr_load_plot,
                         layout_matrix = rbind(c(1,   2),
                                               c(1,  2),
                                               rep(3, 2),
                                               rep(3, 2),
-                                              rep(3, 2),
-                                              rep(4, 2),
-                                              rep(4, 2),
-                                              rep(4, 2)))
+                                              rep(3, 2)#,
+                                              #rep(4, 2),
+                                              #rep(4, 2),
+                                              #rep(4, 2)
+                                              ))
 ### Adding label to the figures
 figure_one <- ggpubr::as_ggplot(figure_1) +
-  draw_plot_label(label = LETTERS[1:4],
-                  x = c(0, 0.5, 0, 0),
-                  y = c(.99, .99, .75, .375))
+  draw_plot_label(label = LETTERS[1:3],
+                  x = c(0, 0.5, 0),
+                  y = c(.99, .99, .60))
 ### Exporting (*.pdf) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.pdf", plot = figure_one,
-      width = 140, height = 180, units = "mm", dpi = 300, scale = 2.5)
+      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
 ### Exporting (*.png) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.png", plot = figure_one,
-      width = 140, height = 180, units = "mm", dpi = 300, scale = 2.5)
+      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
 ### Exporting (*.jpg) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.jpg", plot = figure_one,
-      width = 140, height = 180, units = "mm", dpi = 300, scale = 2.5)
+      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
 
 ## Heatmap with HCA and heatmap of the Pearson correlation
 

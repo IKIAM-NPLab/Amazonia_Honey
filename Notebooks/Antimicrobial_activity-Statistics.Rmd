@@ -46,7 +46,7 @@ First, the antimicrobial data normality was evaluated using the Shapiro-Wilk tes
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Loading the antimicrobial activity data
-all_bacteria <- read_excel("Data/Antimicrobial_of_honey.xlsx", sheet = 2)
+all_bacteria <- read_excel("../Data/Antimicrobial_of_honey.xlsx", sheet = 2)
 # Deleting the group column to perform Shapiro-Wilk test in batch
 no_group <- all_bacteria[,-1]
 # Perform the Shapiro-Wilk test
