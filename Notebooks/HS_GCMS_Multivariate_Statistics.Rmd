@@ -277,6 +277,7 @@ pca_plot <- ggplot(scores,
                               "#F8766D",
                               "#00BFC4",
                               "#E76BF3")) +
+  scale_shape_manual(values=c(17, 16, 15, 3)) +
   ggforce::geom_mark_ellipse(aes(filter = Species == "T. angustula"),
                              show.legend = FALSE, expand = unit(3, 'mm'),
                              tol = 0.01) +
@@ -569,7 +570,7 @@ hm_plot <- Heatmap(hm_scl,
                    clustering_method_columns = "complete",
                    top_annotation = top_info_ann,
                    column_names_gp = gpar(fontface = "italic"),
-                   row_names_max_width = unit(10, "cm"),
+                   row_names_max_width = unit(8, "cm"),
                    right_annotation = hm_row_ann,
                    show_heatmap_legend = F,
                    row_km = 3, column_km = 2,
@@ -669,7 +670,7 @@ corr_pca_plot <- ggplot(corr_scores,
   scale_color_manual(values=c("#7CAE00",
                               "#F8766D",
                               "#E76BF3")) +
-  scale_shape_manual(values=c(16, 17, 3)) +
+  scale_shape_manual(values=c(17, 16, 3)) +
   geom_point(size = 3) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
@@ -935,7 +936,7 @@ Plot the correlation heatplot.
 # Add top anotation to Heatmap
 ann_corr <- HeatmapAnnotation(
   foo = anno_block(gp = gpar(fill = 0, col = "white"),
-                   labels = "Pearson correlation",
+                   labels = "Pearson\n correlation",
                    labels_gp = gpar(col = "black", fontsize = 12,
                                     fontface = "bold")))
 # Color scale
@@ -950,10 +951,10 @@ hm_corr <- Heatmap(hm_corr_table, col = col_fun, cluster_rows = FALSE,
                    cell_fun = function(j, i, x, y, w, h, fill) {
                      if(hm_sign_table[i, j] < 0.05) {
                        grid.text(sprintf("%.1f", hm_corr_table[i, j]), x, y,
-                                 gp = gpar(fontsize = 12, fontface = "bold"))
+                                 gp = gpar(fontsize = 8, fontface = "bold"))
                        } else if(hm_sign_table[i, j] > 0.05) {
                          grid.text(sprintf("%.1f", hm_corr_table[i, j]), x, y,
-                                   gp = gpar(fontsize = 12))}},
+                                   gp = gpar(fontsize = 8))}},
                    show_heatmap_legend = F)
 hm_corr
 

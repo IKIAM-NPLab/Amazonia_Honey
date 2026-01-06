@@ -56,7 +56,7 @@ hm_plot_f2 <- Heatmap(hm_scl,
                       clustering_method_columns = "complete",
                       top_annotation = top_info_ann_f2,
                       column_names_gp = gpar(fontface = "italic"),
-                      row_names_max_width = unit(10, "cm"),
+                      row_names_max_width = unit(8, "cm"),
                       #right_annotation = hm_row_ann,
                       show_heatmap_legend = F,
                       row_km = 3, column_km = 2,
@@ -74,7 +74,7 @@ lgd1a <- Legend(col_fun = col_fun,
                 direction = "horizontal" )
 # Bees species legend
 lgd2 <- Legend(labels = gt_render(c("*T. angustula*",
-                                    "*M. fasciculata*",
+                                    "*M. grandis*",
                                     "*M. fuscopilosa*")),
                legend_gp = gpar(fill = cols_species),
                title = "Bees species", ncol = 1)
@@ -92,16 +92,16 @@ gg_legend_fn_f2 <- ggpubr::as_ggplot(gg_legend_f2)
 # Heatmap plot
 figure2 <- plot_grid(gg_legend_fn_f2,
                      gg_f2, ncol = 1,
-                     rel_heights = c(0.055, 0.880))
+                     rel_heights = c(1, 9))
 ### Exporting (*.pdf) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.pdf", plot = figure2,
-       width = 160, height = 120, units = "mm", dpi = 300, scale = 2.5)
+       width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.png) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.png", plot = figure2,
-       width = 160, height = 120, units = "mm", dpi = 300, scale = 2.5)
+       width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.jpg) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.jpg", plot = figure2,
-       width = 160, height = 120, units = "mm", dpi = 300, scale = 2.5)
+       width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 
 ## Antimicrobial activity
 
@@ -139,6 +139,11 @@ library(ggrepel)
 # PCA biplot result
 fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   geom_point(aes(shape = Species, color = Species), size = 3) +
+  scale_color_manual(values=c("#7CAE00",
+                              "#F8766D",
+                              "#00BFC4",
+                              "#E76BF3")) +
+  scale_shape_manual(values=c(17, 16, 15, 3)) +
   geom_segment(data = ei_compouds, aes(x = 0, y = 0, xend = PC1*100, yend = PC2*100),
                arrow = arrow(length = unit(0.3, "cm"), type = "closed", angle = 25),
                size = 0.01, color = "darkblue") +
@@ -149,7 +154,7 @@ fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   ggforce::geom_mark_ellipse(aes(filter = Species == "T. angustula", color = Species),
                              show.legend = FALSE, expand = unit(3, 'mm'),
                              tol = 0.01) +
-  ggforce::geom_mark_ellipse(aes(filter = Species == "M. fasciculata", color = Species),
+  ggforce::geom_mark_ellipse(aes(filter = Species == "M. grandis", color = Species),
                              show.legend = FALSE, expand = unit(8.2, 'mm'),
                              tol = 0.01) +
   guides(x=guide_axis(title = "Loadings on PC1 (20.14 %)"),
@@ -157,7 +162,7 @@ fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   labs(shape = 'Bees species', color= 'Bees species') +
   theme_classic() +
   theme(legend.text = element_text(face="italic")) +
-  theme(legend.position = c(0.050, 0.100),
+  theme(legend.position = c(0.060, 0.130),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
@@ -165,10 +170,10 @@ fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
 ### Exporting (*.pdf) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.pdf", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.png) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.png", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.jpg) file
 ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.jpg", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.5)
+       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
