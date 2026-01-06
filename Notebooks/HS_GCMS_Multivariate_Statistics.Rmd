@@ -345,7 +345,7 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (20.14 %)"),
          y=guide_axis(title = "PC2 (17.62 %)")) +
-  theme(legend.position = c(0.070, 0.090),
+  theme(legend.position = c(0.075, 0.090),
         legend.background = element_rect(fill = "white", color = "black")) +
   theme(panel.grid = element_blank(), 
         panel.border = element_rect(fill= "transparent")) +
@@ -353,8 +353,12 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
   #ggsci::scale_color_aaas()
 load_pca
-# Save plot
-#ggsave('Result/notame_Result/HS_GCMS/load_pca.pdf', width = 14, height = 7, device='pdf', dpi="print")
+# Save plot in *.pdf
+ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.pdf', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
+# Save plot in *.png
+ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.png', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
+# Save plot in *.jpg
+ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.jpg', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
 
 ```
 
