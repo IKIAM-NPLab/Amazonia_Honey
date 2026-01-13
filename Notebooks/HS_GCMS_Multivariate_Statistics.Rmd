@@ -354,11 +354,11 @@ load_pca <- ggplot(loadings, aes(PC1, PC2)) +
   #ggsci::scale_color_aaas()
 load_pca
 # Save plot in *.pdf
-ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.pdf', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
+#ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.pdf', plot = load_pca, #width = 14, height = 7, dpi = 300, scale = 0.85)
 # Save plot in *.png
-ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.png', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
+#ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.png', plot = load_pca, #width = 14, height = 7, dpi = 300, scale = 0.85)
 # Save plot in *.jpg
-ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.jpg', plot = load_pca, width = 14, height = 7, dpi = 300, scale = 0.85)
+#ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.jpg', plot = load_pca, #width = 14, height = 7, dpi = 300, scale = 0.85)
 
 ```
 
@@ -982,11 +982,11 @@ best_feat <- data.frame(Feature_ID = E.coli_corr$X,
                         P_mirabilis_p = P.mirabilis_corr$Correlation_P_FDR,
                         S_aureus = S.aureus_corr$Correlation_coefficient,
                         S_aureus_p = S.aureus_corr$Correlation_P_FDR)
-# Filtering the feature with the correlation >= 0.5
-best_feat <- best_feat[best_feat$E_coli >= 0.5 |
-                         best_feat$K_pneumonia >= 0.5 |
-                         best_feat$P_mirabilis >= 0.5 |
-                         best_feat$S_aureus >= 0.5, ]
+# Filtering the feature with the correlation >= 0.6
+best_feat <- best_feat[best_feat$E_coli >= 0.6 |
+                         best_feat$K_pneumonia >= 0.6 |
+                         best_feat$P_mirabilis >= 0.6 |
+                         best_feat$S_aureus >= 0.6, ]
 # Adding the metabolite name to the correlation table
 best_feat <- left_join(best_feat, feat_corr_table)
 # Extracting data of no identified metabolites
@@ -1050,7 +1050,7 @@ lgd1a <- Legend(col_fun = col_fun,
 # Packed legends
 pd = packLegend(lgd1a, direction = "horizontal")
 # Heatmap plot
-#png(file="Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 6, units = "in", res= 300)
+#png(file="../Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 6, units = "in", res= 300)
 hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                    cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
                    border_gp = grid::gpar(col = "black", lty = 0.02),
@@ -1065,7 +1065,7 @@ hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                                    gp = gpar(fontsize = 10))}},
                    show_heatmap_legend = F)
 hm_corr1
-draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
+#draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
 #dev.off()
 
 ```
