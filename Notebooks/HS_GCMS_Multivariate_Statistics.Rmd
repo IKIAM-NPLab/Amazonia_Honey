@@ -966,7 +966,7 @@ hm_corr
 
 ### Correlation of unknown metabolites
 
-Filtering the metabolites with positive and high Pearson's correlation coefficient (r >0.5).
+Filtering the metabolites with positive and high Pearson's correlation coefficient (r >0.6).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
@@ -1050,7 +1050,7 @@ lgd1a <- Legend(col_fun = col_fun,
 # Packed legends
 pd = packLegend(lgd1a, direction = "horizontal")
 # Heatmap plot
-#png(file="../Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 6, units = "in", res= 300)
+#png(file="../Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 4, units = "in", res= 300)
 hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                    cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
                    border_gp = grid::gpar(col = "black", lty = 0.02),
@@ -1065,7 +1065,7 @@ hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                                    gp = gpar(fontsize = 10))}},
                    show_heatmap_legend = F)
 hm_corr1
-#draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
+draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
 #dev.off()
 
 ```
