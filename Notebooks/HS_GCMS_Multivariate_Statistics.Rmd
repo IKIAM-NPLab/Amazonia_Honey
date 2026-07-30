@@ -502,7 +502,7 @@ The metabolites were classified using the [ClassyFireR](https://doi.org/10.1186/
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
 
 # InChI key of the metabolites you want to classify
-InChI_Keys <- c('2-Heptanone' = "CATSNJVOTSVZJV-UHFFFAOYSA-N")
+InChI_Keys <- c('2-Heptanone' = "SJZRECIVHVDYJC-UHFFFAOYSA-N")
 # Get classification
 Classification_List <- purrr::map(InChI_Keys, get_classification)
 Classification_List
