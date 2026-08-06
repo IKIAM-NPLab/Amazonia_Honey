@@ -137,8 +137,11 @@ The next step is feature clustering. This step helps us reduce the number of fea
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-clustered <- cluster_features(corrected, rt_window = 1/60, corr_thresh = 0.95,
-                              d_thresh = 0.80)
+clustered <- cluster_features(corrected, rt_window = 1/60,
+                              corr_thresh = 0.95,
+                              d_thresh = 0.80,
+                              plotting = TRUE,
+                              prefix = "../Result/notame_Result/HS_GCMS/Cluster/")
 compressed <- compress_clusters(clustered)
 
 ```
