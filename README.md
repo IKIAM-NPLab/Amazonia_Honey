@@ -7,6 +7,7 @@ The present document aims to record the procedure given for the statistical anal
 - [GC-MS in-house library](https://github.com/IKIAM-NPLab/I_guayusa_volatilome/blob/main/Noteboks/in-house_Library.md)
 - [GC-MS spectral deconvolution](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/Notebooks/HS_GCMS_Spectral_Deconvolution.md)
 - [Statistical analysis](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/Notebooks/HS_GCMS_Multivariate_Statistics.md)
+- [Antimicrobial analysis](https://github.com/IKIAM-NPLab/Amazonia_Honey/blob/main/Notebooks/Antimicrobial_activity-Statistics.md)
 
 # Useful results
 
