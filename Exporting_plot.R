@@ -6,6 +6,11 @@
 ### Library loading
 library(gridExtra)
 library(cowplot)
+
+################################################################################
+######################### Figure 3 #############################################
+################################################################################
+
 ### Figure matrix
 figure_1 <- arrangeGrob(pca_plot,
                         corr_pca_plot,
@@ -26,14 +31,18 @@ figure_one <- ggpubr::as_ggplot(figure_1) +
                   x = c(0, 0.5, 0),
                   y = c(.99, .99, .60))
 ### Exporting (*.pdf) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.pdf", plot = figure_one,
-      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1_MCJ.pdf", plot = figure_one,
+#      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
 ### Exporting (*.png) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.png", plot = figure_one,
-      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1_MCJ.png", plot = figure_one,
+#      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
 ### Exporting (*.jpg) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1.jpg", plot = figure_one,
-      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/Figure1_MCJ.jpg", plot = figure_one,
+#      width = 140, height = 100, units = "mm", dpi = 300, scale = 2.3)
+
+################################################################################
+######################### Figure 4 #############################################
+################################################################################
 
 ## Heatmap with HCA and heatmap of the Pearson correlation
 
@@ -94,14 +103,18 @@ figure2 <- plot_grid(gg_legend_fn_f2,
                      gg_f2, ncol = 1,
                      rel_heights = c(1, 9))
 ### Exporting (*.pdf) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.pdf", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.pdf", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.png) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.png", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.png", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.jpg) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2.jpg", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.jpg", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
+
+################################################################################
+######################### Figure A3 #############################################
+################################################################################
 
 ## Antimicrobial activity
 
@@ -123,14 +136,18 @@ figure_athree <- ggpubr::as_ggplot(figure_a3) +
                   x = c(0, 0.5, 0, 0.5),
                   y = c(.99, .99, .57, .57))
 ### Exporting (*.pdf) file
-ggsave(filename = "Result/Antimicrobial/Figure_A3.pdf", plot = figure_athree,
-       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+#ggsave(filename = "Result/Antimicrobial/Figure_A3.pdf", plot = figure_athree,
+#       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
 ### Exporting (*.png) file
-ggsave(filename = "Result/Antimicrobial/Figure_A3.png", plot = figure_athree,
-       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+#ggsave(filename = "Result/Antimicrobial/Figure_A3.png", plot = figure_athree,
+#       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
 ### Exporting (*.jpg) file
-ggsave(filename = "Result/Antimicrobial/Figure_A3.jpg", plot = figure_athree,
-       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+#ggsave(filename = "Result/Antimicrobial/Figure_A3.jpg", plot = figure_athree,
+#       width = 110, height = 80, units = "mm", dpi = 300, scale = 2.5)
+
+################################################################################
+######################### Figure A5 #############################################
+################################################################################
 
 ## PCA biplot
 
@@ -169,11 +186,12 @@ fig_a4 <- ggplot(scores, aes(PC1, PC2)) +
   geom_vline(xintercept = 0, linetype = "longdash", colour="gray") +
   geom_hline(yintercept = 0, linetype = "longdash", colour="gray")
 ### Exporting (*.pdf) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.pdf", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.pdf", plot = fig_a4,
+#       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.png) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.png", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.png", plot = fig_a4,
+#       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.jpg) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.jpg", plot = fig_a4,
-       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
+#ggsave(filename = "Result/notame_Result/HS_GCMS/FigureA4.jpg", plot = fig_a4,
+#       width = 168, height = 84, units = "mm", dpi = 300, scale = 2.0)
+

@@ -63,7 +63,7 @@ Second, the antimicrobial data homoscedasticity was evaluated using the Bartlett
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 cols_aa <- names(all_bacteria)[2:ncol(all_bacteria)]
-# Perform the Bartlett test test
+# Perform the Bartlett test
 bartlett <- lapply(cols_aa,
                    function(x) bartlett.test(reformulate("Group", x), data = all_bacteria))
 bartlett

@@ -139,9 +139,10 @@ The next step is feature clustering. This step helps us reduce the number of fea
 
 clustered <- cluster_features(corrected, rt_window = 1/60,
                               corr_thresh = 0.95,
-                              d_thresh = 0.80,
-                              plotting = TRUE,
-                              prefix = "../Result/notame_Result/HS_GCMS/Cluster/")
+                              d_thresh = 0.80#,
+                              #plotting = TRUE,
+                              #prefix = "../Result/notame_Result/HS_GCMS/Cluster/"
+                              )
 compressed <- compress_clusters(clustered)
 
 ```
@@ -735,8 +736,8 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
                             box.padding = 0.37,
                             label.padding = 0.22,
                             label.r = 0.30,
-                            cex = 2.5,
-                            max.overlaps = 50,
+                            cex = 3.5,
+                            max.overlaps = 10,
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
@@ -764,7 +765,10 @@ First, the antimicrobial data normality was evaluated using the Shapiro-Wilk tes
 # Loading the "readxl" package
 library(readxl)
 # Loading the antimicrobial activity data
-all_bacteria <- read_excel("../Data/Antimicrobial_of_honey.xlsx", sheet = 1)
+all_bacteria <- read_excel("../Data/Antimicrobial_of_honey.xlsx", sheet = 1)%>%
+  group_by(Group) %>%
+  # Average of each biological replicate
+  summarise(across(where(is.numeric), mean, na.rm = TRUE))
 # Deleting the group column to perform Shapiro-Wilk test in batch
 no_group <- all_bacteria[,-1]
 # Perform the Shapiro-Wilk test
@@ -774,31 +778,9 @@ shapiro
 
 ```
 
-The result showed that only the microorganisms *K. pneumonia* and *P. mirabilis* have a normal distribution (p-value > 0.05). However, when we inspected the data, we found the values in the ATA001 and RIG003 groups in the *E. coli* could be outliers; also, a possible outlier in the RYMG001 group in the *S. aureus* was found. When we delete all these possible outliers, we find that all the microorganisms (not including *S. aureus* at 25 % v/v) have a normal distribution, as seen below.
+The result showed that all microorganisms have a normal distribution (p-value > 0.05), excluding *K. pneumonia* tested with honey at 100 % v/v, and *S. aureus* tested with honey at 25 % v/v.
 
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
-
-# Delete outlier data in E. coli
-no_outliers <- all_bacteria
-no_outliers[no_outliers$Group == "ATA001",]$E_coli_75 <- NA
-no_outliers[no_outliers$Group == "ATA001",]$E_coli_100 <- NA
-no_outliers[no_outliers$Group == "RIG003",]$E_coli_75 <- NA
-no_outliers[no_outliers$Group == "RIG003",]$E_coli_100 <- NA
-# Delete outlier data in S. aureus
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_25 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_50 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_75 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_100 <- NA
-# Deleting the group column to perform Shapiro-Wilk test in batch
-no_outliers <- no_outliers[,-1]
-# Perform the Shapiro-Wilk test
-shapiro_outl <- do.call(rbind, lapply(no_outliers,
-                                 function(x) shapiro.test(x)[c("statistic", "p.value")]))
-shapiro_outl
-
-```
-
-The antimicrobial activity result of honey at 75 % v/v was used in the further analysis because this concentration showed activity in most of the tested microorganisms. (*E. coli*, *K. pneumonia*, *P. mirabilis*, and *S. aureus*).
+The antimicrobial activity result of honey at 75 % v/v was used in the further analysis because this concentration showed activity in most of the tested microorganisms (*E. coli*, *K. pneumonia*, *P. mirabilis*, and *S. aureus*).
 
 ### Metabolomics data transformation
 
@@ -826,31 +808,91 @@ glog_exprs <- glog_transformation(df = pmp_data@assays@data@listData[[1]],
 # Adding glog transformation to notame MetaboSet
 glog_set <- pqn_noflag
 exprs(glog_set) <- glog_exprs
+# Drop QCs
+glog_no_qc <- drop_qcs(glog_set)
 
 ```
 
-Preparing the metabolomics data for the antimicrobial correlation.
+### Data prepartion
 
-```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+Before correlating metabolomics data with antimicrobial activity, metabolomics and antimicrobial data were averaged across technical replicates.
 
-# Drop QCs
-glog_no_qc <- drop_qcs(glog_set)
-# Preparing the data for E. coli correlation (drop outlier data)
-glog_E.coli <- glog_no_qc[, glog_no_qc$Group != "ATA001"]
-pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
-glog_E.coli <- glog_E.coli[, glog_E.coli$Group != "RIG003"]
-pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
-# Preparing the data for S. aureus (dropn outlier data)
-glog_S.aureus <- glog_no_qc[, glog_no_qc$Group != "RYMG001"]
-pData(glog_S.aureus) <- droplevels(pData(glog_S.aureus))
-# Convert antimicrobial result to numeric
-glog_E.coli$E_coli_75 <- as.numeric(glog_E.coli$E_coli_75)
-glog_no_qc$K_pneumonia_75 <- as.numeric(glog_no_qc$K_pneumonia_75)
-glog_no_qc$P_mirabilis_75 <- as.numeric(glog_no_qc$P_mirabilis_75)
-glog_S.aureus$S_aureus_75 <- as.numeric(glog_S.aureus$S_aureus_75)
-# Exporting MetaboSet data to Excel
-#write_to_excel(glog_no_qc,
-#               file = paste0(ppath, "../Result/notame_Result/HS_GCMS/glog_no_qc.xlsx"))
+In the following code, the metabolics dataset was used to determine the average of technical replication for each hive.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# Extract abundance data (feature abundance)
+avrg_exprs <- exprs(glog_no_qc)
+# Extract pheno data (sample information)
+avrg_pd <- pData(glog_no_qc)
+# Transposing the matrix (sample as row and column as feature/ions)
+avrg_exprs <- t(avrg_exprs)
+# Data matrix to DataFrame
+avrg_exprs <- as.data.frame(avrg_exprs)
+# Adding the group to the DataFrame
+avrg_exprs$Group <- avrg_pd$Group
+# Adding the sample ID to the DataFrame
+avrg_exprs$Sample_ID <- avrg_pd$Sample_ID
+# Calculating the average of the feature abundance
+mean_honey <- avrg_exprs %>%
+  group_by(Group) %>%
+  summarise(across(dplyr::starts_with("RTX5MS_EI_"), ~ mean(.x, na.rm = TRUE)),
+            across(everything(), dplyr::first),
+            .groups = "drop")
+# Preparing the data matrix to use as an exprs dataset (feature abundance)
+mean_honey$Group <- NULL
+rownames(mean_honey) <- mean_honey$Sample_ID
+mean_honey <- t(mean_honey)
+mean_honey <- mean_honey[rownames(mean_honey) != "Sample_ID", , drop = FALSE]
+
+```
+
+In the following code, the antimicrobial dataset was used to determine the average of technical replication for each hive.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# Create a new pheno data dataframe using the target data
+honey_pd <- data.frame(Sample_ID = avrg_pd$Sample_ID,
+                       Group = avrg_pd$Group,
+                       E_coli_75 = as.numeric(avrg_pd$E_coli_75),
+                       K_pneumonia_75 = as.numeric(avrg_pd$K_pneumonia_75),
+                       P_mirabilis_75 = as.numeric(avrg_pd$P_mirabilis_75),
+                       S_aureus_75 = as.numeric(avrg_pd$S_aureus_75),
+                       Species = avrg_pd$Species,
+                       Visit = avrg_pd$Visit,
+                       Injection_order = avrg_pd$Injection_order,
+                       Datafile = avrg_pd$Datafile,
+                       QC = avrg_pd$QC)
+# Average calculation of antimicrobial activity by each hive
+mean_pd <- honey_pd %>%
+  group_by(Group) %>%
+  summarise(Sample_ID = dplyr::first(Sample_ID),
+            E_coli_75 = mean(E_coli_75, na.rm = TRUE),
+            K_pneumonia_75 = mean(K_pneumonia_75, na.rm = TRUE),
+            P_mirabilis_75 = mean(P_mirabilis_75, na.rm = TRUE),
+            S_aureus_75 = mean(S_aureus_75, na.rm = TRUE),
+            Species = dplyr::first(Species),
+            Visit = dplyr::first(Visit),
+            Injection_order = dplyr::first(Injection_order),
+            Datafile = dplyr::first(Datafile),
+            QC = dplyr::first(QC)) %>%
+  relocate(Sample_ID, .before = everything())
+mean_pd <- as.data.frame(mean_pd)
+row.names(mean_pd) <- mean_pd$Sample_ID
+
+```
+
+The *notame* metaboset was constructed using the metabolomics and antimicrobial datasets after averaging.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+# Metaboset
+mean_set <- construct_metabosets(exprs = mean_honey,
+                                 pheno_data = mean_pd,
+                                 feature_data = fData(glog_no_qc),
+                                 group_col = "Group")
+# Data extraction
+mean_set <- mean_set$RTX5MS_EI
 
 ```
 
@@ -859,23 +901,23 @@ Perform the Pearson correlation analysis.
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Feature correlation with the E. coli antimicrobial activity
-E.coli_corr <- perform_correlation_tests(glog_E.coli,
-                                         x = featureNames(glog_no_qc),
+E.coli_corr <- perform_correlation_tests(mean_set,
+                                         x = featureNames(mean_set),
                                          y = c("E_coli_75"),
                                          method = "pearson")
 # Feature correlation with the K. pneumonia antimicrobial activity
-K.pneumonia_corr <- perform_correlation_tests(glog_no_qc,
-                                              x = featureNames(glog_set),
+K.pneumonia_corr <- perform_correlation_tests(mean_set,
+                                              x = featureNames(mean_set),
                                               y = c("K_pneumonia_75"),
                                               method = "pearson")
 # Feature correlation with the P. mirabilis antimicrobial activity
-P.mirabilis_corr <- perform_correlation_tests(glog_no_qc,
-                                              x = featureNames(glog_set),
+P.mirabilis_corr <- perform_correlation_tests(mean_set,
+                                              x = featureNames(mean_set),
                                               y = c("P_mirabilis_75"),
                                               method = "pearson")
 # Feature correlation with the S. aureus antimicrobial activity
-S.aureus_corr <- perform_correlation_tests(glog_S.aureus,
-                                           x = featureNames(glog_no_qc),
+S.aureus_corr <- perform_correlation_tests(mean_set,
+                                           x = featureNames(mean_set),
                                            y = c("S_aureus_75"),
                                            method = "pearson")
 
@@ -917,10 +959,10 @@ Create a matrix showing the statistical significance of the correlation result.
 
 # Correlation table for the heatmap
 hm_sign_table <- data.frame(Feature_ID = E.coli_corr$X,
-                            E_coli = E.coli_corr$Correlation_P_FDR,
-                            K_pneumonia = K.pneumonia_corr$Correlation_P_FDR,
-                            P_mirabilis = P.mirabilis_corr$Correlation_P_FDR,
-                            S_aureus = S.aureus_corr$Correlation_P_FDR)
+                            E_coli = E.coli_corr$Correlation_P,
+                            K_pneumonia = K.pneumonia_corr$Correlation_P,
+                            P_mirabilis = P.mirabilis_corr$Correlation_P,
+                            S_aureus = S.aureus_corr$Correlation_P)
 # Adding the metabolie name to the correlation table
 hm_sign_table <- left_join(hm_sign_table, feat_corr_table)
 # Extracting data of the identified metabolites
@@ -978,13 +1020,13 @@ library('stringr')
 # Correlation table for the heatmap with the best features
 best_feat <- data.frame(Feature_ID = E.coli_corr$X,
                         E_coli = E.coli_corr$Correlation_coefficient,
-                        E_coli_p = E.coli_corr$Correlation_P_FDR,
+                        E_coli_p = E.coli_corr$Correlation_P,
                         K_pneumonia = K.pneumonia_corr$Correlation_coefficient,
-                        K_pneumonia_p = K.pneumonia_corr$Correlation_P_FDR,
+                        K_pneumonia_p = K.pneumonia_corr$Correlation_P,
                         P_mirabilis = P.mirabilis_corr$Correlation_coefficient,
-                        P_mirabilis_p = P.mirabilis_corr$Correlation_P_FDR,
+                        P_mirabilis_p = P.mirabilis_corr$Correlation_P,
                         S_aureus = S.aureus_corr$Correlation_coefficient,
-                        S_aureus_p = S.aureus_corr$Correlation_P_FDR)
+                        S_aureus_p = S.aureus_corr$Correlation_P)
 # Filtering the feature with the correlation >= 0.6
 best_feat <- best_feat[best_feat$E_coli >= 0.6 |
                          best_feat$K_pneumonia >= 0.6 |
