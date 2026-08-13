@@ -15,12 +15,19 @@ Jefferson Pastuña
   (PCA)</a>
   - <a href="#score-pca" id="toc-score-pca">Score PCA</a>
   - <a href="#loading-pca" id="toc-loading-pca">Loading PCA</a>
-- <a href="#permanova-analysis" id="toc-permanova-analysis">PERMANOVA
-  analysis</a>
-  - <a href="#t-angustula" id="toc-t-angustula"><em>T. angustula</em></a>
-  - <a href="#m-grandis" id="toc-m-grandis"><em>M. grandis</em></a>
-  - <a href="#m-fuscopilosa" id="toc-m-fuscopilosa"><em>M.
-    fuscopilosa</em></a>
+- <a href="#permanova" id="toc-permanova">PERMANOVA</a>
+  - <a href="#complete-chemical-profile"
+    id="toc-complete-chemical-profile">Complete chemical profile</a>
+    - <a href="#permanova-1" id="toc-permanova-1">PERMANOVA</a>
+    - <a href="#homogeneity-of-dispersions"
+      id="toc-homogeneity-of-dispersions">Homogeneity of dispersions</a>
+  - <a href="#annotated-features" id="toc-annotated-features">Annotated
+    features</a>
+    - <a href="#permanova-2" id="toc-permanova-2">PERMANOVA</a>
+    - <a href="#pairwise-permanova" id="toc-pairwise-permanova">Pairwise
+      PERMANOVA</a>
+    - <a href="#homogeneity-of-dispersions-1"
+      id="toc-homogeneity-of-dispersions-1">Homogeneity of dispersions</a>
 - <a href="#heatmap-with-hca" id="toc-heatmap-with-hca">Heatmap with
   HCA</a>
 - <a href="#antimicrobial-activity-correlation"
@@ -37,6 +44,7 @@ Jefferson Pastuña
     - <a href="#metabolomics-data-transformation"
       id="toc-metabolomics-data-transformation">Metabolomics data
       transformation</a>
+    - <a href="#data-prepartion" id="toc-data-prepartion">Data prepartion</a>
     - <a href="#correlation-of-identified-metabolites"
       id="toc-correlation-of-identified-metabolites">Correlation of identified
       metabolites</a>
@@ -129,8 +137,21 @@ install_dependencies
     ##         install_helper(cran = misc_cran, ...)
     ##     }
     ## }
-    ## <bytecode: 0x0000000013cc01a8>
+    ## <bytecode: 0x00000000142856f0>
     ## <environment: namespace:notame>
+
+``` r
+# Loading additional libraries
+library(vegan)
+```
+
+    ## Warning: package 'vegan' was built under R version 4.4.3
+
+    ## Warning: package 'permute' was built under R version 4.4.3
+
+``` r
+library(pairwiseAdonis)
+```
 
 Then, a primary path and a log system were added to have a record of
 each process executed.
@@ -142,42 +163,42 @@ ppath <- "../Amazonia_Honey/"
 init_log(log_file = paste0(ppath, "../Result/notame_Result/HS_GCMS/HS_GCMS_log.txt"))
 ```
 
-    ## INFO [2026-01-16 12:54:51] Starting logging
+    ## INFO [2026-08-12 23:30:41] Starting logging
 
 Next, the MZmine feature list table in “*notame*” format was loaded.
 
 ``` r
 data <- read_from_excel(file = "../Data/Data_to_notame/HS_GCMS_Data_to_notame.xlsx",
-                        sheet = 2, corner_row = 18, corner_column = "L",
+                        sheet = 3, corner_row = 20, corner_column = "L",
                         split_by = c("Column", "Ion Mode"))
 ```
 
-    ## INFO [2026-01-16 12:54:51] Corner detected correctly at row 18, column L
-    ## INFO [2026-01-16 12:54:51] 
-    ## Extracting sample information from rows 1 to 18 and columns M to AV
-    ## INFO [2026-01-16 12:54:51] Replacing spaces in sample information column names with underscores (_)
-    ## INFO [2026-01-16 12:54:51] Naming the last column of sample information "Datafile"
-    ## INFO [2026-01-16 12:54:51] 
-    ## Extracting feature information from rows 19 to 704 and columns A to L
-    ## INFO [2026-01-16 12:54:51] Creating Split column from Column, Ion Mode
-    ## INFO [2026-01-16 12:54:51] Feature_ID column not found, creating feature IDs
-    ## INFO [2026-01-16 12:54:51] Identified m/z column mass and retention time column RT
-    ## INFO [2026-01-16 12:54:51] Identified m/z column mass and retention time column RT
-    ## INFO [2026-01-16 12:54:51] Creating feature IDs from Split, m/z and retention time
-    ## INFO [2026-01-16 12:54:51] Replacing dots (.) in feature information column names with underscores (_)
-    ## INFO [2026-01-16 12:54:51] 
-    ## Extracting feature abundances from rows 19 to 704 and columns M to AV
-    ## INFO [2026-01-16 12:54:51] 
+    ## INFO [2026-08-12 23:30:42] Corner detected correctly at row 20, column L
+    ## INFO [2026-08-12 23:30:42] 
+    ## Extracting sample information from rows 1 to 20 and columns M to AV
+    ## INFO [2026-08-12 23:30:42] Replacing spaces in sample information column names with underscores (_)
+    ## INFO [2026-08-12 23:30:42] Naming the last column of sample information "Datafile"
+    ## INFO [2026-08-12 23:30:42] 
+    ## Extracting feature information from rows 21 to 706 and columns A to L
+    ## INFO [2026-08-12 23:30:42] Creating Split column from Column, Ion Mode
+    ## INFO [2026-08-12 23:30:42] Feature_ID column not found, creating feature IDs
+    ## INFO [2026-08-12 23:30:42] Identified m/z column mass and retention time column RT
+    ## INFO [2026-08-12 23:30:42] Identified m/z column mass and retention time column RT
+    ## INFO [2026-08-12 23:30:42] Creating feature IDs from Split, m/z and retention time
+    ## INFO [2026-08-12 23:30:42] Replacing dots (.) in feature information column names with underscores (_)
+    ## INFO [2026-08-12 23:30:42] 
+    ## Extracting feature abundances from rows 21 to 706 and columns M to AV
+    ## INFO [2026-08-12 23:30:42] 
     ## Checking sample information
-    ## INFO [2026-01-16 12:54:51] QC column generated from rows containing 'QC'
-    ## INFO [2026-01-16 12:54:51] Sample ID autogenerated from injection orders and prefix ID_
-    ## INFO [2026-01-16 12:54:51] Checking that feature abundances only contain numeric values
-    ## INFO [2026-01-16 12:54:51] 
+    ## INFO [2026-08-12 23:30:42] QC column generated from rows containing 'QC'
+    ## INFO [2026-08-12 23:30:42] Sample ID autogenerated from injection orders and prefix ID_
+    ## INFO [2026-08-12 23:30:42] Checking that feature abundances only contain numeric values
+    ## INFO [2026-08-12 23:30:42] 
     ## Checking feature information
-    ## INFO [2026-01-16 12:54:51] Checking that feature IDs are unique and not stored as numbers
-    ## INFO [2026-01-16 12:54:51] Checking that m/z and retention time values are reasonable
-    ## INFO [2026-01-16 12:54:51] Identified m/z column mass and retention time column RT
-    ## INFO [2026-01-16 12:54:51] Identified m/z column mass and retention time column RT
+    ## INFO [2026-08-12 23:30:42] Checking that feature IDs are unique and not stored as numbers
+    ## INFO [2026-08-12 23:30:42] Checking that m/z and retention time values are reasonable
+    ## INFO [2026-08-12 23:30:42] Identified m/z column mass and retention time column RT
+    ## INFO [2026-08-12 23:30:42] Identified m/z column mass and retention time column RT
 
 Once the data was loaded, the next step was to create a MetaboSet to
 work with R objects from now on.
@@ -190,11 +211,11 @@ modes <- construct_metabosets(exprs = data$exprs,
 ```
 
     ## Initializing the object(s) with unflagged features
-    ## INFO [2026-01-16 12:54:51] 
+    ## INFO [2026-08-12 23:30:42] 
     ## Checking feature information
-    ## INFO [2026-01-16 12:54:51] Checking that feature IDs are unique and not stored as numbers
-    ## INFO [2026-01-16 12:54:51] Checking that feature abundances only contain numeric values
-    ## INFO [2026-01-16 12:54:51] Setting row and column names of exprs based on feature and pheno data
+    ## INFO [2026-08-12 23:30:42] Checking that feature IDs are unique and not stored as numbers
+    ## INFO [2026-08-12 23:30:42] Checking that feature abundances only contain numeric values
+    ## INFO [2026-08-12 23:30:42] Setting row and column names of exprs based on feature and pheno data
 
 ## Preprocessing
 
@@ -219,7 +240,7 @@ sample group or class.
 mode <- flag_detection(mode, qc_limit = 7/9, group_limit = 2/3)
 ```
 
-    ## INFO [2026-01-16 12:54:52] 
+    ## INFO [2026-08-12 23:30:42] 
     ## 2% of features flagged for low detection rate
 
 The following preprocessing step is drift correction, which is applied
@@ -230,12 +251,12 @@ using smoothed cubic spline regression.
 corrected <- correct_drift(mode)
 ```
 
-    ## INFO [2026-01-16 12:54:52] 
-    ## Starting drift correction at 2026-01-16 12:54:52.387369
-    ## INFO [2026-01-16 12:54:54] Drift correction performed at 2026-01-16 12:54:54.211474
-    ## INFO [2026-01-16 12:54:55] Inspecting drift correction results 2026-01-16 12:54:55.20353
-    ## INFO [2026-01-16 12:54:56] Drift correction results inspected at 2026-01-16 12:54:56.804622
-    ## INFO [2026-01-16 12:54:56] 
+    ## INFO [2026-08-12 23:30:42] 
+    ## Starting drift correction at 2026-08-12 23:30:42.840146
+    ## INFO [2026-08-12 23:30:44] Drift correction performed at 2026-08-12 23:30:44.537243
+    ## INFO [2026-08-12 23:30:45] Inspecting drift correction results 2026-08-12 23:30:45.406292
+    ## INFO [2026-08-12 23:30:47] Drift correction results inspected at 2026-08-12 23:30:47.077388
+    ## INFO [2026-08-12 23:30:47] 
     ## Drift correction results inspected, report:
     ## Drift_corrected: 100%
 
@@ -270,22 +291,26 @@ number of features of the same molecule that were split due to a 70 eV
 electron ionization (EI) environment.
 
 ``` r
-clustered <- cluster_features(corrected, rt_window = 1/60, corr_thresh = 0.95,
-                              d_thresh = 0.80)
+clustered <- cluster_features(corrected, rt_window = 1/60,
+                              corr_thresh = 0.95,
+                              d_thresh = 0.80#,
+                              #plotting = TRUE,
+                              #prefix = "../Result/notame_Result/HS_GCMS/Cluster/"
+                              )
 ```
 
-    ## INFO [2026-01-16 12:54:59] Identified m/z column mass and retention time column RT
-    ## INFO [2026-01-16 12:54:59] 
-    ## Starting feature clustering at 2026-01-16 12:54:59.21676
-    ## INFO [2026-01-16 12:54:59] Finding connections between features in RTX5MS_EI
+    ## INFO [2026-08-12 23:30:49] Identified m/z column mass and retention time column RT
+    ## INFO [2026-08-12 23:30:49] 
+    ## Starting feature clustering at 2026-08-12 23:30:49.598532
+    ## INFO [2026-08-12 23:30:49] Finding connections between features in RTX5MS_EI
     ## [1] 100
     ## [1] 200
     ## [1] 300
     ## [1] 400
     ## [1] 500
     ## [1] 600
-    ## INFO [2026-01-16 12:55:20] Found 5601 connections in RTX5MS_EI
-    ## INFO [2026-01-16 12:55:20] Found 5601 connections
+    ## INFO [2026-08-12 23:31:11] Found 5601 connections in RTX5MS_EI
+    ## INFO [2026-08-12 23:31:11] Found 5601 connections
     ## 57 components found
     ## 
     ## 29 components found
@@ -296,13 +321,13 @@ clustered <- cluster_features(corrected, rt_window = 1/60, corr_thresh = 0.95,
     ## 
     ## 2 components found
     ## 
-    ## INFO [2026-01-16 12:55:21] Found 72 clusters of 2 or more features, clustering finished at 2026-01-16 12:55:21.07801
+    ## INFO [2026-08-12 23:31:11] Found 72 clusters of 2 or more features, clustering finished at 2026-08-12 23:31:11.969812
 
 ``` r
 compressed <- compress_clusters(clustered)
 ```
 
-    ## INFO [2026-01-16 12:55:21] Clusters compressed, left with 179 features
+    ## INFO [2026-08-12 23:31:12] Clusters compressed, left with 179 features
 
 We can inspect the data using the PCA plot after the clustering
 algorithm execution.
@@ -364,8 +389,8 @@ pqn_set <- pqn_normalization(imputed,
                              all_features = FALSE)
 ```
 
-    ## INFO [2026-01-16 12:55:23] Starting PQN normalization
-    ## INFO [2026-01-16 12:55:23] Using median of qc samples as reference spectrum
+    ## INFO [2026-08-12 23:31:14] Starting PQN normalization
+    ## INFO [2026-08-12 23:31:14] Using median of qc samples as reference spectrum
 
 We can inspect the data with the PCA plot after data normalization.
 
@@ -523,324 +548,174 @@ load_pca
 #ggsave(filename = '../Result/notame_Result/HS_GCMS/load_pca_4A.jpg', plot = load_pca, #width = 14, height = 7, dpi = 300, scale = 0.85)
 ```
 
-# PERMANOVA analysis
+# PERMANOVA
 
-## *T. angustula*
+## Complete chemical profile
 
-PERMANOVA analysis of *T. angustula* by collection site.
+### PERMANOVA
 
 ``` r
 # Drop QC
 pqn_noqc <- drop_qcs(pqn_noflag)
-# Removal of the M. grandis group from the dataset
-permanova_ta <- pqn_noqc[, pqn_noqc$Species != "M. grandis"]
-pData(permanova_ta) <- droplevels(pData(permanova_ta))
-# Removal of the M. fuscopilosa group from the dataset
-permanova_ta <- permanova_ta[, permanova_ta$Species != "M. fuscopilosa"]
-pData(permanova_ta) <- droplevels(pData(permanova_ta))
-# Change to factor varibles
-permanova_ta@phenoData@data$Group <- as.factor(permanova_ta@phenoData@data$Group)
-# PERMANOVA between close hives of bees T. angustula site 1 and 2 (Removal of site 3)
-permanova_1vs2ta <- permanova_ta[, permanova_ta$Site != "3"]
-pData(permanova_1vs2ta) <- droplevels(pData(permanova_1vs2ta))
-permanova_1vs2ta <- perform_permanova(permanova_1vs2ta, group = "Group", nperm = 999)
+# Extract the feature abundance
+permanova_fa <- exprs(pqn_noqc)
+# Extract the pheno data
+permanova_pd <- pData(pqn_noqc)
+permanova_pd$Species <- as.factor(permanova_pd$Species)
+permanova_pd$Locality <- as.factor(permanova_pd$Locality)
+permanova_pd$Site <- as.factor(permanova_pd$Site)
+# Calculate distance matrix
+dist_mat <- vegdist(t(permanova_fa), method = "euclidean")
+# Implement PERMANOVA Global
+permanova_result <- adonis2(dist_mat ~ Species + Locality,
+                            data = permanova_pd,
+                            permutations = 999,
+                            by = "terms")
+permanova_result
 ```
 
-    ## INFO [2026-01-16 12:55:28] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:29] PERMANOVA performed
+    ## Permutation test for adonis under reduced model
+    ## Terms added sequentially (first to last)
+    ## Permutation: free
+    ## Number of permutations: 999
+    ## 
+    ## adonis2(formula = dist_mat ~ Species + Locality, data = permanova_pd, permutations = 999, by = "terms")
+    ##          Df   SumOfSqs      R2      F Pr(>F)
+    ## Species   2 7.2276e+11 0.09953 1.3394  0.164
+    ## Locality  1 3.3301e+11 0.04586 1.2342  0.316
+    ## Residual 23 6.2057e+12 0.85461              
+    ## Total    26 7.2615e+12 1.00000
+
+### Homogeneity of dispersions
 
 ``` r
-permanova_1vs2ta
+# Test dispersion for Species
+disp_sp <- betadisper(dist_mat, permanova_pd$Species)
+permutest(disp_sp, permutations = 9999)
 ```
 
-    ##  ###### PERMANOVA Analysis #######
     ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
+    ## Permutation test for homogeneity of multivariate dispersions
+    ## Permutation: free
+    ## Number of permutations: 9999
     ## 
-    ## Contrast Matrix
-    ##           ER001 RYTA006
-    ## C ER001       1       0
-    ## C RYTA006     0       1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  384.4018 510.5982      1        4 3.011384   0.083        0.083
+    ## Response: Distances
+    ##           Df     Sum Sq    Mean Sq      F N.Perm Pr(>F)
+    ## Groups     2 2.6754e+11 1.3377e+11 0.5597   9999 0.6617
+    ## Residuals 24 5.7362e+12 2.3901e+11
 
 ``` r
-# PERMANOVA between close hives of bees T. angustula site 1 and 3 (Removal of site 2)
-permanova_1vs3ta <- permanova_ta[, permanova_ta$Site != "2"]
-pData(permanova_1vs3ta) <- droplevels(pData(permanova_1vs3ta))
-permanova_1vs3ta <- perform_permanova(permanova_1vs3ta, group = "Group", nperm = 999)
+# Test dispersion for Locality
+disp_loc <- betadisper(dist_mat, permanova_pd$Locality)
+permutest(disp_loc, permutations = 9999)
 ```
 
-    ## INFO [2026-01-16 12:55:29] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:30] PERMANOVA performed
+    ## 
+    ## Permutation test for homogeneity of multivariate dispersions
+    ## Permutation: free
+    ## Number of permutations: 9999
+    ## 
+    ## Response: Distances
+    ##           Df     Sum Sq    Mean Sq      F N.Perm Pr(>F)
+    ## Groups     1 9.3349e+10 9.3349e+10 0.3923   9999 0.6135
+    ## Residuals 25 5.9485e+12 2.3794e+11
+
+## Annotated features
+
+### PERMANOVA
 
 ``` r
-permanova_1vs3ta
+# Extracting identified metabolite data
+pqn_noqc_ids <- pqn_noqc[!is.na(pqn_noqc@featureData@data$Metabolite),]
+# Removing the M. fuscopilosa site 9
+#pqn_noqc_ids <- pqn_noqc_ids[, pqn_noqc_ids$Site != "9"]
+#pData(pqn_noqc_ids) <- droplevels(pData(pqn_noqc_ids))
+# Extract the feature abundance
+permanova_fa_ids <- exprs(pqn_noqc_ids)
+# Extract the pheno data
+permanova_pd_ids <- pData(pqn_noqc_ids)
+permanova_pd_ids$Species <- as.factor(permanova_pd_ids$Species)
+permanova_pd_ids$Locality <- as.factor(permanova_pd_ids$Locality)
+permanova_pd_ids$Site <- as.factor(permanova_pd_ids$Site)
+# Calculate distance matrix
+dist_mat_ids <- vegdist(t(permanova_fa_ids), method = "euclidean")
+# Implement PERMANOVA Global
+permanova_result_ids <- adonis2(dist_mat_ids ~ Species + Locality,
+                            data = permanova_pd_ids,
+                            permutations = 999,
+                            by = "terms")
+permanova_result_ids
 ```
 
-    ##  ###### PERMANOVA Analysis #######
+    ## Permutation test for adonis under reduced model
+    ## Terms added sequentially (first to last)
+    ## Permutation: free
+    ## Number of permutations: 999
     ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##           ATA001 RYTA006
-    ## C ATA001       1       0
-    ## C RYTA006      0       1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  543.1867 351.8133      1        4 6.175852     0.1          0.1
+    ## adonis2(formula = dist_mat_ids ~ Species + Locality, data = permanova_pd_ids, permutations = 999, by = "terms")
+    ##          Df   SumOfSqs      R2      F Pr(>F)  
+    ## Species   2 4.5135e+11 0.22810 3.8620  0.019 *
+    ## Locality  1 1.8342e+11 0.09269 3.1388  0.082 .
+    ## Residual 23 1.3440e+12 0.67921                
+    ## Total    26 1.9788e+12 1.00000                
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+### Pairwise PERMANOVA
 
 ``` r
-# PERMANOVA between close hives of bees T. angustula site 2 and 3 (Removal of site 1)
-permanova_2vs3ta <- permanova_ta[, permanova_ta$Site != "1"]
-pData(permanova_2vs3ta) <- droplevels(pData(permanova_2vs3ta))
-permanova_2vs3ta <- perform_permanova(permanova_2vs3ta, group = "Group", nperm = 999)
+# Pairwise PERMANOVA with FDR adjustment
+pairwise_results_ids <- pairwise.adonis(x = t(permanova_fa_ids),
+                                        factors = permanova_pd_ids$Species,
+                                        sim.method = "euclidean",
+                                        p.adjust.m = "fdr") # 'BH' o 'fdr'
+pairwise_results_ids
 ```
 
-    ## INFO [2026-01-16 12:55:30] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:31] PERMANOVA performed
+    ##                            pairs Df    SumsOfSqs  F.Model        R2 p.value
+    ## 1 T. angustula vs M. fuscopilosa  1 339139267173 3.573791 0.1825804   0.066
+    ## 2     T. angustula vs M. grandis  1   6382682226 4.454113 0.2177612   0.002
+    ## 3   M. fuscopilosa vs M. grandis  1 331503658394 3.504375 0.1796712   0.176
+    ##   p.adjusted sig
+    ## 1      0.099    
+    ## 2      0.006   *
+    ## 3      0.176
+
+### Homogeneity of dispersions
 
 ``` r
-permanova_2vs3ta
+# Test dispersion for Species
+disp_sp_ids <- betadisper(dist_mat_ids, permanova_pd_ids$Species)
+permutest(disp_sp, permutations = 9999)
 ```
 
-    ##  ###### PERMANOVA Analysis #######
     ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
+    ## Permutation test for homogeneity of multivariate dispersions
+    ## Permutation: free
+    ## Number of permutations: 9999
     ## 
-    ## Contrast Matrix
-    ##          ATA001 ER001
-    ## C ATA001      1     0
-    ## C ER001       0     1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  516.7884 378.2116      1        4 5.465602   0.082        0.082
-
-## *M. grandis*
-
-PERMANOVA analysis of *M. grandis* by collection site.
+    ## Response: Distances
+    ##           Df     Sum Sq    Mean Sq      F N.Perm Pr(>F)
+    ## Groups     2 2.6754e+11 1.3377e+11 0.5597   9999 0.6598
+    ## Residuals 24 5.7362e+12 2.3901e+11
 
 ``` r
-# Removal of the T. angustula group from the dataset
-permanova_mfa <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
-pData(permanova_mfa) <- droplevels(pData(permanova_mfa))
-# Removal of the M. fuscopilosa group from the dataset
-permanova_mfa <- permanova_mfa[, permanova_mfa$Species != "M. fuscopilosa"]
-pData(permanova_mfa) <- droplevels(pData(permanova_mfa))
-# Change to factor varibles
-permanova_mfa@phenoData@data$Group <- as.factor(permanova_mfa@phenoData@data$Group)
-# PERMANOVA between close hives of bees M. grandis site 5 and 6 (Removal of site 4)
-permanova_5vs6mfa <- permanova_mfa[, permanova_mfa$Site != "4"]
-pData(permanova_5vs6mfa) <- droplevels(pData(permanova_5vs6mfa))
-permanova_5vs6mfa <- perform_permanova(permanova_5vs6mfa, group = "Group", nperm = 999)
+# Test dispersion for Locality
+disp_loc_ids <- betadisper(dist_mat_ids, permanova_pd_ids$Locality)
+permutest(disp_loc_ids, permutations = 9999)
 ```
 
-    ## INFO [2026-01-16 12:55:31] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:31] PERMANOVA performed
-
-``` r
-permanova_5vs6mfa
-```
-
-    ##  ###### PERMANOVA Analysis #######
     ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
+    ## Permutation test for homogeneity of multivariate dispersions
+    ## Permutation: free
+    ## Number of permutations: 9999
     ## 
-    ## Contrast Matrix
-    ##          RGB004 RIG005
-    ## C RGB004      1      0
-    ## C RIG005      0      1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total   619.634  275.366      1        4 9.000877   0.094        0.094
-
-``` r
-# PERMANOVA between close hives of bees M. grandis site 5 and 4 (Removal of site 6)
-permanova_5vs4mfa <- permanova_mfa[, permanova_mfa$Site != "6"]
-pData(permanova_5vs4mfa) <- droplevels(pData(permanova_5vs4mfa))
-permanova_5vs4mfa <- perform_permanova(permanova_5vs4mfa, group = "Group", nperm = 999)
-```
-
-    ## INFO [2026-01-16 12:55:31] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:32] PERMANOVA performed
-
-``` r
-permanova_5vs4mfa
-```
-
-    ##  ###### PERMANOVA Analysis #######
-    ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##           RIG005 RYMG001
-    ## C RIG005       1       0
-    ## C RYMG001      0       1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  548.2971 346.7029      1        4 6.325843   0.078        0.078
-
-``` r
-# PERMANOVA between close hives of bees M. grandis site 6 and 4 (Removal of site 5)
-permanova_6vs4mfa <- permanova_mfa[, permanova_mfa$Site != "5"]
-pData(permanova_6vs4mfa) <- droplevels(pData(permanova_6vs4mfa))
-permanova_6vs4mfa <- perform_permanova(permanova_6vs4mfa, group = "Group", nperm = 999)
-```
-
-    ## INFO [2026-01-16 12:55:32] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:33] PERMANOVA performed
-
-``` r
-permanova_6vs4mfa
-```
-
-    ##  ###### PERMANOVA Analysis #######
-    ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##           RGB004 RYMG001
-    ## C RGB004       1       0
-    ## C RYMG001      0       1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  551.4406 343.5594      1        4 6.420323   0.093        0.093
-
-## *M. fuscopilosa*
-
-PERMANOVA analysis of *M. fuscopilosa* by collection site.
-
-``` r
-# Removal of the T. angustula group from the dataset
-permanova_mfu <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
-pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
-# Removal of the M. grandis group from the dataset
-permanova_mfu <- permanova_mfu[, permanova_mfu$Species != "M. grandis"]
-pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
-# Change to factor varibles
-permanova_mfu@phenoData@data$Group <- as.factor(permanova_mfu@phenoData@data$Group)
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 9 (Removal of site 7)
-permanova_8vs9mfu <- permanova_mfu[, permanova_mfu$Site != "7"]
-pData(permanova_8vs9mfu) <- droplevels(pData(permanova_8vs9mfu))
-permanova_8vs9mfu <- perform_permanova(permanova_8vs9mfu, group = "Group", nperm = 999)
-```
-
-    ## INFO [2026-01-16 12:55:33] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:33] PERMANOVA performed
-
-``` r
-permanova_8vs9mfu
-```
-
-    ##  ###### PERMANOVA Analysis #######
-    ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##          RGY001 RIG003
-    ## C RGY001      1      0
-    ## C RIG003      0      1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  554.0464 340.9536      1        4 6.499961   0.081        0.081
-
-``` r
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 7 (Removal of site 9)
-permanova_8vs7mfu <- permanova_mfu[, permanova_mfu$Site != "9"]
-pData(permanova_8vs7mfu) <- droplevels(pData(permanova_8vs7mfu))
-permanova_8vs7mfu <- perform_permanova(permanova_8vs7mfu, group = "Group", nperm = 999)
-```
-
-    ## INFO [2026-01-16 12:55:33] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:34] PERMANOVA performed
-
-``` r
-permanova_8vs7mfu
-```
-
-    ##  ###### PERMANOVA Analysis #######
-    ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##           FIED001 RGY001
-    ## C FIED001       1      0
-    ## C RGY001        0      1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  531.4305 363.5695      1        4 5.846809   0.046        0.046
-
-``` r
-# PERMANOVA between close hives of bees M. fuscopilosa site 9 and 7 (Removal of site 8)
-permanova_9vs7mfu <- permanova_mfu[, permanova_mfu$Site != "8"]
-pData(permanova_9vs7mfu) <- droplevels(pData(permanova_9vs7mfu))
-permanova_9vs7mfu <- perform_permanova(permanova_9vs7mfu, group = "Group", nperm = 999)
-```
-
-    ## INFO [2026-01-16 12:55:34] Starting PERMANOVA tests
-    ## INFO [2026-01-16 12:55:35] PERMANOVA performed
-
-``` r
-permanova_9vs7mfu
-```
-
-    ##  ###### PERMANOVA Analysis #######
-    ## 
-    ## Call
-    ## PERMANOVA::PERMANOVA(Distance = initialized, group = pData(object)[, 
-    ##     group], nperm = 999)
-    ## ________________________________________________
-    ## 
-    ## Contrast Matrix
-    ##           FIED001 RIG003
-    ## C FIED001       1      0
-    ## C RIG003        0      1
-    ## ________________________________________________
-    ## 
-    ## MANOVA
-    ##       Explained Residual df Num df Denom    F-exp p-value p-value adj.
-    ## Total  607.7088 287.2912      1        4 8.461223     0.1          0.1
+    ## Response: Distances
+    ##           Df     Sum Sq    Mean Sq      F N.Perm Pr(>F)   
+    ## Groups     1 4.3005e+11 4.3005e+11 8.2234   9999 0.0046 **
+    ## Residuals 25 1.3074e+12 5.2296e+10                        
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # Heatmap with HCA
 
@@ -883,7 +758,7 @@ metabolite classifications to the heatmap plot.
 
 ``` r
 # InChI key of the metabolites you want to classify
-InChI_Keys <- c('2-Heptanone' = "CATSNJVOTSVZJV-UHFFFAOYSA-N")
+InChI_Keys <- c('2-Heptanone' = "SJZRECIVHVDYJC-UHFFFAOYSA-N")
 # Get classification
 Classification_List <- purrr::map(InChI_Keys, get_classification)
 Classification_List
@@ -918,14 +793,14 @@ set.seed(1540)
 # Adding row and column names
 hm_scl <- hm_height
 rownames(hm_scl) <- hm_fdata$Metabolite
-colnames(hm_scl) <- hm_pdata$Species
+colnames(hm_scl) <- hm_pdata$hm_name
 # Metabolite class color
-cols_metclass <- c("Benzenoids" = "#800000FF",
-                   "Hydrocarbons" = "#FFA319FF",
-                   "Lipids and lipid-like molecules" = "#8A9045FF",
-                   "Organic oxygen compounds" = "#8DD3C7",
-                   "Organohalogen compounds" = "#BEBADA",
-                   "Organoheterocyclic compounds" = "#FFFFB3")
+cols_metclass <- c("Organic oxygen compounds" = "#800000FF",
+                   "Lipids and lipid-like molecules" = "#FFA319FF",
+                   "Benzenoids" = "#8A9045FF",
+                   "Organoheterocyclic compounds" = "#8DD3C7",
+                   "Hydrocarbons" = "#BEBADA",
+                   "Organohalogen compounds" = "#FFFFB3")
 # Add row anotation to HeatMap
 hm_row_ann <- rowAnnotation(`Superclass` = hm_fdata$classyfireR_Superclass,
                             col = list(`Superclass` = cols_metclass),
@@ -960,7 +835,7 @@ hm_plot <- Heatmap(hm_scl,
 hm_plot
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 Adding legends to the heatmap.
 
@@ -999,7 +874,7 @@ gcms_hm <- plot_grid(gg_legend_fn,
 gcms_hm
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
 
 # Antimicrobial activity correlation
 
@@ -1065,7 +940,7 @@ corr_pca_plot <- ggplot(corr_scores,
 corr_pca_plot
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ### Loading PCA
 
@@ -1106,8 +981,8 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
                             box.padding = 0.37,
                             label.padding = 0.22,
                             label.r = 0.30,
-                            cex = 2.5,
-                            max.overlaps = 50,
+                            cex = 3.5,
+                            max.overlaps = 10,
                             min.segment.length = 0) +
   guides(x=guide_axis(title = "PC1 (22.46 %)"),
          y=guide_axis(title = "PC2 (18.82 %)")) +
@@ -1121,7 +996,7 @@ corr_load_plot <- ggplot(corr_loadings, aes(PC1, PC2)) +
 corr_load_plot
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
 
 ## Using the Pearson correlation
 
@@ -1137,7 +1012,10 @@ Shapiro-Wilk test.
 # Loading the "readxl" package
 library(readxl)
 # Loading the antimicrobial activity data
-all_bacteria <- read_excel("../Data/Antimicrobial_of_honey.xlsx", sheet = 1)
+all_bacteria <- read_excel("../Data/Antimicrobial_of_honey.xlsx", sheet = 1)%>%
+  group_by(Group) %>%
+  # Average of each biological replicate
+  summarise(across(where(is.numeric), mean, na.rm = TRUE))
 # Deleting the group column to perform Shapiro-Wilk test in batch
 no_group <- all_bacteria[,-1]
 # Perform the Shapiro-Wilk test
@@ -1146,65 +1024,27 @@ shapiro <- do.call(rbind, lapply(no_group,
 shapiro
 ```
 
-    ##                 statistic p.value     
-    ## E_coli_100      0.8894981 0.007754756 
-    ## E_coli_75       0.910591  0.0235632   
-    ## K_pneumonia_50  0.9506033 0.2217358   
-    ## K_pneumonia_75  0.9520331 0.2400907   
-    ## K_pneumonia_100 0.8965943 0.01118818  
-    ## P_mirabilis_50  0.9317354 0.07623142  
-    ## P_mirabilis_75  0.9404336 0.1248864   
-    ## P_mirabilis_100 0.9253929 0.05333025  
-    ## S_aureus_25     0.7805308 6.412762e-05
-    ## S_aureus_50     0.8894501 0.007735745 
-    ## S_aureus_75     0.8934946 0.009524042 
-    ## S_aureus_100    0.896372  0.01105921
+    ##                 statistic p.value   
+    ## E_coli_100      0.8915633 0.2070348 
+    ## E_coli_75       0.9183897 0.379074  
+    ## K_pneumonia_50  0.9473022 0.6604825 
+    ## K_pneumonia_75  0.9263017 0.4469454 
+    ## K_pneumonia_100 0.8206819 0.03507457
+    ## P_mirabilis_50  0.9100873 0.3164863 
+    ## P_mirabilis_75  0.9536608 0.7302173 
+    ## P_mirabilis_100 0.9216444 0.4060279 
+    ## S_aureus_25     0.7900992 0.01573205
+    ## S_aureus_50     0.9109186 0.322357  
+    ## S_aureus_75     0.9074646 0.2985305 
+    ## S_aureus_100    0.9054863 0.285548
 
-The result showed that only the microorganisms *K. pneumonia* and *P.
-mirabilis* have a normal distribution (p-value \> 0.05). However, when
-we inspected the data, we found the values in the ATA001 and RIG003
-groups in the *E. coli* could be outliers; also, a possible outlier in
-the RYMG001 group in the *S. aureus* was found. When we delete all these
-possible outliers, we find that all the microorganisms (not including
-*S. aureus* at 25 % v/v) have a normal distribution, as seen below.
-
-``` r
-# Delete outlier data in E. coli
-no_outliers <- all_bacteria
-no_outliers[no_outliers$Group == "ATA001",]$E_coli_75 <- NA
-no_outliers[no_outliers$Group == "ATA001",]$E_coli_100 <- NA
-no_outliers[no_outliers$Group == "RIG003",]$E_coli_75 <- NA
-no_outliers[no_outliers$Group == "RIG003",]$E_coli_100 <- NA
-# Delete outlier data in S. aureus
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_25 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_50 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_75 <- NA
-no_outliers[no_outliers$Group == "RYMG001",]$S_aureus_100 <- NA
-# Deleting the group column to perform Shapiro-Wilk test in batch
-no_outliers <- no_outliers[,-1]
-# Perform the Shapiro-Wilk test
-shapiro_outl <- do.call(rbind, lapply(no_outliers,
-                                 function(x) shapiro.test(x)[c("statistic", "p.value")]))
-shapiro_outl
-```
-
-    ##                 statistic p.value    
-    ## E_coli_100      0.9319303 0.1504756  
-    ## E_coli_75       0.9202502 0.08778051 
-    ## K_pneumonia_50  0.9506033 0.2217358  
-    ## K_pneumonia_75  0.9520331 0.2400907  
-    ## K_pneumonia_100 0.8965943 0.01118818 
-    ## P_mirabilis_50  0.9317354 0.07623142 
-    ## P_mirabilis_75  0.9404336 0.1248864  
-    ## P_mirabilis_100 0.9253929 0.05333025 
-    ## S_aureus_25     0.8831963 0.009642998
-    ## S_aureus_50     0.9319041 0.1075295  
-    ## S_aureus_75     0.9669953 0.5936641  
-    ## S_aureus_100    0.9608898 0.4565626
+The result showed that all microorganisms have a normal distribution
+(p-value \> 0.05), excluding *K. pneumonia* tested with honey at 100 %
+v/v, and *S. aureus* tested with honey at 25 % v/v.
 
 The antimicrobial activity result of honey at 75 % v/v was used in the
 further analysis because this concentration showed activity in most of
-the tested microorganisms. (*E. coli*, *K. pneumonia*, *P. mirabilis*,
+the tested microorganisms (*E. coli*, *K. pneumonia*, *P. mirabilis*,
 and *S. aureus*).
 
 ### Metabolomics data transformation
@@ -1235,76 +1075,137 @@ glog_exprs <- glog_transformation(df = pmp_data@assays@data@listData[[1]],
 # Adding glog transformation to notame MetaboSet
 glog_set <- pqn_noflag
 exprs(glog_set) <- glog_exprs
-```
-
-Preparing the metabolomics data for the antimicrobial correlation.
-
-``` r
 # Drop QCs
 glog_no_qc <- drop_qcs(glog_set)
-# Preparing the data for E. coli correlation (drop outlier data)
-glog_E.coli <- glog_no_qc[, glog_no_qc$Group != "ATA001"]
-pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
-glog_E.coli <- glog_E.coli[, glog_E.coli$Group != "RIG003"]
-pData(glog_E.coli) <- droplevels(pData(glog_E.coli))
-# Preparing the data for S. aureus (dropn outlier data)
-glog_S.aureus <- glog_no_qc[, glog_no_qc$Group != "RYMG001"]
-pData(glog_S.aureus) <- droplevels(pData(glog_S.aureus))
-# Convert antimicrobial result to numeric
-glog_E.coli$E_coli_75 <- as.numeric(glog_E.coli$E_coli_75)
-glog_no_qc$K_pneumonia_75 <- as.numeric(glog_no_qc$K_pneumonia_75)
-glog_no_qc$P_mirabilis_75 <- as.numeric(glog_no_qc$P_mirabilis_75)
-glog_S.aureus$S_aureus_75 <- as.numeric(glog_S.aureus$S_aureus_75)
-# Exporting MetaboSet data to Excel
-#write_to_excel(glog_no_qc,
-#               file = paste0(ppath, "../Result/notame_Result/HS_GCMS/glog_no_qc.xlsx"))
+```
+
+### Data prepartion
+
+Before correlating metabolomics data with antimicrobial activity,
+metabolomics and antimicrobial data were averaged across technical
+replicates.
+
+In the following code, the metabolics dataset was used to determine the
+average of technical replication for each hive.
+
+``` r
+# Extract abundance data (feature abundance)
+avrg_exprs <- exprs(glog_no_qc)
+# Extract pheno data (sample information)
+avrg_pd <- pData(glog_no_qc)
+# Transposing the matrix (sample as row and column as feature/ions)
+avrg_exprs <- t(avrg_exprs)
+# Data matrix to DataFrame
+avrg_exprs <- as.data.frame(avrg_exprs)
+# Adding the group to the DataFrame
+avrg_exprs$Group <- avrg_pd$Group
+# Adding the sample ID to the DataFrame
+avrg_exprs$Sample_ID <- avrg_pd$Sample_ID
+# Calculating the average of the feature abundance
+mean_honey <- avrg_exprs %>%
+  group_by(Group) %>%
+  summarise(across(dplyr::starts_with("RTX5MS_EI_"), ~ mean(.x, na.rm = TRUE)),
+            across(everything(), dplyr::first),
+            .groups = "drop")
+# Preparing the data matrix to use as an exprs dataset (feature abundance)
+mean_honey$Group <- NULL
+rownames(mean_honey) <- mean_honey$Sample_ID
+mean_honey <- t(mean_honey)
+mean_honey <- mean_honey[rownames(mean_honey) != "Sample_ID", , drop = FALSE]
+```
+
+In the following code, the antimicrobial dataset was used to determine
+the average of technical replication for each hive.
+
+``` r
+# Create a new pheno data dataframe using the target data
+honey_pd <- data.frame(Sample_ID = avrg_pd$Sample_ID,
+                       Group = avrg_pd$Group,
+                       E_coli_75 = as.numeric(avrg_pd$E_coli_75),
+                       K_pneumonia_75 = as.numeric(avrg_pd$K_pneumonia_75),
+                       P_mirabilis_75 = as.numeric(avrg_pd$P_mirabilis_75),
+                       S_aureus_75 = as.numeric(avrg_pd$S_aureus_75),
+                       Species = avrg_pd$Species,
+                       Visit = avrg_pd$Visit,
+                       Injection_order = avrg_pd$Injection_order,
+                       Datafile = avrg_pd$Datafile,
+                       QC = avrg_pd$QC)
+# Average calculation of antimicrobial activity by each hive
+mean_pd <- honey_pd %>%
+  group_by(Group) %>%
+  summarise(Sample_ID = dplyr::first(Sample_ID),
+            E_coli_75 = mean(E_coli_75, na.rm = TRUE),
+            K_pneumonia_75 = mean(K_pneumonia_75, na.rm = TRUE),
+            P_mirabilis_75 = mean(P_mirabilis_75, na.rm = TRUE),
+            S_aureus_75 = mean(S_aureus_75, na.rm = TRUE),
+            Species = dplyr::first(Species),
+            Visit = dplyr::first(Visit),
+            Injection_order = dplyr::first(Injection_order),
+            Datafile = dplyr::first(Datafile),
+            QC = dplyr::first(QC)) %>%
+  relocate(Sample_ID, .before = everything())
+mean_pd <- as.data.frame(mean_pd)
+row.names(mean_pd) <- mean_pd$Sample_ID
+```
+
+The *notame* metaboset was constructed using the metabolomics and
+antimicrobial datasets after averaging.
+
+``` r
+# Metaboset
+mean_set <- construct_metabosets(exprs = mean_honey,
+                                 pheno_data = mean_pd,
+                                 feature_data = fData(glog_no_qc),
+                                 group_col = "Group")
+# Data extraction
+mean_set <- mean_set$RTX5MS_EI
 ```
 
 Perform the Pearson correlation analysis.
 
 ``` r
 # Feature correlation with the E. coli antimicrobial activity
-E.coli_corr <- perform_correlation_tests(glog_E.coli,
-                                         x = featureNames(glog_no_qc),
+E.coli_corr <- perform_correlation_tests(mean_set,
+                                         x = featureNames(mean_set),
                                          y = c("E_coli_75"),
                                          method = "pearson")
 ```
 
-    ## INFO [2026-01-16 12:55:50] Starting correlation tests.
-    ## INFO [2026-01-16 12:55:50] Correlation tests performed.
+    ## INFO [2026-08-12 23:31:41] Starting correlation tests.
+    ## INFO [2026-08-12 23:31:41] Correlation tests performed.
 
 ``` r
 # Feature correlation with the K. pneumonia antimicrobial activity
-K.pneumonia_corr <- perform_correlation_tests(glog_no_qc,
-                                              x = featureNames(glog_set),
+K.pneumonia_corr <- perform_correlation_tests(mean_set,
+                                              x = featureNames(mean_set),
                                               y = c("K_pneumonia_75"),
                                               method = "pearson")
 ```
 
-    ## INFO [2026-01-16 12:55:50] Starting correlation tests.
-    ## INFO [2026-01-16 12:55:50] Correlation tests performed.
+    ## INFO [2026-08-12 23:31:41] Starting correlation tests.
+    ## INFO [2026-08-12 23:31:41] Correlation tests performed.
 
 ``` r
 # Feature correlation with the P. mirabilis antimicrobial activity
-P.mirabilis_corr <- perform_correlation_tests(glog_no_qc,
-                                              x = featureNames(glog_set),
+P.mirabilis_corr <- perform_correlation_tests(mean_set,
+                                              x = featureNames(mean_set),
                                               y = c("P_mirabilis_75"),
                                               method = "pearson")
 ```
 
-    ## INFO [2026-01-16 12:55:50] Starting correlation tests.
-    ## INFO [2026-01-16 12:55:50] Correlation tests performed.
+    ## INFO [2026-08-12 23:31:41] Starting correlation tests.
+    ## INFO [2026-08-12 23:31:41] Correlation tests performed.
 
 ``` r
 # Feature correlation with the S. aureus antimicrobial activity
-S.aureus_corr <- perform_correlation_tests(glog_S.aureus,
-                                           x = featureNames(glog_no_qc),
+S.aureus_corr <- perform_correlation_tests(mean_set,
+                                           x = featureNames(mean_set),
                                            y = c("S_aureus_75"),
                                            method = "pearson")
 ```
 
-    ## INFO [2026-01-16 12:55:50] Starting correlation tests.
-    ## INFO [2026-01-16 12:55:50] Correlation tests performed.
+    ## INFO [2026-08-12 23:31:41] Starting correlation tests.
+    ## INFO [2026-08-12 23:31:42] Correlation tests performed.
 
 ### Correlation of identified metabolites
 
@@ -1340,10 +1241,10 @@ result.
 ``` r
 # Correlation table for the heatmap
 hm_sign_table <- data.frame(Feature_ID = E.coli_corr$X,
-                            E_coli = E.coli_corr$Correlation_P_FDR,
-                            K_pneumonia = K.pneumonia_corr$Correlation_P_FDR,
-                            P_mirabilis = P.mirabilis_corr$Correlation_P_FDR,
-                            S_aureus = S.aureus_corr$Correlation_P_FDR)
+                            E_coli = E.coli_corr$Correlation_P,
+                            K_pneumonia = K.pneumonia_corr$Correlation_P,
+                            P_mirabilis = P.mirabilis_corr$Correlation_P,
+                            S_aureus = S.aureus_corr$Correlation_P)
 # Adding the metabolie name to the correlation table
 hm_sign_table <- left_join(hm_sign_table, feat_corr_table)
 # Extracting data of the identified metabolites
@@ -1387,12 +1288,12 @@ hm_corr <- Heatmap(hm_corr_table, col = col_fun, cluster_rows = FALSE,
 hm_corr
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-42-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-45-1.png)<!-- -->
 
 ### Correlation of unknown metabolites
 
 Filtering the metabolites with positive and high Pearson’s correlation
-coefficient (r \>0.6).
+coefficient (r \>0.75).
 
 ``` r
 # Library to change character values
@@ -1400,18 +1301,18 @@ library('stringr')
 # Correlation table for the heatmap with the best features
 best_feat <- data.frame(Feature_ID = E.coli_corr$X,
                         E_coli = E.coli_corr$Correlation_coefficient,
-                        E_coli_p = E.coli_corr$Correlation_P_FDR,
+                        E_coli_p = E.coli_corr$Correlation_P,
                         K_pneumonia = K.pneumonia_corr$Correlation_coefficient,
-                        K_pneumonia_p = K.pneumonia_corr$Correlation_P_FDR,
+                        K_pneumonia_p = K.pneumonia_corr$Correlation_P,
                         P_mirabilis = P.mirabilis_corr$Correlation_coefficient,
-                        P_mirabilis_p = P.mirabilis_corr$Correlation_P_FDR,
+                        P_mirabilis_p = P.mirabilis_corr$Correlation_P,
                         S_aureus = S.aureus_corr$Correlation_coefficient,
-                        S_aureus_p = S.aureus_corr$Correlation_P_FDR)
-# Filtering the feature with the correlation >= 0.6
-best_feat <- best_feat[best_feat$E_coli >= 0.6 |
-                         best_feat$K_pneumonia >= 0.6 |
-                         best_feat$P_mirabilis >= 0.6 |
-                         best_feat$S_aureus >= 0.6, ]
+                        S_aureus_p = S.aureus_corr$Correlation_P)
+# Filtering the feature with the correlation >= 0.75
+best_feat <- best_feat[best_feat$E_coli >= 0.75 |
+                         best_feat$K_pneumonia >= 0.75 |
+                         best_feat$P_mirabilis >= 0.75 |
+                         best_feat$S_aureus >= 0.75, ]
 # Adding the metabolite name to the correlation table
 best_feat <- left_join(best_feat, feat_corr_table)
 # Extracting data of no identified metabolites
@@ -1470,7 +1371,8 @@ lgd1a <- Legend(col_fun = col_fun,
 # Packed legends
 pd = packLegend(lgd1a, direction = "horizontal")
 # Heatmap plot
-#png(file="../Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 4, units = "in", res= 300)
+#png(file="../Result/notame_Result/HS_GCMS/FigureA1_noFDR.png", width = 5,
+#height = 4, units = "in", res= 300)
 hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                    cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
                    border_gp = grid::gpar(col = "black", lty = 0.02),
@@ -1488,7 +1390,7 @@ hm_corr1
 draw(pd, x = unit(7.5, "cm"), y = unit(1, "cm"), just = c("left", "bottom"))
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-46-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -1558,7 +1460,7 @@ upset_plot <- UpSet(comb_mat,
 upset_plot
 ```
 
-![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-47-1.png)<!-- -->
+![](HS_GCMS_Multivariate_Statistics_files/figure-gfm/unnamed-chunk-50-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -1570,80 +1472,82 @@ Finish a record.
 finish_log()
 ```
 
-    ## INFO [2026-01-16 12:55:54] Finished analysis. Fri Jan 16 12:55:54 2026
+    ## INFO [2026-08-12 23:31:45] Finished analysis. Wed Aug 12 23:31:45 2026
     ## Session info:
     ## 
-    ## INFO [2026-01-16 12:55:54] R version 4.4.1 (2024-06-14 ucrt)
-    ## INFO [2026-01-16 12:55:54] Platform: x86_64-w64-mingw32/x64
-    ## INFO [2026-01-16 12:55:54] Running under: Windows 7 x64 (build 7601) Service Pack 1
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] Matrix products: default
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] locale:
-    ## INFO [2026-01-16 12:55:54] [1] LC_COLLATE=English_United States.1252 
-    ## INFO [2026-01-16 12:55:54] [2] LC_CTYPE=English_United States.1252   
-    ## INFO [2026-01-16 12:55:54] [3] LC_MONETARY=English_United States.1252
-    ## INFO [2026-01-16 12:55:54] [4] LC_NUMERIC=C                          
-    ## INFO [2026-01-16 12:55:54] [5] LC_TIME=English_United States.1252    
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] time zone: America/Guayaquil
-    ## INFO [2026-01-16 12:55:54] tzcode source: internal
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] attached base packages:
-    ## INFO [2026-01-16 12:55:54] [1] stats4    grid      stats     graphics  grDevices utils     datasets 
-    ## INFO [2026-01-16 12:55:54] [8] methods   base     
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] other attached packages:
-    ## INFO [2026-01-16 12:55:54]  [1] stringr_1.5.1               pmp_1.14.1                 
-    ## INFO [2026-01-16 12:55:54]  [3] SummarizedExperiment_1.34.0 GenomicRanges_1.56.0       
-    ## INFO [2026-01-16 12:55:54]  [5] GenomeInfoDb_1.40.1         IRanges_2.38.0             
-    ## INFO [2026-01-16 12:55:54]  [7] S4Vectors_0.42.0            MatrixGenerics_1.16.0      
-    ## INFO [2026-01-16 12:55:54]  [9] matrixStats_1.3.0           readxl_1.4.3               
-    ## INFO [2026-01-16 12:55:54] [11] classyfireR_0.3.8           mdatools_0.14.2            
-    ## INFO [2026-01-16 12:55:54] [13] cowplot_1.1.3               colorRamp2_0.1.0           
-    ## INFO [2026-01-16 12:55:54] [15] ComplexHeatmap_2.20.0       dplyr_1.1.4                
-    ## INFO [2026-01-16 12:55:54] [17] patchwork_1.3.0             notame_0.3.1               
-    ## INFO [2026-01-16 12:55:54] [19] magrittr_2.0.3              ggplot2_4.0.1              
-    ## INFO [2026-01-16 12:55:54] [21] futile.logger_1.4.3         Biobase_2.64.0             
-    ## INFO [2026-01-16 12:55:54] [23] BiocGenerics_0.54.0         generics_0.1.3             
-    ## INFO [2026-01-16 12:55:54] 
-    ## INFO [2026-01-16 12:55:54] loaded via a namespace (and not attached):
-    ## INFO [2026-01-16 12:55:54]   [1] RColorBrewer_1.1-3      sys_3.4.2               rstudioapi_0.16.0      
-    ## INFO [2026-01-16 12:55:54]   [4] jsonlite_1.8.8          shape_1.4.6.1           farver_2.1.2           
-    ## INFO [2026-01-16 12:55:54]   [7] rmarkdown_2.27          zlibbioc_1.50.0         GlobalOptions_0.1.2    
-    ## INFO [2026-01-16 12:55:54]  [10] fs_1.6.4                vctrs_0.6.5             memoise_2.0.1          
-    ## INFO [2026-01-16 12:55:54]  [13] askpass_1.2.0           rstatix_0.7.2           itertools_0.1-3        
-    ## INFO [2026-01-16 12:55:54]  [16] S4Arrays_1.4.1          htmltools_0.5.8.1       usethis_2.2.3          
-    ## INFO [2026-01-16 12:55:54]  [19] missForest_1.5          lambda.r_1.2.4          curl_5.2.1             
-    ## INFO [2026-01-16 12:55:54]  [22] broom_1.0.6             cellranger_1.1.0        SparseArray_1.4.8      
-    ## INFO [2026-01-16 12:55:54]  [25] plyr_1.8.9              impute_1.80.0           futile.options_1.0.1   
-    ## INFO [2026-01-16 12:55:54]  [28] cachem_1.1.0            commonmark_1.9.1        igraph_2.0.3           
-    ## INFO [2026-01-16 12:55:54]  [31] lifecycle_1.0.4         iterators_1.0.14        pkgconfig_2.0.3        
-    ## INFO [2026-01-16 12:55:54]  [34] Matrix_1.7-0            R6_2.5.1                fastmap_1.2.0          
-    ## INFO [2026-01-16 12:55:54]  [37] GenomeInfoDbData_1.2.12 clue_0.3-65             digest_0.6.36          
-    ## INFO [2026-01-16 12:55:54]  [40] pcaMethods_1.96.0       colorspace_2.1-0        RSQLite_2.3.7          
-    ## INFO [2026-01-16 12:55:54]  [43] ggpubr_0.6.0            labeling_0.4.3          randomForest_4.7-1.1   
-    ## INFO [2026-01-16 12:55:54]  [46] fansi_1.0.6             httr_1.4.7              polyclip_1.10-7        
-    ## INFO [2026-01-16 12:55:54]  [49] abind_1.4-5             compiler_4.4.1          rngtools_1.5.2         
-    ## INFO [2026-01-16 12:55:54]  [52] bit64_4.0.5             withr_3.0.0             doParallel_1.0.17      
-    ## INFO [2026-01-16 12:55:54]  [55] S7_0.2.1                backports_1.5.0         carData_3.0-5          
-    ## INFO [2026-01-16 12:55:54]  [58] DBI_1.2.3               highr_0.11              ggforce_0.5.0          
-    ## INFO [2026-01-16 12:55:54]  [61] ggsignif_0.6.4          MASS_7.3-60.2           openssl_2.2.0          
-    ## INFO [2026-01-16 12:55:54]  [64] DelayedArray_0.30.1     rjson_0.2.21            tools_4.4.1            
-    ## INFO [2026-01-16 12:55:54]  [67] zip_2.3.1               glue_1.8.0              gridtext_0.1.5         
-    ## INFO [2026-01-16 12:55:54]  [70] reshape2_1.4.4          cluster_2.1.6           gtable_0.3.6           
-    ## INFO [2026-01-16 12:55:54]  [73] tidyr_1.3.1             xml2_1.3.6              car_3.1-2              
-    ## INFO [2026-01-16 12:55:54]  [76] utf8_1.2.4              XVector_0.44.0          ggrepel_0.9.5          
-    ## INFO [2026-01-16 12:55:54]  [79] foreach_1.5.2           pillar_1.9.0            markdown_1.13          
-    ## INFO [2026-01-16 12:55:54]  [82] circlize_0.4.16         tweenr_2.0.3            lattice_0.22-6         
-    ## INFO [2026-01-16 12:55:54]  [85] bit_4.0.5               deldir_2.0-4            tidyselect_1.2.1       
-    ## INFO [2026-01-16 12:55:54]  [88] knitr_1.47              xfun_0.45               credentials_2.0.1      
-    ## INFO [2026-01-16 12:55:54]  [91] stringi_1.8.4           UCSC.utils_1.0.0        yaml_2.3.8             
-    ## INFO [2026-01-16 12:55:54]  [94] evaluate_0.24.0         codetools_0.2-20        tibble_3.2.1           
-    ## INFO [2026-01-16 12:55:54]  [97] cli_3.6.3               xtable_1.8-4            Rcpp_1.0.12            
-    ## INFO [2026-01-16 12:55:54] [100] gert_2.0.1              png_0.1-8               parallel_4.4.1         
-    ## INFO [2026-01-16 12:55:54] [103] blob_1.2.4              doRNG_1.8.6             PERMANOVA_0.2.0        
-    ## INFO [2026-01-16 12:55:54] [106] viridisLite_0.4.2       scales_1.4.0            openxlsx_4.2.8         
-    ## INFO [2026-01-16 12:55:54] [109] purrr_1.0.2             crayon_1.5.3            clisymbols_1.2.0       
-    ## INFO [2026-01-16 12:55:54] [112] GetoptLong_1.0.5        rlang_1.1.4             formatR_1.14
+    ## INFO [2026-08-12 23:31:45] R version 4.4.1 (2024-06-14 ucrt)
+    ## INFO [2026-08-12 23:31:45] Platform: x86_64-w64-mingw32/x64
+    ## INFO [2026-08-12 23:31:45] Running under: Windows 7 x64 (build 7601) Service Pack 1
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] Matrix products: default
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] locale:
+    ## INFO [2026-08-12 23:31:45] [1] LC_COLLATE=English_United States.1252 
+    ## INFO [2026-08-12 23:31:45] [2] LC_CTYPE=English_United States.1252   
+    ## INFO [2026-08-12 23:31:45] [3] LC_MONETARY=English_United States.1252
+    ## INFO [2026-08-12 23:31:45] [4] LC_NUMERIC=C                          
+    ## INFO [2026-08-12 23:31:45] [5] LC_TIME=English_United States.1252    
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] time zone: America/Guayaquil
+    ## INFO [2026-08-12 23:31:45] tzcode source: internal
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] attached base packages:
+    ## INFO [2026-08-12 23:31:45] [1] stats4    grid      stats     graphics  grDevices utils     datasets 
+    ## INFO [2026-08-12 23:31:45] [8] methods   base     
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] other attached packages:
+    ## INFO [2026-08-12 23:31:45]  [1] stringr_1.5.1               pmp_1.14.1                 
+    ## INFO [2026-08-12 23:31:45]  [3] SummarizedExperiment_1.34.0 GenomicRanges_1.56.0       
+    ## INFO [2026-08-12 23:31:45]  [5] GenomeInfoDb_1.40.1         IRanges_2.38.0             
+    ## INFO [2026-08-12 23:31:45]  [7] S4Vectors_0.42.0            MatrixGenerics_1.16.0      
+    ## INFO [2026-08-12 23:31:45]  [9] matrixStats_1.3.0           readxl_1.4.3               
+    ## INFO [2026-08-12 23:31:45] [11] classyfireR_0.3.8           mdatools_0.14.2            
+    ## INFO [2026-08-12 23:31:45] [13] cowplot_1.1.3               colorRamp2_0.1.0           
+    ## INFO [2026-08-12 23:31:45] [15] ComplexHeatmap_2.20.0       dplyr_1.1.4                
+    ## INFO [2026-08-12 23:31:45] [17] patchwork_1.3.0             pairwiseAdonis_0.4.1       
+    ## INFO [2026-08-12 23:31:45] [19] cluster_2.1.6               vegan_2.7-1                
+    ## INFO [2026-08-12 23:31:45] [21] permute_0.9-8               notame_0.3.1               
+    ## INFO [2026-08-12 23:31:45] [23] magrittr_2.0.3              ggplot2_4.0.1              
+    ## INFO [2026-08-12 23:31:45] [25] futile.logger_1.4.3         Biobase_2.64.0             
+    ## INFO [2026-08-12 23:31:45] [27] BiocGenerics_0.54.0         generics_0.1.3             
+    ## INFO [2026-08-12 23:31:45] 
+    ## INFO [2026-08-12 23:31:45] loaded via a namespace (and not attached):
+    ## INFO [2026-08-12 23:31:45]   [1] RColorBrewer_1.1-3      sys_3.4.2               rstudioapi_0.16.0      
+    ## INFO [2026-08-12 23:31:45]   [4] jsonlite_1.8.8          shape_1.4.6.1           farver_2.1.2           
+    ## INFO [2026-08-12 23:31:45]   [7] rmarkdown_2.27          zlibbioc_1.50.0         GlobalOptions_0.1.2    
+    ## INFO [2026-08-12 23:31:45]  [10] fs_1.6.4                vctrs_0.6.5             memoise_2.0.1          
+    ## INFO [2026-08-12 23:31:45]  [13] askpass_1.2.0           rstatix_0.7.2           itertools_0.1-3        
+    ## INFO [2026-08-12 23:31:45]  [16] S4Arrays_1.4.1          htmltools_0.5.8.1       usethis_2.2.3          
+    ## INFO [2026-08-12 23:31:45]  [19] missForest_1.5          lambda.r_1.2.4          curl_5.2.1             
+    ## INFO [2026-08-12 23:31:45]  [22] broom_1.0.6             cellranger_1.1.0        SparseArray_1.4.8      
+    ## INFO [2026-08-12 23:31:45]  [25] plyr_1.8.9              impute_1.80.0           futile.options_1.0.1   
+    ## INFO [2026-08-12 23:31:45]  [28] cachem_1.1.0            commonmark_1.9.1        igraph_2.0.3           
+    ## INFO [2026-08-12 23:31:45]  [31] lifecycle_1.0.4         iterators_1.0.14        pkgconfig_2.0.3        
+    ## INFO [2026-08-12 23:31:45]  [34] Matrix_1.7-0            R6_2.5.1                fastmap_1.2.0          
+    ## INFO [2026-08-12 23:31:45]  [37] GenomeInfoDbData_1.2.12 clue_0.3-65             digest_0.6.36          
+    ## INFO [2026-08-12 23:31:45]  [40] pcaMethods_1.96.0       colorspace_2.1-0        RSQLite_2.3.7          
+    ## INFO [2026-08-12 23:31:45]  [43] ggpubr_0.6.0            labeling_0.4.3          randomForest_4.7-1.1   
+    ## INFO [2026-08-12 23:31:45]  [46] fansi_1.0.6             httr_1.4.7              polyclip_1.10-7        
+    ## INFO [2026-08-12 23:31:45]  [49] abind_1.4-5             mgcv_1.9-1              compiler_4.4.1         
+    ## INFO [2026-08-12 23:31:45]  [52] rngtools_1.5.2          bit64_4.0.5             withr_3.0.0            
+    ## INFO [2026-08-12 23:31:45]  [55] doParallel_1.0.17       S7_0.2.1                backports_1.5.0        
+    ## INFO [2026-08-12 23:31:45]  [58] carData_3.0-5           DBI_1.2.3               highr_0.11             
+    ## INFO [2026-08-12 23:31:45]  [61] ggforce_0.5.0           ggsignif_0.6.4          MASS_7.3-60.2          
+    ## INFO [2026-08-12 23:31:45]  [64] openssl_2.2.0           DelayedArray_0.30.1     rjson_0.2.21           
+    ## INFO [2026-08-12 23:31:45]  [67] tools_4.4.1             zip_2.3.1               glue_1.8.0             
+    ## INFO [2026-08-12 23:31:45]  [70] nlme_3.1-164            gridtext_0.1.5          reshape2_1.4.4         
+    ## INFO [2026-08-12 23:31:45]  [73] gtable_0.3.6            tidyr_1.3.1             XVector_0.44.0         
+    ## INFO [2026-08-12 23:31:45]  [76] xml2_1.3.6              car_3.1-2               utf8_1.2.4             
+    ## INFO [2026-08-12 23:31:45]  [79] ggrepel_0.9.5           foreach_1.5.2           pillar_1.9.0           
+    ## INFO [2026-08-12 23:31:45]  [82] markdown_1.13           circlize_0.4.16         splines_4.4.1          
+    ## INFO [2026-08-12 23:31:45]  [85] tweenr_2.0.3            lattice_0.22-6          bit_4.0.5              
+    ## INFO [2026-08-12 23:31:45]  [88] tidyselect_1.2.1        knitr_1.47              xfun_0.45              
+    ## INFO [2026-08-12 23:31:45]  [91] credentials_2.0.1       UCSC.utils_1.0.0        stringi_1.8.4          
+    ## INFO [2026-08-12 23:31:45]  [94] yaml_2.3.8              evaluate_0.24.0         codetools_0.2-20       
+    ## INFO [2026-08-12 23:31:45]  [97] tibble_3.2.1            cli_3.6.3               Rcpp_1.0.12            
+    ## INFO [2026-08-12 23:31:45] [100] gert_2.0.1              png_0.1-8               parallel_4.4.1         
+    ## INFO [2026-08-12 23:31:45] [103] blob_1.2.4              doRNG_1.8.6             viridisLite_0.4.2      
+    ## INFO [2026-08-12 23:31:45] [106] scales_1.4.0            openxlsx_4.2.8          purrr_1.0.2            
+    ## INFO [2026-08-12 23:31:45] [109] crayon_1.5.3            clisymbols_1.2.0        GetoptLong_1.0.5       
+    ## INFO [2026-08-12 23:31:45] [112] rlang_1.1.4             formatR_1.14

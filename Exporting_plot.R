@@ -103,13 +103,13 @@ figure2 <- plot_grid(gg_legend_fn_f2,
                      gg_f2, ncol = 1,
                      rel_heights = c(1, 9))
 ### Exporting (*.pdf) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.pdf", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR_44ids.pdf", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.png) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.png", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR_44ids.png", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 ### Exporting (*.jpg) file
-ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR.jpg", plot = figure2,
+ggsave(filename = "Result/notame_Result/HS_GCMS/Figure2_noFDR_44ids.jpg", plot = figure2,
        width = 140, height = 120, units = "mm", dpi = 300, scale = 2.0)
 
 ################################################################################

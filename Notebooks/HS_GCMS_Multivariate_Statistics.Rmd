@@ -45,6 +45,10 @@ library(notame)
 # Dependency packages installation
 install_dependencies
 
+# Loading additional libraries
+library(vegan)
+library(pairwiseAdonis)
+
 ```
 
 Then, a primary path and a log system were added to have a record of each process executed.
@@ -63,7 +67,7 @@ Next, the MZmine feature list table in “*notame*” format was loaded.
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 data <- read_from_excel(file = "../Data/Data_to_notame/HS_GCMS_Data_to_notame.xlsx",
-                        sheet = 2, corner_row = 18, corner_column = "L",
+                        sheet = 3, corner_row = 20, corner_column = "L",
                         split_by = c("Column", "Ion Mode"))
 
 ```
@@ -366,103 +370,99 @@ load_pca
 
 ```
 
-# PERMANOVA analysis
+# PERMANOVA
 
-## *T. angustula*
+## Complete chemical profile
 
-PERMANOVA analysis of *T. angustula* by collection site.
+### PERMANOVA
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
 # Drop QC
 pqn_noqc <- drop_qcs(pqn_noflag)
-# Removal of the M. grandis group from the dataset
-permanova_ta <- pqn_noqc[, pqn_noqc$Species != "M. grandis"]
-pData(permanova_ta) <- droplevels(pData(permanova_ta))
-# Removal of the M. fuscopilosa group from the dataset
-permanova_ta <- permanova_ta[, permanova_ta$Species != "M. fuscopilosa"]
-pData(permanova_ta) <- droplevels(pData(permanova_ta))
-# Change to factor varibles
-permanova_ta@phenoData@data$Group <- as.factor(permanova_ta@phenoData@data$Group)
-# PERMANOVA between close hives of bees T. angustula site 1 and 2 (Removal of site 3)
-permanova_1vs2ta <- permanova_ta[, permanova_ta$Site != "3"]
-pData(permanova_1vs2ta) <- droplevels(pData(permanova_1vs2ta))
-permanova_1vs2ta <- perform_permanova(permanova_1vs2ta, group = "Group", nperm = 999)
-permanova_1vs2ta
-# PERMANOVA between close hives of bees T. angustula site 1 and 3 (Removal of site 2)
-permanova_1vs3ta <- permanova_ta[, permanova_ta$Site != "2"]
-pData(permanova_1vs3ta) <- droplevels(pData(permanova_1vs3ta))
-permanova_1vs3ta <- perform_permanova(permanova_1vs3ta, group = "Group", nperm = 999)
-permanova_1vs3ta
-# PERMANOVA between close hives of bees T. angustula site 2 and 3 (Removal of site 1)
-permanova_2vs3ta <- permanova_ta[, permanova_ta$Site != "1"]
-pData(permanova_2vs3ta) <- droplevels(pData(permanova_2vs3ta))
-permanova_2vs3ta <- perform_permanova(permanova_2vs3ta, group = "Group", nperm = 999)
-permanova_2vs3ta
+# Extract the feature abundance
+permanova_fa <- exprs(pqn_noqc)
+# Extract the pheno data
+permanova_pd <- pData(pqn_noqc)
+permanova_pd$Species <- as.factor(permanova_pd$Species)
+permanova_pd$Locality <- as.factor(permanova_pd$Locality)
+permanova_pd$Site <- as.factor(permanova_pd$Site)
+# Calculate distance matrix
+dist_mat <- vegdist(t(permanova_fa), method = "euclidean")
+# Implement PERMANOVA Global
+permanova_result <- adonis2(dist_mat ~ Species + Locality,
+                            data = permanova_pd,
+                            permutations = 999,
+                            by = "terms")
+permanova_result
 
 ```
 
-## *M. grandis*
-
-PERMANOVA analysis of *M. grandis* by collection site.
+### Homogeneity of dispersions
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-# Removal of the T. angustula group from the dataset
-permanova_mfa <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
-pData(permanova_mfa) <- droplevels(pData(permanova_mfa))
-# Removal of the M. fuscopilosa group from the dataset
-permanova_mfa <- permanova_mfa[, permanova_mfa$Species != "M. fuscopilosa"]
-pData(permanova_mfa) <- droplevels(pData(permanova_mfa))
-# Change to factor varibles
-permanova_mfa@phenoData@data$Group <- as.factor(permanova_mfa@phenoData@data$Group)
-# PERMANOVA between close hives of bees M. grandis site 5 and 6 (Removal of site 4)
-permanova_5vs6mfa <- permanova_mfa[, permanova_mfa$Site != "4"]
-pData(permanova_5vs6mfa) <- droplevels(pData(permanova_5vs6mfa))
-permanova_5vs6mfa <- perform_permanova(permanova_5vs6mfa, group = "Group", nperm = 999)
-permanova_5vs6mfa
-# PERMANOVA between close hives of bees M. grandis site 5 and 4 (Removal of site 6)
-permanova_5vs4mfa <- permanova_mfa[, permanova_mfa$Site != "6"]
-pData(permanova_5vs4mfa) <- droplevels(pData(permanova_5vs4mfa))
-permanova_5vs4mfa <- perform_permanova(permanova_5vs4mfa, group = "Group", nperm = 999)
-permanova_5vs4mfa
-# PERMANOVA between close hives of bees M. grandis site 6 and 4 (Removal of site 5)
-permanova_6vs4mfa <- permanova_mfa[, permanova_mfa$Site != "5"]
-pData(permanova_6vs4mfa) <- droplevels(pData(permanova_6vs4mfa))
-permanova_6vs4mfa <- perform_permanova(permanova_6vs4mfa, group = "Group", nperm = 999)
-permanova_6vs4mfa
+# Test dispersion for Species
+disp_sp <- betadisper(dist_mat, permanova_pd$Species)
+permutest(disp_sp, permutations = 9999)
+# Test dispersion for Locality
+disp_loc <- betadisper(dist_mat, permanova_pd$Locality)
+permutest(disp_loc, permutations = 9999)
 
 ```
 
-## *M. fuscopilosa*
+## Annotated features
 
-PERMANOVA analysis of *M. fuscopilosa* by collection site.
+### PERMANOVA
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
-# Removal of the T. angustula group from the dataset
-permanova_mfu <- pqn_noqc[, pqn_noqc$Species != "T. angustula"]
-pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
-# Removal of the M. grandis group from the dataset
-permanova_mfu <- permanova_mfu[, permanova_mfu$Species != "M. grandis"]
-pData(permanova_mfu) <- droplevels(pData(permanova_mfu))
-# Change to factor varibles
-permanova_mfu@phenoData@data$Group <- as.factor(permanova_mfu@phenoData@data$Group)
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 9 (Removal of site 7)
-permanova_8vs9mfu <- permanova_mfu[, permanova_mfu$Site != "7"]
-pData(permanova_8vs9mfu) <- droplevels(pData(permanova_8vs9mfu))
-permanova_8vs9mfu <- perform_permanova(permanova_8vs9mfu, group = "Group", nperm = 999)
-permanova_8vs9mfu
-# PERMANOVA between close hives of bees M. fuscopilosa site 8 and 7 (Removal of site 9)
-permanova_8vs7mfu <- permanova_mfu[, permanova_mfu$Site != "9"]
-pData(permanova_8vs7mfu) <- droplevels(pData(permanova_8vs7mfu))
-permanova_8vs7mfu <- perform_permanova(permanova_8vs7mfu, group = "Group", nperm = 999)
-permanova_8vs7mfu
-# PERMANOVA between close hives of bees M. fuscopilosa site 9 and 7 (Removal of site 8)
-permanova_9vs7mfu <- permanova_mfu[, permanova_mfu$Site != "8"]
-pData(permanova_9vs7mfu) <- droplevels(pData(permanova_9vs7mfu))
-permanova_9vs7mfu <- perform_permanova(permanova_9vs7mfu, group = "Group", nperm = 999)
-permanova_9vs7mfu
+# Extracting identified metabolite data
+pqn_noqc_ids <- pqn_noqc[!is.na(pqn_noqc@featureData@data$Metabolite),]
+# Removing the M. fuscopilosa site 9
+#pqn_noqc_ids <- pqn_noqc_ids[, pqn_noqc_ids$Site != "9"]
+#pData(pqn_noqc_ids) <- droplevels(pData(pqn_noqc_ids))
+# Extract the feature abundance
+permanova_fa_ids <- exprs(pqn_noqc_ids)
+# Extract the pheno data
+permanova_pd_ids <- pData(pqn_noqc_ids)
+permanova_pd_ids$Species <- as.factor(permanova_pd_ids$Species)
+permanova_pd_ids$Locality <- as.factor(permanova_pd_ids$Locality)
+permanova_pd_ids$Site <- as.factor(permanova_pd_ids$Site)
+# Calculate distance matrix
+dist_mat_ids <- vegdist(t(permanova_fa_ids), method = "euclidean")
+# Implement PERMANOVA Global
+permanova_result_ids <- adonis2(dist_mat_ids ~ Species + Locality,
+                            data = permanova_pd_ids,
+                            permutations = 999,
+                            by = "terms")
+permanova_result_ids
+
+```
+
+### Pairwise PERMANOVA
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Pairwise PERMANOVA with FDR adjustment
+pairwise_results_ids <- pairwise.adonis(x = t(permanova_fa_ids),
+                                        factors = permanova_pd_ids$Species,
+                                        sim.method = "euclidean",
+                                        p.adjust.m = "fdr") # 'BH' o 'fdr'
+pairwise_results_ids
+
+```
+
+### Homogeneity of dispersions
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Test dispersion for Species
+disp_sp_ids <- betadisper(dist_mat_ids, permanova_pd_ids$Species)
+permutest(disp_sp, permutations = 9999)
+# Test dispersion for Locality
+disp_loc_ids <- betadisper(dist_mat_ids, permanova_pd_ids$Locality)
+permutest(disp_loc_ids, permutations = 9999)
 
 ```
 
@@ -544,14 +544,14 @@ set.seed(1540)
 # Adding row and column names
 hm_scl <- hm_height
 rownames(hm_scl) <- hm_fdata$Metabolite
-colnames(hm_scl) <- hm_pdata$Species
+colnames(hm_scl) <- hm_pdata$hm_name
 # Metabolite class color
-cols_metclass <- c("Benzenoids" = "#800000FF",
-                   "Hydrocarbons" = "#FFA319FF",
-                   "Lipids and lipid-like molecules" = "#8A9045FF",
-                   "Organic oxygen compounds" = "#8DD3C7",
-                   "Organohalogen compounds" = "#BEBADA",
-                   "Organoheterocyclic compounds" = "#FFFFB3")
+cols_metclass <- c("Organic oxygen compounds" = "#800000FF",
+                   "Lipids and lipid-like molecules" = "#FFA319FF",
+                   "Benzenoids" = "#8A9045FF",
+                   "Organoheterocyclic compounds" = "#8DD3C7",
+                   "Hydrocarbons" = "#BEBADA",
+                   "Organohalogen compounds" = "#FFFFB3")
 # Add row anotation to HeatMap
 hm_row_ann <- rowAnnotation(`Superclass` = hm_fdata$classyfireR_Superclass,
                             col = list(`Superclass` = cols_metclass),
@@ -1011,7 +1011,7 @@ hm_corr
 
 ### Correlation of unknown metabolites
 
-Filtering the metabolites with positive and high Pearson's correlation coefficient (r >0.6).
+Filtering the metabolites with positive and high Pearson's correlation coefficient (r >0.75).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 
@@ -1027,11 +1027,11 @@ best_feat <- data.frame(Feature_ID = E.coli_corr$X,
                         P_mirabilis_p = P.mirabilis_corr$Correlation_P,
                         S_aureus = S.aureus_corr$Correlation_coefficient,
                         S_aureus_p = S.aureus_corr$Correlation_P)
-# Filtering the feature with the correlation >= 0.6
-best_feat <- best_feat[best_feat$E_coli >= 0.6 |
-                         best_feat$K_pneumonia >= 0.6 |
-                         best_feat$P_mirabilis >= 0.6 |
-                         best_feat$S_aureus >= 0.6, ]
+# Filtering the feature with the correlation >= 0.75
+best_feat <- best_feat[best_feat$E_coli >= 0.75 |
+                         best_feat$K_pneumonia >= 0.75 |
+                         best_feat$P_mirabilis >= 0.75 |
+                         best_feat$S_aureus >= 0.75, ]
 # Adding the metabolite name to the correlation table
 best_feat <- left_join(best_feat, feat_corr_table)
 # Extracting data of no identified metabolites
@@ -1095,7 +1095,8 @@ lgd1a <- Legend(col_fun = col_fun,
 # Packed legends
 pd = packLegend(lgd1a, direction = "horizontal")
 # Heatmap plot
-#png(file="../Result/notame_Result/HS_GCMS/FigureA1.png", width = 5, height = 4, units = "in", res= 300)
+#png(file="../Result/notame_Result/HS_GCMS/FigureA1_noFDR.png", width = 5,
+#height = 4, units = "in", res= 300)
 hm_corr1 <- Heatmap(hm_corr_table1, col = col_fun, cluster_rows = FALSE,
                    cluster_columns = FALSE, column_names_gp = gpar(fontface = "italic"),
                    border_gp = grid::gpar(col = "black", lty = 0.02),
