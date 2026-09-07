@@ -15,10 +15,10 @@ The present document aims to record the procedure given for the statistical anal
 
 PCA analysis of chemical profile only (A and C), and PCA analysis of chemical profile with antimicrobial activity (B and D).
 
-![PCA analysis](Result/notame_Result/HS_GCMS/Figure1.png)
+![PCA analysis](Result/notame_Result/HS_GCMS/Figure1_MCJ.png)
 
 ## Heatmap with HCA
 
 Heatmap of the annotated features, and heatplot of feature abundance correlation with antimicrobial activity (zone inhibition diameter).
 
-![Heatmap](Result/notame_Result/HS_GCMS/Figure2.png)
+![Heatmap](Result/notame_Result/HS_GCMS/Figure2_noFDR_44ids.png)
